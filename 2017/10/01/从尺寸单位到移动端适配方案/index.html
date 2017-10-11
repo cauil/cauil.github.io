@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>从尺寸单位到移动端适配方案 | Cauil&#39;blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="css尺寸单位绝对单位在平常的前端开发中，在很多地方写css的时候，你都会用到长度尺寸单位，可能最典型的代表就是px；其实这些单位主要分两类，绝对单位和相对单位；px就属于绝对单位，除了px之外，其他的你可能都很少使用,如下：  mm, cm, in: 毫米（Millimeters），厘米（centimeters），英寸（inches） pt, pc: 点（Points (1/72 of an i">
+<meta name="keywords" content="css,移动端">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从尺寸单位到移动端适配方案">
+<meta property="og:url" content="http://cauil.github.io/2017/10/01/从尺寸单位到移动端适配方案/index.html">
+<meta property="og:site_name" content="Cauil&#39;blog">
+<meta property="og:description" content="css尺寸单位绝对单位在平常的前端开发中，在很多地方写css的时候，你都会用到长度尺寸单位，可能最典型的代表就是px；其实这些单位主要分两类，绝对单位和相对单位；px就属于绝对单位，除了px之外，其他的你可能都很少使用,如下：  mm, cm, in: 毫米（Millimeters），厘米（centimeters），英寸（inches） pt, pc: 点（Points (1/72 of an i">
+<meta property="og:image" content="http://cauil.github.io/images/caniuse.png">
+<meta property="og:updated_time" content="2017-10-10T15:43:15.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="从尺寸单位到移动端适配方案">
+<meta name="twitter:description" content="css尺寸单位绝对单位在平常的前端开发中，在很多地方写css的时候，你都会用到长度尺寸单位，可能最典型的代表就是px；其实这些单位主要分两类，绝对单位和相对单位；px就属于绝对单位，除了px之外，其他的你可能都很少使用,如下：  mm, cm, in: 毫米（Millimeters），厘米（centimeters），英寸（inches） pt, pc: 点（Points (1/72 of an i">
+<meta name="twitter:image" content="http://cauil.github.io/images/caniuse.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Cauil&#39;blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Cauil&#39;blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="Flux RSS"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://cauil.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-从尺寸单位到移动端适配方案" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/10/01/从尺寸单位到移动端适配方案/" class="article-date">
+  <time datetime="2017-09-30T16:00:00.000Z" itemprop="datePublished">2017-10-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/css/">css</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      从尺寸单位到移动端适配方案
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="css尺寸单位"><a href="#css尺寸单位" class="headerlink" title="css尺寸单位"></a>css尺寸单位</h2><h4 id="绝对单位"><a href="#绝对单位" class="headerlink" title="绝对单位"></a>绝对单位</h4><p>在平常的前端开发中，在很多地方写css的时候，你都会用到长度尺寸单位，可能最典型的代表就是px；<br>其实这些单位主要分两类，绝对单位和相对单位；px就属于绝对单位，除了px之外，其他的你可能都很<br>少使用,如下：</p>
+<ul>
+<li>mm, cm, in: 毫米（Millimeters），厘米（centimeters），英寸（inches）</li>
+<li>pt, pc: 点（Points (1/72 of an inch)）， 十二点活字（ picas (12 points.)）</li>
+</ul>
+<h4 id="相对单位"><a href="#相对单位" class="headerlink" title="相对单位"></a>相对单位</h4><p>上面列举的主要是绝对单位，那相对单位是啥呢，顾名思义，相对单位就是基于某些参考物的单位；主要有：</p>
+<ul>
+<li>ex, ch: 分别是小写x的高度和数字0的宽度；</li>
+<li>em, rem: em和rem都是基于<code>font-size</code>的单位，但又有所不同，em是基于当前元素的<code>font-size</code>为参考物<br>的(如果当前font-size没有设置，就基于父元素，以此类推); rem是基于根元素为参考物，如果根元素没有设置，<br>大多数浏览器默认为16px；假如参考物的<code>font-size: 20px</code>, 那么<code>1em=20px</code>, <code>1.5rem=30px</code>;</li>
+<li>vw, vh, vmin, vmax: 这组单位都是基于视口为参考物，vw基于视口的宽度，vh基于视口的高度，vmin=min(vw, vh),<br>vmax=max(vw,vh)</li>
+</ul>
+<h2 id="在移动端的使用"><a href="#在移动端的使用" class="headerlink" title="在移动端的使用"></a>在移动端的使用</h2><p>目前市面的手机品类繁多，屏幕分辨率也各有不同，导致移动端开发难度加大，我们怎么开发来适配不同的手机？</p>
+<h4 id="rem"><a href="#rem" class="headerlink" title="rem"></a>rem</h4><p>以iphone三种尺寸手机为例: iphone4(320px),iphone6(375px),iphone6 plus(414px);</p>
+<p>普通的做法是根据不同比例的尺寸来等比例<br>缩放，例如iphone4文本大小是12px，那么iphone6就是<code>（375/320*12px=14px）</code>,iphone6 plus就是<code>（414/320*12px=15.5px）</code>;</p>
+<p>最开始的方法： 以一款尺寸做一版样式，然后用js去控制viewpoint的intial-scale(网页缩放比例); 天猫最初站点就是用这种<br>方法来进行移动端的开发的，这样有些不好的地方，如手机为大屏幕的时候图片文字会拉伸，导致页面模糊,在某些布局在不同<br>尺寸的屏幕也有可能导致布局错乱；</p>
+<p>为了最好的适配不同的手机尺寸，目前最普遍的做法就是应用到上一节说到的相对单位rem; </p>
+<h4 id="兼容性"><a href="#兼容性" class="headerlink" title="兼容性"></a>兼容性</h4><p>先来看看rem的兼容性：</p>
+<p><img src="/images/caniuse.png" alt="caniuse"></p>
+<p>从图中可以看出兼容性还是很不错的，大部分市面上主流浏览器都支持,我们可以比较放心的使用；</p>
+<p>rem官方文档上<a href="https://www.w3.org/TR/css3-values/#rem的解释是：" target="_blank" rel="external">https://www.w3.org/TR/css3-values/#rem的解释是：</a></p>
+<p><i>rem unit</i></p>
+<p><code>rem unit
+Equal to the computed value of font-size on the root element. When specified on the font-size property of the root element, the rem units refer to the property’s initial value.</code></p>
+<p>实际就是根据根元素来设置字体大小，然后其他设置了rem单位的就是利用这个来进行同等的变换；</p>
+<h2 id="适配实现方案"><a href="#适配实现方案" class="headerlink" title="适配实现方案"></a>适配实现方案</h2><h4 id="方案1-动态添加html样式"><a href="#方案1-动态添加html样式" class="headerlink" title="方案1 - 动态添加html样式"></a>方案1 - 动态添加html样式</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">(function() &#123;</div><div class="line">   var b = document.documentElement;</div><div class="line">   var a = document.createElement(&quot;style&quot;);</div><div class="line">   a.innerHTML = &quot;html &#123; font-size: &quot; + ((b.clientWidth &gt; 640 ? 640 : b.clientWidth) / 18.75) + &quot;px !important; &#125;&quot;;</div><div class="line">   b.firstElementChild.appendChild(a)</div><div class="line">&#125;)();</div></pre></td></tr></table></figure>
+<h4 id="方案2-利用media-query来设置"><a href="#方案2-利用media-query来设置" class="headerlink" title="方案2 - 利用media query来设置"></a>方案2 - 利用media query来设置</h4><p>利用css的media query也是可以来实现font-size的设置，如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">@media (min-device-width : 375px) and (max-device-width : 667px) and (-webkit-min-device-pixel-ratio : 2)&#123;</div><div class="line">      html&#123;font-size: 37.5px;&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="方案3-js动态设置"><a href="#方案3-js动态设置" class="headerlink" title="方案3 - js动态设置"></a>方案3 - js动态设置</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">document.getElementsByTagName(&apos;html&apos;)[0].style.fontSize = window.innerWidth / 10 + &apos;px&apos;;</div></pre></td></tr></table></figure>
+<h2 id="rem解决方案升级"><a href="#rem解决方案升级" class="headerlink" title="rem解决方案升级"></a>rem解决方案升级</h2><p>上面几个方案我们就实现了动态设置font-size并根据rem实现移动端不同尺寸的适配；</p>
+<p>但适用rem的方案还是有不足的地方的：</p>
+<ol>
+<li><p>大屏幕伸缩之后可能导致页面模糊</p>
+</li>
+<li><p>设计稿里面的px都要转换成rem</p>
+</li>
+</ol>
+<p>如何解决这些问题呢？</p>
+<p>提供高分辨率设计稿，一般采用的是宽度为750px的设计稿，刚好是375的两倍，并利用sass实现一个函数功能<br>为提供直接px到rem的转换;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@function px2rem($px)&#123;</div><div class="line">    $rem : 75px;</div><div class="line">    @return ($px/$rem) + rem;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>设置基准font-size为75，传入参数px大小直接计算出rem的大小；</p>
+<p>这样我们就可以完全按照视觉稿上的尺寸来了, 不用除于2了，就解决了图片高清问题，并且不用手动转换单位；</p>
+<p>不过rem不是万能的，也还是具有不足之处的,如：</p>
+<ol>
+<li><p>一个App里native界面和Web界面混合使用时，rem在不同尺寸屏幕上的适配与native界面适配不一致;</p>
+</li>
+<li><p>rem在多屏幕尺寸适配上与当前两大平台的设计哲学不一致, 有些并不是理想的按照不同大小进行等比例缩放；</p>
+</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文我们一开始先讲了css尺寸单位，包括绝对单位与相对单位，并详细讲述了em和rem；接下来讲述了rem在现代<br>移动端开发的应用，最后讲述了rem的几种应用方案与不足之处；</p>
+<p>最后祝大家双节快乐，祖国越来越强大！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://cauil.github.io/2017/10/01/从尺寸单位到移动端适配方案/" data-id="cj8me9zw20011rmscdpeazxqe" class="article-share-link">Partager</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/css/">css</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/移动端/">移动端</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/10/10/hello-world/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Récent</strong>
+      <div class="article-nav-title">
+        
+          Hello World
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/02/21/linkedList/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Ancien</strong>
+      <div class="article-nav-title">leetcode之linked list</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Catégories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/algorithm/">algorithm</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/css/">css</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/js/">js</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/life/">life</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/读书/">读书</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Mot-clés</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/leetcode/">leetcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/移动端/">移动端</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/读书/">读书</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Nuage de mot-clés</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/css/" style="font-size: 15px;">css</a> <a href="/tags/javascript/" style="font-size: 20px;">javascript</a> <a href="/tags/leetcode/" style="font-size: 10px;">leetcode</a> <a href="/tags/life/" style="font-size: 10px;">life</a> <a href="/tags/移动端/" style="font-size: 10px;">移动端</a> <a href="/tags/读书/" style="font-size: 10px;">读书</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Articles récents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/10/10/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2017/10/01/从尺寸单位到移动端适配方案/">从尺寸单位到移动端适配方案</a>
+          </li>
+        
+          <li>
+            <a href="/2016/02/21/linkedList/">leetcode之linked list</a>
+          </li>
+        
+          <li>
+            <a href="/2015/12/27/DiveIntoJs_core/">深入理解Javascript： JavaScript核心</a>
+          </li>
+        
+          <li>
+            <a href="/2015/12/15/DiveIntoJs_module_pattern/">深入理解Javascript：模块模式</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 cauil<br>
+      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

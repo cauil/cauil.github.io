@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>leetcode之linked list | Cauil&#39;blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="链表javascript实现链表（Linked list）是一种常见的基础数据结构，是一种线性表，但是并不会按线性的顺序存储数据，而是在每一个节点里存到下一个节点的指针(Pointer)。由于不必须按顺序存储，链表在插入的时候可以达到O(1)的复杂度，比另一种线性表顺序表快得多，但是查找一个节点或者访问特定编号的节点则需要O(n)的时间，而顺序表相应的时间复杂度分别是O(logn)和O(1)。 j">
+<meta name="keywords" content="leetcode,algorithm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="leetcode之linked list">
+<meta property="og:url" content="http://cauil.github.io/2016/02/21/linkedList/index.html">
+<meta property="og:site_name" content="Cauil&#39;blog">
+<meta property="og:description" content="链表javascript实现链表（Linked list）是一种常见的基础数据结构，是一种线性表，但是并不会按线性的顺序存储数据，而是在每一个节点里存到下一个节点的指针(Pointer)。由于不必须按顺序存储，链表在插入的时候可以达到O(1)的复杂度，比另一种线性表顺序表快得多，但是查找一个节点或者访问特定编号的节点则需要O(n)的时间，而顺序表相应的时间复杂度分别是O(logn)和O(1)。 j">
+<meta property="og:updated_time" content="2017-10-10T15:26:34.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="leetcode之linked list">
+<meta name="twitter:description" content="链表javascript实现链表（Linked list）是一种常见的基础数据结构，是一种线性表，但是并不会按线性的顺序存储数据，而是在每一个节点里存到下一个节点的指针(Pointer)。由于不必须按顺序存储，链表在插入的时候可以达到O(1)的复杂度，比另一种线性表顺序表快得多，但是查找一个节点或者访问特定编号的节点则需要O(n)的时间，而顺序表相应的时间复杂度分别是O(logn)和O(1)。 j">
+  
+    <link rel="alternate" href="/atom.xml" title="Cauil&#39;blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Cauil&#39;blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="Flux RSS"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://cauil.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-linkedList" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/02/21/linkedList/" class="article-date">
+  <time datetime="2016-02-20T16:00:00.000Z" itemprop="datePublished">2016-02-21</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/algorithm/">algorithm</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      leetcode之linked list
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="链表javascript实现"><a href="#链表javascript实现" class="headerlink" title="链表javascript实现"></a>链表javascript实现</h2><p>链表（Linked list）是一种常见的基础数据结构，是一种线性表，但是并不会按线性的顺序存储数据，而是在每一个节点里存到下一个节点的指针(Pointer)。由于不必须按顺<br>序存储，链表在插入的时候可以达到O(1)的复杂度，比另一种线性表顺序表快得多，但是查找一个节点或者访问特定编号的节点则需要O(n)的时间，而顺序表相应的时间复杂度<br>分别是O(logn)和O(1)。</p>
+<p>javascript实现可以通过下面的方法：</p>
+<pre><code>function ListNode(val) {
+    this.val = val;
+    this.next = null;
+}
+</code></pre><p>下面我们看看链表题目的基本类型:</p>
+<h2 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h2><p>删除的题目有19, 83, 203, 237, 82</p>
+<p>删除其实就是找到要删除元素的前一个元素pre;</p>
+<pre><code>pre.next = pre.next.next;
+</code></pre><p>不过还有一种是假删除，找前一个元素比较麻烦，我们可以直接把要删除元素的下一个元素的值赋给当前删除，然后删除下一个元素；</p>
+<pre><code>cur.val = cur.next.val;
+cur.next = cur.next.next;
+</code></pre><p>看一个典型例题<a href="https://leetcode.com/problems/remove-nth-node-from-end-of-list/" target="_blank" rel="external">19. Remove Nth Node From End of List</a>:</p>
+<p>Given a linked list, remove the nth node from the end of list and return its head.<br>For example,</p>
+<pre><code>Given linked list: 1-&gt;2-&gt;3-&gt;4-&gt;5, and n = 2.
+After removing the second node from the end, the linked list becomes 1-&gt;2-&gt;3-&gt;5.
+</code></pre><p>这个题目我们可以通过设置两个变量，fast变量先走n步，然后fast和slow变量同时走，直到fast为null; 此时slow就是到达了倒数第n个元素，执行删除即可；代码如下：</p>
+<pre><code>var removeNthFromEnd = function(head, n) {
+    var left, before, right = head;
+    left = before = {next: head}; 
+    while (n--) right = right.next;
+    while (right) {
+        right = right.next;
+        left = left.next;
+    }
+    left.next = left.next.next;
+    return before.next;
+};
+</code></pre><h2 id="查找"><a href="#查找" class="headerlink" title="查找"></a>查找</h2><p>查找题目有：160, 141, 142</p>
+<p>我们来看看<a href="https://leetcode.com/problems/linked-list-cycle/" target="_blank" rel="external">141. Linked List Cycle</a>，判断是否🈶️环，我们可以通过设置两个指针fast和slow，slow一次走一步，fast一次走两部，如果🈶️环，fast必定在环内追上slow；于是：</p>
+<pre><code>var hasCycle = function(head) {
+    var slow = head;
+    var fast = head;
+
+    while(fast &amp;&amp; fast.next) {
+        fast = fast.next.next;
+        slow = slow.next;
+        if(fast === slow) {
+            return true;
+        }
+    }
+    return false;
+};
+</code></pre><h2 id="翻转"><a href="#翻转" class="headerlink" title="翻转"></a>翻转</h2><p>翻转题目有234，206，24，92，61</p>
+<p><a href="https://leetcode.com/problems/palindrome-linked-list/" target="_blank" rel="external">234. Palindrome Linked List</a>其实是一个判断是否是回文的题目，但是我们可以利用翻转来判断；</p>
+<p>首先利用两个变量来找到中间点，然后分为两个链表，把后面的链表翻转过来，并同时遍历两个链表比较：</p>
+<pre><code>var isPalindrome = function(head) {
+    function reverse(curr) {
+        var prev = null;
+        var next;
+        while(curr) {
+            next = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = next;
+        }
+        return prev;
+    }
+    var fast = head;
+    var slow = head;
+    while(fast &amp;&amp; fast.next) {
+        fast = fast.next.next;
+        slow = slow.next;
+    }
+    if(fast) slow = slow.next;
+
+    slow = reverse(slow);
+    while(slow &amp;&amp; head.val === slow.val) {
+        head = head.next;
+        slow = slow.next;
+    }
+    return slow === null;
+};
+</code></pre><h2 id="合并"><a href="#合并" class="headerlink" title="合并"></a>合并</h2><p>合并的题目有：21，328，86，148，2，92，143</p>
+<p><a href="https://leetcode.com/problems/partition-list/" target="_blank" rel="external">86. Partition List</a>这个题目是让我们把指定元素后面的都小于它的元素放到指定元素前面去；</p>
+<p>我们可以设置两个表头，遍历链表，把小于指定元素的链接到第一个表，反之，链接到第二个表，最后把第二个链表链接到第一个链表后面；</p>
+<pre><code>var partition = function(head, x) {
+    var hd1 = new ListNode(0);
+    var hd2 = new ListNode(0);
+    var p1 = hd1;
+    var p2 = hd2;
+    while(head) {
+        if(head.val &lt; x) {
+            p1.next = head;
+            p1 = p1.next;
+        } else {
+            p2.next = head;
+            p2 = p2.next;
+        }
+        head = head.next;
+    }
+    p2.next = null;
+    p1.next = hd2.next;
+    return hd1.next;
+};
+</code></pre><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>其实链表的操作就是那几种：删除／查找／翻转／合并, 只要掌握链表的基本操作并配合标记或者特定题目的一些特性，基本都可以解决；</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://cauil.github.io/2016/02/21/linkedList/" data-id="cj8me9zvy000xrmscvswgz1u8" class="article-share-link">Partager</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/algorithm/">algorithm</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/leetcode/">leetcode</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/10/01/从尺寸单位到移动端适配方案/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Récent</strong>
+      <div class="article-nav-title">
+        
+          从尺寸单位到移动端适配方案
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/12/27/DiveIntoJs_core/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Ancien</strong>
+      <div class="article-nav-title">深入理解Javascript： JavaScript核心</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Catégories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/algorithm/">algorithm</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/css/">css</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/js/">js</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/life/">life</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/读书/">读书</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Mot-clés</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/leetcode/">leetcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/移动端/">移动端</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/读书/">读书</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Nuage de mot-clés</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/css/" style="font-size: 15px;">css</a> <a href="/tags/javascript/" style="font-size: 20px;">javascript</a> <a href="/tags/leetcode/" style="font-size: 10px;">leetcode</a> <a href="/tags/life/" style="font-size: 10px;">life</a> <a href="/tags/移动端/" style="font-size: 10px;">移动端</a> <a href="/tags/读书/" style="font-size: 10px;">读书</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Articles récents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/10/10/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2017/10/01/从尺寸单位到移动端适配方案/">从尺寸单位到移动端适配方案</a>
+          </li>
+        
+          <li>
+            <a href="/2016/02/21/linkedList/">leetcode之linked list</a>
+          </li>
+        
+          <li>
+            <a href="/2015/12/27/DiveIntoJs_core/">深入理解Javascript： JavaScript核心</a>
+          </li>
+        
+          <li>
+            <a href="/2015/12/15/DiveIntoJs_module_pattern/">深入理解Javascript：模块模式</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 cauil<br>
+      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

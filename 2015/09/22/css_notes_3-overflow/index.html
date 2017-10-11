@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>CSS：overflow | Cauil&#39;blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="1.overflow基本属性值：visible、hidden、scroll、auto、inherit 初始值：visible 应用于：块级元素和替换元素 继承值：无 计算值：根据指定确定 overflow-x和overflow-y当容器高宽都不足以容下图片时，overflow-x:hidden会把x方向的隐藏掉、y方向出现滚动条；为什么会出现这种情况呢？ 如果overflow-x和overflow">
+<meta name="keywords" content="css">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSS：overflow">
+<meta property="og:url" content="http://cauil.github.io/2015/09/22/css_notes_3-overflow/index.html">
+<meta property="og:site_name" content="Cauil&#39;blog">
+<meta property="og:description" content="1.overflow基本属性值：visible、hidden、scroll、auto、inherit 初始值：visible 应用于：块级元素和替换元素 继承值：无 计算值：根据指定确定 overflow-x和overflow-y当容器高宽都不足以容下图片时，overflow-x:hidden会把x方向的隐藏掉、y方向出现滚动条；为什么会出现这种情况呢？ 如果overflow-x和overflow">
+<meta property="og:updated_time" content="2017-10-10T15:25:11.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CSS：overflow">
+<meta name="twitter:description" content="1.overflow基本属性值：visible、hidden、scroll、auto、inherit 初始值：visible 应用于：块级元素和替换元素 继承值：无 计算值：根据指定确定 overflow-x和overflow-y当容器高宽都不足以容下图片时，overflow-x:hidden会把x方向的隐藏掉、y方向出现滚动条；为什么会出现这种情况呢？ 如果overflow-x和overflow">
+  
+    <link rel="alternate" href="/atom.xml" title="Cauil&#39;blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Cauil&#39;blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="Flux RSS"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://cauil.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-css_notes_3-overflow" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/09/22/css_notes_3-overflow/" class="article-date">
+  <time datetime="2015-09-21T16:00:00.000Z" itemprop="datePublished">2015-09-22</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/css/">css</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      CSS：overflow
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="1-overflow基本属性"><a href="#1-overflow基本属性" class="headerlink" title="1.overflow基本属性"></a>1.overflow基本属性</h2><p>值：<code>visible、hidden、scroll、auto、inherit</code></p>
+<p>初始值：<code>visible</code></p>
+<p>应用于：块级元素和替换元素</p>
+<p>继承值：无</p>
+<p>计算值：根据指定确定</p>
+<h3 id="overflow-x和overflow-y"><a href="#overflow-x和overflow-y" class="headerlink" title="overflow-x和overflow-y"></a>overflow-x和overflow-y</h3><p>当容器高宽都不足以容下图片时，<code>overflow-x:hidden</code>会把x方向的隐藏掉、y方向出现滚动条；为什么会出现这种情况呢？</p>
+<p>如果<code>overflow-x</code>和<code>overflow-y</code>值相同，则等同于<code>overflow</code>；</p>
+<p>如果<code>overflow-x</code>和<code>overflow-y</code>值不同，且其中一个值为<code>visible</code>，另一个值为<code>hidden、scroll、auto</code>，则<code>visible</code>会被重置为<code>auto</code>；这就是为什么上面的y方向出现滚动条；</p>
+<h3 id="兼容性"><a href="#兼容性" class="headerlink" title="兼容性"></a>兼容性</h3><p>不同浏览器滚动条的表现不一样；</p>
+<p>宽度设定机制，见下面一个例子：</p>
+<pre><code>&lt;div class=&quot;box&quot;&gt;&lt;div class=&quot;content&quot;&gt;&lt;/div&gt;&lt;/div&gt;
+
+.box { width: 400px; height: 100px; overflow: auto; }
+.content { width: 100%; height: 200px; background-color: #beceeb; }
+</code></pre><p>在IE7中，垂直和水平方向都出现了滚动条；这是宽度设定机制差异导致的，IE7浏览器把100%宽度算成了外部容器的400px，而垂直方向出现滚动条后，会占用宽度的，从而外部容器水平方向没有400px，从而水平方向出现了滚动条。</p>
+<p>如何避免这种情况呢，直接去掉<code>width: 100%</code>就好了。</p>
+<p>IE8没有这种情况；</p>
+<h3 id="如何使overflow属性有效"><a href="#如何使overflow属性有效" class="headerlink" title="如何使overflow属性有效"></a>如何使overflow属性有效</h3><ul>
+<li><p>非<code>display： inline</code>水平</p>
+</li>
+<li><p>对应方位的尺寸限制；<code>width/height/max-width/max-height/absolute</code>拉伸；</p>
+</li>
+<li><p>对于单元格td等，还需要table为<code>table-layout：fixed</code>状态才行；</p>
+</li>
+</ul>
+<p>两个IE7的bug：</p>
+<p>(1)IE7浏览器下，按钮里的文字越多，按钮两侧的padding留白就越大！</p>
+<p>解决方案：给所有按钮添加css样式<code>overflow:visible</code></p>
+<p>(2)</p>
+<pre><code>.size{ max-width: 200px; max-height: 300px; overflow: auto; }
+&lt;div class=&apos;size&apos;&gt;&lt;img src=&quot;mm1.jpg&quot; width=&quot;256&quot; height=&quot;191&quot;&gt;&lt;/div&gt;
+</code></pre><p>按理论只有水平出现滚动条，结果垂直方向也出现了；</p>
+<h2 id="2-overflow与滚动条"><a href="#2-overflow与滚动条" class="headerlink" title="2.overflow与滚动条"></a>2.overflow与滚动条</h2><h3 id="滚动条出现的条件"><a href="#滚动条出现的条件" class="headerlink" title="滚动条出现的条件"></a>滚动条出现的条件</h3><p>1.<code>overflow:auto/overflow:scroll  //&lt;html&gt;、&lt;textarea&gt;</code></p>
+<p>2.当子元素的水平或者垂直方向超过容器对应方向的最大限度；</p>
+<h3 id="body-html与滚动条"><a href="#body-html与滚动条" class="headerlink" title="body/html与滚动条"></a>body/html与滚动条</h3><p>无论什么浏览器，<strong>默认滚动条均来自<code>&lt;html&gt;</code></strong>而不是<code>&lt;body&gt;</code>标签；</p>
+<p>原因：新建一个空白HTML页面，<code>&lt;body&gt;</code>默认<code>.5em margin</code>值，如果滚动条来自<code>&lt;body&gt;</code>，则应该滚动条与浏览器边框有边距；而事实是滚动条是紧贴着浏览器边框的；</p>
+<p>IE7-浏览器默认类似： <code>html { overflow-y: scroll; }</code><br>IE8+等浏览器默认：<code>html { overflow: hidden; }</code></p>
+<p>所以，如果我们想要去除页面默认滚动条，只需要：</p>
+<pre><code>html { overflow: hidden; }
+</code></pre><p>而没必要把<body>也拉下水：</body></p>
+<pre><code>html, body { overflow: hidden; } //不需要body标签
+</code></pre><h3 id="JS与滚动高度"><a href="#JS与滚动高度" class="headerlink" title="JS与滚动高度"></a>JS与滚动高度</h3><p>chrome浏览器是：<code>document.body.scrollTop</code>;</p>
+<p>其他浏览器是：<code>document.documentElement.scrollTop</code>;</p>
+<p>目前，两者不会同时存在，因此，有人会写成：</p>
+<pre><code>var st = document.body.scrollTop +　document.documentElement.scrollTop
+</code></pre><p>建议使用：</p>
+<pre><code>var st = document.body.scrollTop ||　document.documentElement.scrollTop
+</code></pre><h3 id="overflow的padding-bottom缺失现象"><a href="#overflow的padding-bottom缺失现象" class="headerlink" title="overflow的padding-bottom缺失现象"></a>overflow的padding-bottom缺失现象</h3><pre><code>.box { width: 400px; height: 100px; padding: 100px 0; overflow: auto; }
+</code></pre><p>在chrome浏览器下面的padding-bottom可以滚动出来；而其他浏览器都不存在；</p>
+<p>可能导致的： 不一样的scrollHeight(元素内容高度)</p>
+<h3 id="滚动条的宽度机制"><a href="#滚动条的宽度机制" class="headerlink" title="滚动条的宽度机制"></a>滚动条的宽度机制</h3><p>滚动条会占用容器的可用宽度和高度；</p>
+<p>下面这种方法可以计算滚动条的宽度：</p>
+<pre><code>.box {width: 400px; overflow: scroll; }
+.in {*zoom: 1; /* for IE7 */}
+
+&lt;div class=&quot;box&quot;&gt;
+    &lt;div id=&quot;in&quot; class=&quot;in&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+console.log(400 - document.getElementById(&quot;in&quot;).clientWidth);
+</code></pre><p>测得的结果：IE7+/Chrome/FireFox(win7)-均是17像素；</p>
+<h3 id="overflow-auto的潜在布局隐患"><a href="#overflow-auto的潜在布局隐患" class="headerlink" title="overflow:auto的潜在布局隐患"></a>overflow:auto的潜在布局隐患</h3><p>滚动条会占用容器尺寸，原本和谐的布局，滚动条出现后可能挂掉；</p>
+<h3 id="水平居中跳动问题"><a href="#水平居中跳动问题" class="headerlink" title="水平居中跳动问题"></a>水平居中跳动问题</h3><pre><code>.container { width: 1150px; margin: 0 auto; }
+</code></pre><p>问题的修复：</p>
+<p>1.<code>html { overflow-y: scroll; }</code> // 太丑</p>
+<p>2.<code>.container { padding-left: calc(100vw - 100%);}</code></p>
+<h2 id="3-overflow与BFC"><a href="#3-overflow与BFC" class="headerlink" title="3.overflow与BFC"></a>3.overflow与BFC</h2><p>BFC(block formatting context) - ‘块级格式化上下面’</p>
+<p>BFC有一个特点：页面之结界，内部元素再怎么翻云覆雨都不会影响外部；</p>
+<h3 id="overflow与BFC"><a href="#overflow与BFC" class="headerlink" title="overflow与BFC"></a>overflow与BFC</h3><p>overflow有三种属性会触发BFC：<code>auto、scroll、hidden</code></p>
+<p>有三种常用用途：</p>
+<p>清楚浮动影响、避免margin穿透问题、两栏自适应布局</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://cauil.github.io/2015/09/22/css_notes_3-overflow/" data-id="cj8me9zvl000crmsc5dpge6bd" class="article-share-link">Partager</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/css/">css</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/10/19/DiveIntoJs_Events_propagation/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Récent</strong>
+      <div class="article-nav-title">
+        
+          深入理解Javascript：DOM事件之事件传播
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/08/21/css_notes_2-float/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Ancien</strong>
+      <div class="article-nav-title">CSS：浮动</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Catégories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/algorithm/">algorithm</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/css/">css</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/js/">js</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/life/">life</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/读书/">读书</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Mot-clés</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/leetcode/">leetcode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/移动端/">移动端</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/读书/">读书</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Nuage de mot-clés</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/css/" style="font-size: 15px;">css</a> <a href="/tags/javascript/" style="font-size: 20px;">javascript</a> <a href="/tags/leetcode/" style="font-size: 10px;">leetcode</a> <a href="/tags/life/" style="font-size: 10px;">life</a> <a href="/tags/移动端/" style="font-size: 10px;">移动端</a> <a href="/tags/读书/" style="font-size: 10px;">读书</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">February 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">October 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Articles récents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/10/10/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2017/10/01/从尺寸单位到移动端适配方案/">从尺寸单位到移动端适配方案</a>
+          </li>
+        
+          <li>
+            <a href="/2016/02/21/linkedList/">leetcode之linked list</a>
+          </li>
+        
+          <li>
+            <a href="/2015/12/27/DiveIntoJs_core/">深入理解Javascript： JavaScript核心</a>
+          </li>
+        
+          <li>
+            <a href="/2015/12/15/DiveIntoJs_module_pattern/">深入理解Javascript：模块模式</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 cauil<br>
+      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
