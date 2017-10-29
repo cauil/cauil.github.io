@@ -239,6 +239,192 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/10/29/2017-10-19-JS之异步1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cauil">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/abu.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cauil's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/10/29/2017-10-19-JS之异步1/" itemprop="url">JS之异步1</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-29T00:00:00+08:00">
+                2017-10-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JS/" itemprop="url" rel="index">
+                    <span itemprop="name">JS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="什么是异步"><a href="#什么是异步" class="headerlink" title="什么是异步"></a>什么是异步</h2><p>异步：一种通讯方式， 一个可以无需等待被调用函数的返回值就让操作继续进行的方法.</p>
+<p>在操作系统中对设备的处理，很多就是利用异步来处理的；比如中断，计算机的网卡接受从网络中发过来的数据，如果让cpu一直轮询等待数据的传输完成，这个很费时间, 浪费cpu的效率，<br>在网卡接受网络数据的时候，可以让cpu自己先忙其他的，等网络数据接受完毕之后才让网卡发起一个中断请求让cpu介入进行处理；这就是异步。</p>
+<h2 id="JS中的异步"><a href="#JS中的异步" class="headerlink" title="JS中的异步"></a>JS中的异步</h2><p>谈起JS的异步，就不得不说JS引擎是基于单线程事件循环的概念构建的。跟上面举的例子一样，为了让JS更有效率，响应更及时，JS中加入了异步。</p>
+<p>JS引擎同一时刻只能执行一个代码块,所以需要跟踪即将运行的代码，那些代码被放在一个任务队列中，每当一段代码准备执行是，都会被添加到任务队列中。每当JS引擎中的一段代码执行结束时，<br>事件循环会执行队列中的下一个任务。如下图可示：</p>
+<p><img src="/images/eventqueue.jpg" alt=""></p>
+<p>JS中有哪些异步呢？</p>
+<p>setTimeout(), setInterval(), ajax请求，dom事件这些都是JS中比较常见的异步.</p>
+<h2 id="事件模型"><a href="#事件模型" class="headerlink" title="事件模型"></a>事件模型</h2><p>用户点击按钮或按下键盘上的按钮会触发类似onclick这样的事件，它会向任务队列添加一个新任务来响应用户的操作。如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">let button = document.getElementById(&quot;my-btn&quot;);</div><div class="line">button.onclick = function(event) &#123;</div><div class="line">    console.log(&quot;clicked&quot;);</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>这段代码中当按钮被点击的时候，会触发onclick事件，执行函数(clickFn)会被添加到任务队列中，当任务队列执行到clickFn的时候打印出clicked;</p>
+<p>如下图:</p>
+<p><img src="/images/eventstack.png" alt=""></p>
+<p>事件模型适用于响应用户交互和完成类似的低频功能，但其对于更复杂的需求来说却不是很灵活。</p>
+<h2 id="setTimeout与setInterval"><a href="#setTimeout与setInterval" class="headerlink" title="setTimeout与setInterval"></a>setTimeout与setInterval</h2><p>这两个区别不大，我们看一段代码:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">setTimeout(function() &#123;</div><div class="line">    console.log(&apos;settimeout&apos;);</div><div class="line">&#125;, 1000)</div><div class="line">var sTime = new Date().getTime();</div><div class="line">console.log(new Date());</div><div class="line">console.log(&apos;test1&apos;);</div><div class="line">while(new Date().getTime() - sTime &lt; 2000) &#123;</div><div class="line">&#125;</div><div class="line">console.log(new Date())</div></pre></td></tr></table></figure>
+<p>执行结果显示打印出:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">// Sun Oct 29 2017 20:24:29 GMT+0800 (CST)</div><div class="line">// test1</div><div class="line">// Sun Oct 29 2017 20:24:31 GMT+0800 (CST)</div><div class="line">// settimeout</div></pre></td></tr></table></figure>
+<p>从中可以看出：</p>
+<ol>
+<li>先打印test1，setTimeout的确是异步过程，会在1秒后加入任务队列;</li>
+<li>只有在任务队列中的前面任务执行完，才会执行加入的任务(这段代码是过了两秒);</li>
+</ol>
+<p>setTimeout也是一种异步的方式，但是不能很好的把控。</p>
+<h2 id="回调模式"><a href="#回调模式" class="headerlink" title="回调模式"></a>回调模式</h2><p>回调模式与事件模式类似，只不过回调模式中被调用的函数是作为参数传入的，如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">fs.readFile(&apos;example.txt&apos;, function(err, contents) &#123;</div><div class="line">    if(err) &#123;</div><div class="line">        throw err;</div><div class="line">    &#125;</div><div class="line">    console.log(contents)</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>文件example.txt读取完毕后会把回调加入任务队列中，如果此时任务队列为空，直接执行回调，如果不为空，等前面的任务执行完再执行回调；</p>
+<p>但是这有一个问题，当我们的需求是，先读取文件1，然后需要把读出的文件1作为内容进行网络转发；那就会：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">fs.readFile(&apos;example.txt&apos;, function(err, contents) &#123;</div><div class="line">    if(err) &#123;</div><div class="line">        throw err;</div><div class="line">    &#125;;</div><div class="line">    console.log(contents);</div><div class="line">    ajax(&#123;</div><div class="line">        url: &apos;xxx.json&apos;</div><div class="line">        data: contents,</div><div class="line">        success: function() &#123;</div><div class="line">            doSomething()</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>这样看起来还是，当时如果这样的需求是叠加的，那就可能会形成传说中的回调地狱了。如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">fn1(function(err, result) &#123;</div><div class="line">    if(err) &#123;throw err;&#125;</div><div class="line"></div><div class="line">    fn2(function(err, result) &#123;</div><div class="line">        if(err) &#123;throw err;&#125;</div><div class="line"></div><div class="line">        fn3(function(err, result) &#123;</div><div class="line">            if(err) &#123;throw err;&#125;</div><div class="line"></div><div class="line">            fn4(function(err, result) &#123;</div><div class="line">                if(err) &#123;throw err;&#125;</div><div class="line">            &#125;)</div><div class="line">            ...</div><div class="line">        &#125;)</div><div class="line">    &#125;)</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>像上面这样嵌套多个方法调用，会创建出一堆难于理解和调试的代码。</p>
+<h2 id="异步之生成器"><a href="#异步之生成器" class="headerlink" title="异步之生成器"></a>异步之生成器</h2><h4 id="生成器简单介绍"><a href="#生成器简单介绍" class="headerlink" title="生成器简单介绍"></a>生成器简单介绍</h4><p>有时间会深入讲述一下生成器，这里只是简单说一下生成器的概念。下面就是一个生成器函数的栗子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">function *test() &#123; // 生成器函数</div><div class="line">    yield 1;</div><div class="line">    yield 2;</div><div class="line">&#125;</div><div class="line">var iter = test() // 迭代器</div></pre></td></tr></table></figure>
+<p>上面就是一个简单的生成器函数，当执行会生成一个迭代器，迭代器可参考之前写过的一片文章谈谈遍历与迭代协议.</p>
+<p>迭代器每次调用next方法会执行生成器函数，并且每次执行完yield关键词就停止，只在当下一次调用next的时候才回到之前执行停止的地方继续执行；</p>
+<p>如若需要回调或者系列化一序列的异步操作，生成器和yield语句就派上用场了。</p>
+<h4 id="生成器处理异步操作"><a href="#生成器处理异步操作" class="headerlink" title="生成器处理异步操作"></a>生成器处理异步操作</h4><p>任务处理器:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">function run(taskDef) &#123;</div><div class="line">    let task = taskDef();      // 1.外层生成器函数执行  创建一个无使用限制的迭代器</div><div class="line"></div><div class="line">    let result = task.next(); // 2. 开始任务，执行到第一个yield</div><div class="line"></div><div class="line">    // 循环调用next</div><div class="line">    function step() &#123;</div><div class="line">        if(!result.done) &#123; // 3.判断是否迭代完毕（没有yield或者return）</div><div class="line">            if(typeof result.value === &apos;function&apos;) &#123; // 4.下面包裹函数return的函数</div><div class="line">                result.value(function(err, data) &#123; // 5.调用return的函数, 传入回调函数到callback</div><div class="line">                    if(err) &#123;</div><div class="line">                        result = task.throw(err);</div><div class="line">                        return;</div><div class="line">                    &#125;</div><div class="line">                    result = task.next(data); // 6.异步回调完，继续执行到下一个yield</div><div class="line">                    step(); // 7. 循环执行 </div><div class="line">                &#125;)</div><div class="line">            &#125;</div><div class="line">        &#125; else &#123;</div><div class="line">            result = task.next(result.value);</div><div class="line">            step(); // 循环执行</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    step(); // 启动</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然后把异步操作包裹起来，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">let fs = require(&apos;sf&apos;);</div><div class="line"></div><div class="line">function readFile(filename) &#123;</div><div class="line">    return function(callback) &#123;</div><div class="line">        fs.readFile(filename, callback)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>下面是最终的调用方式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">run(function *() &#123;</div><div class="line">    let contents = yield readFile(&apos;config.json&apos;);</div><div class="line">    doSomethingWith(contents);</div><div class="line">    yield readMoreFile(&apos;xxx.json&apos;);</div><div class="line">    console.log(&apos;Done&apos;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>这样就可以很好的解决回调地狱的问题了，并且把异步操作通过同步的形式来调用。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>上面谈了JS的异步，并分别讲了事件模型／setTimeout／回调模型，最后讲述了怎么用生成器来处理回调地狱，并可以用同步的操作方式.</p>
+<p>上面这种处理形式还是比较麻烦，需要把异步函数包裹起来，并且无法区分用作任务执行器回调函数的返回值和一个不是回调函数的返回值。</p>
+<p>这种方式在场景使用中还是有局限性，如果需求需要并行执行两个异步操作或者同时进行两个异步操作并且只取优先完成的操作；这种就不太好处理了，会在下一篇中讲述解决的办法.</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/10/19/2017-10-19-mongo/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2369,258 +2555,6 @@ new Number(&quot;3&quot;) - [1] // 2
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2015/10/19/DiveIntoJs_Events_propagation/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cauil">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/abu.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Cauil's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2015/10/19/DiveIntoJs_Events_propagation/" itemprop="url">深入理解Javascript：DOM事件之事件传播</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-10-19T00:00:00+08:00">
-                2015-10-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/js/" itemprop="url" rel="index">
-                    <span itemprop="name">js</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>客户端Javascript程序采用异步事件驱动编程模型。</p>
-<p>那首先什么是异步事件驱动编程模型呢？</p>
-<p>在这种设计风格下，当文档、浏览器、元素或与之相关的对象发生某些有趣的事情时，Web浏览器就会产生事件。</p>
-<p>这些对象等待事件发生，然后他们相应，这就是所谓的异步驱动风格。</p>
-<h2 id="1-事件是什么呢？"><a href="#1-事件是什么呢？" class="headerlink" title="1.事件是什么呢？"></a>1.事件是什么呢？</h2><p>事件就是Web浏览器通知应用程序发生了什么事情。</p>
-<p>事件类型：是一个用来说明发生什么类型事件的字符串；例如‘mousemove’表示用户移动鼠标，由于事件类型只是一个字符串，有时也可称为事件名字。</p>
-<p>事件目标：发生的事件或者与之相关的对象。在JS应用程序中，Windows、Document、Element对象是最常见的事件目标。</p>
-<p>下面的代码就是弹出事件目标与类型的方法：</p>
-<pre><code>&lt;div id=&apos;box&apos;&gt;
-    &lt;button&gt;按钮&lt;/button&gt;
-&lt;/div&gt;
-&lt;script&gt;
-    var bt = document.getElementsByTagName(&apos;button&apos;)[0];
-
-    bt.addEventListener(&apos;click&apos;,function(event){
-        alert(&apos;事件目标:&apos; + event.target);
-        alert(&apos;事件类型：&apos; + event.type);
-    })
-&lt;/script&gt;
-</code></pre><p>事件处理程序：处理或相应事件的函数。当在特定的事件目标上发生特定类型的事件时，浏览器会调用对应的事件处理程序。</p>
-<p>事件对象：与特定事件相关且包含有关该事件详细信息的对象；例如，鼠标事件的相关对象会包含鼠标指针的坐标。</p>
-<p>事件传播：浏览器决定哪个对象触发其事件处理程序的过程：</p>
-<ul>
-<li>对于单个对象的特定事件（比如windows的load事件），必须是不能传播的；</li>
-<li>事件传播向上传播，即冒泡传播；</li>
-<li>事件处理程序能够通过调用方法或者设置事件对象属性来阻止事件传播，这样就能停止冒泡；</li>
-</ul>
-<p>事件捕获：事件传播的另外一种形式，在容器元素上注册的特定处理程序有机会在事件传播到真实目标之前捕获它。IE8或之前的版本不支持事件捕获，所以不常用它。</p>
-<h2 id="2-事件传播"><a href="#2-事件传播" class="headerlink" title="2.事件传播"></a>2.事件传播</h2><p>上面介绍了什么是事件，下面详细介绍事件的传播机制；</p>
-<p>当事件目标是Windows对象或其他的一些单独对象（如XMLHTTPRequest）时，浏览器简单的通过调用对象上适当的处理程序相应事件。</p>
-<p>当事件目标是文档或者文档元素时，情况不同：</p>
-<p>事件传播有三个阶段：</p>
-<p>捕获阶段，发生在目标处理程序调用之前，称为‘捕获’阶段，为<strong>第一阶段</strong>；</p>
-<p>目标对象本身的时间处理程序调用是<strong>第二个阶段</strong>；</p>
-<p>事件冒泡是事件传播的<strong>第三个阶段</strong>；</p>
-<p><img src="http://7xj29n.com1.z0.glb.clouddn.com/事件传播.jpg" alt="http://7xj29n.com1.z0.glb.clouddn.com/事件传播.jpg"></p>
-<h2 id="3-事件冒泡"><a href="#3-事件冒泡" class="headerlink" title="3.事件冒泡"></a>3.事件冒泡</h2><p>事件最开始由具体的元素（即事件发生的对象）接受，然后逐级向上传播至最不具体的那个节点。</p>
-<p>下面是html：</p>
-<pre><code>&lt;body&gt;
-    &lt;div id=&apos;box&apos;&gt;
-        &lt;button&gt;按钮&lt;/button&gt;
-    &lt;/div&gt;
-&lt;/body&gt;
-</code></pre><p>比如当点击上面HTML中的按钮，事件会一直向上冒泡，寻找注册了clink的事件处理程序的元素：</p>
-<pre><code>button --&gt;　box --&gt;　body --&gt; html --&gt; document root
-</code></pre><h2 id="4-事件捕获"><a href="#4-事件捕获" class="headerlink" title="4.事件捕获"></a>4.事件捕获</h2><p>事件捕获像反向的冒泡阶段；最先调用windows对象的捕获处理程序，然后是Document对象的捕获处理程序，接着是body对象的，再然后是DOM树向下，依次类推，直到调用事件目标的父元素的捕获事件处理程序。</p>
-<p>事件捕获只能用于addEventListener()注册且第三个参数是true的事件处理程序中。意味着事件捕获无法在IE9之前的IE中使用。因为IE9之前的IE中不支持addEventListener。</p>
-<pre><code>&lt;body&gt;
-    &lt;div id=&apos;box&apos;&gt;
-        &lt;button&gt;按钮&lt;/button&gt;
-    &lt;/div&gt;
-&lt;/body&gt;
-</code></pre><p>当点击上面html的按钮时，事件捕获阶段会从上到下寻找注册了click事件捕获处理程序的元素：</p>
-<pre><code>document root --&gt; html --&gt; body --&gt; box --&gt; button
-</code></pre><h2 id="5-事件的取消"><a href="#5-事件的取消" class="headerlink" title="5.事件的取消"></a>5.事件的取消</h2><p>取消事件的浏览器默认操作有三种方式：</p>
-<ul>
-<li>设置事件处理程序的返回值为false；</li>
-<li>在支持addEventListener的浏览器中，也能通过调用事件对象的preventDefault()方法取消事件的默认行为</li>
-<li>在IE9之前的IE中，可以设置事件对象的returnValue属性为false</li>
-</ul>
-<p>取消事件的传播可以通过：</p>
-<ul>
-<li>在支持addEventListener的浏览器中，也能通过调用事件对象的一个stopPropagation()方法取消事件的继续传播；如果在同一对象上定义了其他处理程序，剩下的处理程序将依旧被调用，但调用stopPropagation方法之后其他任何对象的事件处理程序将不会调用</li>
-<li>IE9之前不支持上一种方法的可以通过IE事件对象的cancelBubble属性设置为true能阻止事件进一步冒泡（这些版本事件传播不支持事件的捕获阶段）</li>
-</ul>
-<h2 id="6-综合例子"><a href="#6-综合例子" class="headerlink" title="6.综合例子"></a>6.综合例子</h2><p>下面是一个综合例子：</p>
-<p>当点击按钮时，会依次弹出对话框：‘事件捕获阶段body’、‘事件捕获阶段box’、‘事件捕获阶段：button’、‘事件调用阶段：button’、‘事件冒泡阶段：box’、‘事件冒泡阶段：body’；</p>
-<p>当点击box时，会依次弹出对话框：‘事件捕获阶段body’、‘事件捕获阶段box’、‘事件冒泡阶段：box’、‘事件冒泡阶段：body’；</p>
-<pre><code>&lt;html&gt;
-    &lt;head&gt;
-        &lt;title&gt;事件流&lt;/title&gt;
-        &lt;meta charset=&quot;utf-8&quot;&gt;
-        &lt;style&gt;
-            #box {height:100px;width: 100px;border: solid 1px red; text-align: center;background-color: burlywood}
-            #button {border: solid 1px red;}
-        &lt;/style&gt;
-    &lt;/head&gt;
-
-    &lt;body id=&quot;body&quot;&gt;
-        &lt;div id=&quot;box&quot;&gt;box
-            &lt;button id=&quot;button&quot;&gt;按钮&lt;/button&gt;
-        &lt;/div&gt;
-        &lt;script&gt;
-            var bt = document.getElementById(&apos;button&apos;);
-            var bx = document.getElementById(&apos;box&apos;);
-            var bd = document.getElementById(&apos;body&apos;);
-
-            bt.addEventListener(&apos;click&apos;, function(){
-                alert(&quot;事件捕获阶段：button&quot;);
-            }, true);
-            bx.addEventListener(&apos;click&apos;, function(){
-                alert(&quot;事件捕获阶段box&quot;);
-            },true);
-            bd.addEventListener(&apos;click&apos;, function(){
-                alert(&quot;事件捕获阶段body&quot;);
-                // event.stopPropagation();
-            },true);
-
-            bt.addEventListener(&apos;click&apos;, function(){
-                alert(&quot;事件调用阶段：button&quot;);
-            }, false);
-            bx.addEventListener(&apos;click&apos;, function(){
-                alert(&quot;事件冒泡阶段：box&quot;);
-            },false);
-            bd.addEventListener(&apos;click&apos;, function(){
-                alert(&quot;事件冒泡阶段：body&quot;);
-            },false);
-        &lt;/script&gt;
-    &lt;/body&gt;
-
-&lt;/html&gt;
-</code></pre>
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2675,7 +2609,7 @@ new Number(&quot;3&quot;) - [1] // 2
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-count">17</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2686,7 +2620,7 @@ new Number(&quot;3&quot;) - [1] // 2
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">分类</span>
                 
               </div>
@@ -2697,7 +2631,7 @@ new Number(&quot;3&quot;) - [1] // 2
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

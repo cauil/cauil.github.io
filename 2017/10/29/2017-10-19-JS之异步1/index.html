@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="JS,异步," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="什么是异步异步：一种通讯方式， 一个可以无需等待被调用函数的返回值就让操作继续进行的方法. 在操作系统中对设备的处理，很多就是利用异步来处理的；比如中断，计算机的网卡接受从网络中发过来的数据，如果让cpu一直轮询等待数据的传输完成，这个很费时间, 浪费cpu的效率，在网卡接受网络数据的时候，可以让cpu自己先忙其他的，等网络数据接受完毕之后才让网卡发起一个中断请求让cpu介入进行处理；这就是异步。">
+<meta name="keywords" content="JS,异步">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JS之异步1">
+<meta property="og:url" content="http://cauil.github.io/2017/10/29/2017-10-19-JS之异步1/index.html">
+<meta property="og:site_name" content="Cauil&#39;s Blog">
+<meta property="og:description" content="什么是异步异步：一种通讯方式， 一个可以无需等待被调用函数的返回值就让操作继续进行的方法. 在操作系统中对设备的处理，很多就是利用异步来处理的；比如中断，计算机的网卡接受从网络中发过来的数据，如果让cpu一直轮询等待数据的传输完成，这个很费时间, 浪费cpu的效率，在网卡接受网络数据的时候，可以让cpu自己先忙其他的，等网络数据接受完毕之后才让网卡发起一个中断请求让cpu介入进行处理；这就是异步。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://cauil.github.io/images/eventqueue.jpg">
+<meta property="og:image" content="http://cauil.github.io/images/eventstack.png">
+<meta property="og:updated_time" content="2017-10-29T14:58:44.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JS之异步1">
+<meta name="twitter:description" content="什么是异步异步：一种通讯方式， 一个可以无需等待被调用函数的返回值就让操作继续进行的方法. 在操作系统中对设备的处理，很多就是利用异步来处理的；比如中断，计算机的网卡接受从网络中发过来的数据，如果让cpu一直轮询等待数据的传输完成，这个很费时间, 浪费cpu的效率，在网卡接受网络数据的时候，可以让cpu自己先忙其他的，等网络数据接受完毕之后才让网卡发起一个中断请求让cpu介入进行处理；这就是异步。">
+<meta name="twitter:image" content="http://cauil.github.io/images/eventqueue.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://cauil.github.io/2017/10/29/2017-10-19-JS之异步1/"/>
+
+
+
+
+
+  <title>JS之异步1 | Cauil's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Cauil's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">陌上花开，可缓缓归矣</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/10/29/2017-10-19-JS之异步1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cauil">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/abu.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cauil's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">JS之异步1</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-29T00:00:00+08:00">
+                2017-10-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JS/" itemprop="url" rel="index">
+                    <span itemprop="name">JS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="什么是异步"><a href="#什么是异步" class="headerlink" title="什么是异步"></a>什么是异步</h2><p>异步：一种通讯方式， 一个可以无需等待被调用函数的返回值就让操作继续进行的方法.</p>
+<p>在操作系统中对设备的处理，很多就是利用异步来处理的；比如中断，计算机的网卡接受从网络中发过来的数据，如果让cpu一直轮询等待数据的传输完成，这个很费时间, 浪费cpu的效率，<br>在网卡接受网络数据的时候，可以让cpu自己先忙其他的，等网络数据接受完毕之后才让网卡发起一个中断请求让cpu介入进行处理；这就是异步。</p>
+<h2 id="JS中的异步"><a href="#JS中的异步" class="headerlink" title="JS中的异步"></a>JS中的异步</h2><p>谈起JS的异步，就不得不说JS引擎是基于单线程事件循环的概念构建的。跟上面举的例子一样，为了让JS更有效率，响应更及时，JS中加入了异步。</p>
+<p>JS引擎同一时刻只能执行一个代码块,所以需要跟踪即将运行的代码，那些代码被放在一个任务队列中，每当一段代码准备执行是，都会被添加到任务队列中。每当JS引擎中的一段代码执行结束时，<br>事件循环会执行队列中的下一个任务。如下图可示：</p>
+<p><img src="/images/eventqueue.jpg" alt=""></p>
+<p>JS中有哪些异步呢？</p>
+<p>setTimeout(), setInterval(), ajax请求，dom事件这些都是JS中比较常见的异步.</p>
+<h2 id="事件模型"><a href="#事件模型" class="headerlink" title="事件模型"></a>事件模型</h2><p>用户点击按钮或按下键盘上的按钮会触发类似onclick这样的事件，它会向任务队列添加一个新任务来响应用户的操作。如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">let button = document.getElementById(&quot;my-btn&quot;);</div><div class="line">button.onclick = function(event) &#123;</div><div class="line">    console.log(&quot;clicked&quot;);</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>这段代码中当按钮被点击的时候，会触发onclick事件，执行函数(clickFn)会被添加到任务队列中，当任务队列执行到clickFn的时候打印出clicked;</p>
+<p>如下图:</p>
+<p><img src="/images/eventstack.png" alt=""></p>
+<p>事件模型适用于响应用户交互和完成类似的低频功能，但其对于更复杂的需求来说却不是很灵活。</p>
+<h2 id="setTimeout与setInterval"><a href="#setTimeout与setInterval" class="headerlink" title="setTimeout与setInterval"></a>setTimeout与setInterval</h2><p>这两个区别不大，我们看一段代码:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">setTimeout(function() &#123;</div><div class="line">    console.log(&apos;settimeout&apos;);</div><div class="line">&#125;, 1000)</div><div class="line">var sTime = new Date().getTime();</div><div class="line">console.log(new Date());</div><div class="line">console.log(&apos;test1&apos;);</div><div class="line">while(new Date().getTime() - sTime &lt; 2000) &#123;</div><div class="line">&#125;</div><div class="line">console.log(new Date())</div></pre></td></tr></table></figure>
+<p>执行结果显示打印出:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">// Sun Oct 29 2017 20:24:29 GMT+0800 (CST)</div><div class="line">// test1</div><div class="line">// Sun Oct 29 2017 20:24:31 GMT+0800 (CST)</div><div class="line">// settimeout</div></pre></td></tr></table></figure>
+<p>从中可以看出：</p>
+<ol>
+<li>先打印test1，setTimeout的确是异步过程，会在1秒后加入任务队列;</li>
+<li>只有在任务队列中的前面任务执行完，才会执行加入的任务(这段代码是过了两秒);</li>
+</ol>
+<p>setTimeout也是一种异步的方式，但是不能很好的把控。</p>
+<h2 id="回调模式"><a href="#回调模式" class="headerlink" title="回调模式"></a>回调模式</h2><p>回调模式与事件模式类似，只不过回调模式中被调用的函数是作为参数传入的，如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">fs.readFile(&apos;example.txt&apos;, function(err, contents) &#123;</div><div class="line">    if(err) &#123;</div><div class="line">        throw err;</div><div class="line">    &#125;</div><div class="line">    console.log(contents)</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>文件example.txt读取完毕后会把回调加入任务队列中，如果此时任务队列为空，直接执行回调，如果不为空，等前面的任务执行完再执行回调；</p>
+<p>但是这有一个问题，当我们的需求是，先读取文件1，然后需要把读出的文件1作为内容进行网络转发；那就会：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">fs.readFile(&apos;example.txt&apos;, function(err, contents) &#123;</div><div class="line">    if(err) &#123;</div><div class="line">        throw err;</div><div class="line">    &#125;;</div><div class="line">    console.log(contents);</div><div class="line">    ajax(&#123;</div><div class="line">        url: &apos;xxx.json&apos;</div><div class="line">        data: contents,</div><div class="line">        success: function() &#123;</div><div class="line">            doSomething()</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>这样看起来还是，当时如果这样的需求是叠加的，那就可能会形成传说中的回调地狱了。如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">fn1(function(err, result) &#123;</div><div class="line">    if(err) &#123;throw err;&#125;</div><div class="line"></div><div class="line">    fn2(function(err, result) &#123;</div><div class="line">        if(err) &#123;throw err;&#125;</div><div class="line"></div><div class="line">        fn3(function(err, result) &#123;</div><div class="line">            if(err) &#123;throw err;&#125;</div><div class="line"></div><div class="line">            fn4(function(err, result) &#123;</div><div class="line">                if(err) &#123;throw err;&#125;</div><div class="line">            &#125;)</div><div class="line">            ...</div><div class="line">        &#125;)</div><div class="line">    &#125;)</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>像上面这样嵌套多个方法调用，会创建出一堆难于理解和调试的代码。</p>
+<h2 id="异步之生成器"><a href="#异步之生成器" class="headerlink" title="异步之生成器"></a>异步之生成器</h2><h4 id="生成器简单介绍"><a href="#生成器简单介绍" class="headerlink" title="生成器简单介绍"></a>生成器简单介绍</h4><p>有时间会深入讲述一下生成器，这里只是简单说一下生成器的概念。下面就是一个生成器函数的栗子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">function *test() &#123; // 生成器函数</div><div class="line">    yield 1;</div><div class="line">    yield 2;</div><div class="line">&#125;</div><div class="line">var iter = test() // 迭代器</div></pre></td></tr></table></figure>
+<p>上面就是一个简单的生成器函数，当执行会生成一个迭代器，迭代器可参考之前写过的一片文章谈谈遍历与迭代协议.</p>
+<p>迭代器每次调用next方法会执行生成器函数，并且每次执行完yield关键词就停止，只在当下一次调用next的时候才回到之前执行停止的地方继续执行；</p>
+<p>如若需要回调或者系列化一序列的异步操作，生成器和yield语句就派上用场了。</p>
+<h4 id="生成器处理异步操作"><a href="#生成器处理异步操作" class="headerlink" title="生成器处理异步操作"></a>生成器处理异步操作</h4><p>任务处理器:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">function run(taskDef) &#123;</div><div class="line">    let task = taskDef();      // 1.外层生成器函数执行  创建一个无使用限制的迭代器</div><div class="line"></div><div class="line">    let result = task.next(); // 2. 开始任务，执行到第一个yield</div><div class="line"></div><div class="line">    // 循环调用next</div><div class="line">    function step() &#123;</div><div class="line">        if(!result.done) &#123; // 3.判断是否迭代完毕（没有yield或者return）</div><div class="line">            if(typeof result.value === &apos;function&apos;) &#123; // 4.下面包裹函数return的函数</div><div class="line">                result.value(function(err, data) &#123; // 5.调用return的函数, 传入回调函数到callback</div><div class="line">                    if(err) &#123;</div><div class="line">                        result = task.throw(err);</div><div class="line">                        return;</div><div class="line">                    &#125;</div><div class="line">                    result = task.next(data); // 6.异步回调完，继续执行到下一个yield</div><div class="line">                    step(); // 7. 循环执行 </div><div class="line">                &#125;)</div><div class="line">            &#125;</div><div class="line">        &#125; else &#123;</div><div class="line">            result = task.next(result.value);</div><div class="line">            step(); // 循环执行</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    step(); // 启动</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然后把异步操作包裹起来，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">let fs = require(&apos;sf&apos;);</div><div class="line"></div><div class="line">function readFile(filename) &#123;</div><div class="line">    return function(callback) &#123;</div><div class="line">        fs.readFile(filename, callback)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>下面是最终的调用方式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">run(function *() &#123;</div><div class="line">    let contents = yield readFile(&apos;config.json&apos;);</div><div class="line">    doSomethingWith(contents);</div><div class="line">    yield readMoreFile(&apos;xxx.json&apos;);</div><div class="line">    console.log(&apos;Done&apos;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>这样就可以很好的解决回调地狱的问题了，并且把异步操作通过同步的形式来调用。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>上面谈了JS的异步，并分别讲了事件模型／setTimeout／回调模型，最后讲述了怎么用生成器来处理回调地狱，并可以用同步的操作方式.</p>
+<p>上面这种处理形式还是比较麻烦，需要把异步函数包裹起来，并且无法区分用作任务执行器回调函数的返回值和一个不是回调函数的返回值。</p>
+<p>这种方式在场景使用中还是有局限性，如果需求需要并行执行两个异步操作或者同时进行两个异步操作并且只取优先完成的操作；这种就不太好处理了，会在下一篇中讲述解决的办法.</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JS/" rel="tag"># JS</a>
+          
+            <a href="/tags/异步/" rel="tag"># 异步</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/19/2017-10-19-mongo/" rel="next" title="mongo">
+                <i class="fa fa-chevron-left"></i> mongo
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/abu.jpg"
+                alt="cauil" />
+            
+              <p class="site-author-name" itemprop="name">cauil</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/cauil" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://weibo.com/cauil" target="_blank" title="Weibo">
+                    
+                      <i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://douban.com/people/cauil" target="_blank" title="DouBan">
+                    
+                      <i class="fa fa-fw fa-douban"></i>DouBan</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是异步"><span class="nav-number">1.</span> <span class="nav-text">什么是异步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JS中的异步"><span class="nav-number">2.</span> <span class="nav-text">JS中的异步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#事件模型"><span class="nav-number">3.</span> <span class="nav-text">事件模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#setTimeout与setInterval"><span class="nav-number">4.</span> <span class="nav-text">setTimeout与setInterval</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#回调模式"><span class="nav-number">5.</span> <span class="nav-text">回调模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#异步之生成器"><span class="nav-number">6.</span> <span class="nav-text">异步之生成器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#生成器简单介绍"><span class="nav-number">6.0.1.</span> <span class="nav-text">生成器简单介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#生成器处理异步操作"><span class="nav-number">6.0.2.</span> <span class="nav-text">生成器处理异步操作</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">7.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cauil</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
