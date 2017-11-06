@@ -239,6 +239,252 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2015/10/19/DiveIntoJs_compare/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cauil">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/abu.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cauil's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2015/10/19/DiveIntoJs_compare/" itemprop="url">深入理解Javascript： 比较</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-10-19T00:00:00+08:00">
+                2015-10-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/js/" itemprop="url" rel="index">
+                    <span itemprop="name">js</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>开始这个之前我们先看几个例子</p>
+<pre><code>var a = [1, 2]
+var b = [1, 2]
+a == [1, 2] // false
+a == b // false
+
+var c = {a: 1, b: 2}
+var d = {a: 1, b: 2}
+c == d // false
+
+var str = &apos;test&apos;
+str == &apos;test&apos; // true
+
+str.toUpperCase() // &apos;TEST&apos;
+str // &apos;test&apos;
+</code></pre><p>为什么有这种现象发生呢？</p>
+<h2 id="1-JS的原始值与对象"><a href="#1-JS的原始值与对象" class="headerlink" title="1.JS的原始值与对象"></a>1.JS的原始值与对象</h2><p>原来JS分为两种对象，一个是原始类型，有undefined、null、布尔值、数字和字符串；一个是对象类型（数组、函数等）；</p>
+<p>原始类型值是不可更改的，任何方法都无法更改一个原始值，如上面例子中str经过转换大写之后还是‘test’；原始类型值的比较是值的比较；</p>
+<p>对象类型值的比较并非值的比较，即使两个对象包含同样的属性及相同的值，如上例子的a与b、c与d的比较都为false；</p>
+<p>对象的比较为引用的比较，当且仅当它们引用同一个基对象时，它们才相等，如下：</p>
+<pre><code>var a = [1, 2]
+var b = a
+a == b // true
+</code></pre><h2 id="2-与"><a href="#2-与" class="headerlink" title="2.== 与 ==="></a>2.<code>==</code> 与 <code>===</code></h2><p>再来看一个例子：</p>
+<pre><code>1 == &apos;1&apos; // true
+1 === &apos;1&apos; // false
+var undefined;
+undefined == null; // true
+1 == true;   // true
+2 == true;   // false
+0 == false;  // true
+0 == &apos;&apos;;     // true
+NaN == NaN;  // false
+[] == false; // true
+[] == ![];   // true
+</code></pre><p>为啥会有前面两行的结果呢？</p>
+<p>原来‘==’运算符用来检测两个操作数是否相等，这里相等的定义非常宽松，可以允许进行类型转换；</p>
+<p>而‘===’运算符用来检测两个操作数是否<strong>严格</strong>相等，会比较两个操作数的类型是否相同；</p>
+<h3 id="运算规则"><a href="#运算规则" class="headerlink" title="===运算规则"></a><code>===</code>运算规则</h3><p>‘===’运算符首先计算其操作数的值，然后比较这两个值，比较过程没有任何类型转换；</p>
+<ul>
+<li><p>如果两个值类型不同，返回false；</p>
+</li>
+<li><p>如果两个值都为null或者undefined，返回true；</p>
+</li>
+<li><p>如果两个值都为布尔值true或者false，返回true；</p>
+</li>
+<li><p>如果其中一个为NaN,则返回false，即使另一个也为NaN；</p>
+</li>
+<li><p>如果两个值为数字且数值相等，则返回true，0与-0也返回true；</p>
+</li>
+<li><p>如果两个字符串的长度或者内容不同，则返回false；</p>
+</li>
+<li><p>如果两个引用值指向同一个对象，则返回true，其他对象比较都返回false；</p>
+</li>
+</ul>
+<h3 id="运算规则-1"><a href="#运算规则-1" class="headerlink" title="==运算规则"></a><code>==</code>运算规则</h3><p>‘==’运算符跟‘===’类似，不过比较并不严格。如果两个操作数类型相同，则和上文所述的严格相等的比较规则一样；</p>
+<p>如果两个操作数不是同一类型，那么相等运算符会尝试进行一些类型转换，然后进行比较：</p>
+<ul>
+<li><p>如果一个值为null，另一个为undefined，则它们相等；</p>
+</li>
+<li><p>如果一个值是数字，另一个是字符串，先将字符串转换为数字，然后使用转换后的值进行比较；</p>
+</li>
+<li><p>如果其中一个是true，则将其转换为1再进行比较；如果是false，则转换为0再进行比较；</p>
+</li>
+<li><p>如果一个值为对象，另一个值是数字或字符串，则使用下一小节要讲的类型转换规则转换为原始值，然后再进行比较；对象通过toString()方法或valueOf方法转换为原始值；JS语言核心的内置类首先尝试使用valueOf()，再尝试toString()，除了日期类，日期类只使用toString()转换。那些不是内置对象则通过各自实现中定义的方法转换为原始值；</p>
+</li>
+<li><p>其他不同类型之间的比较均不相等；</p>
+</li>
+</ul>
+<p>如<code>&#39;1&#39; == true</code>返回true，其中true转换为1，‘1’转换为1，因为两个数字的值相等，所以返回true。</p>
+<h2 id="3-类型转换"><a href="#3-类型转换" class="headerlink" title="3.类型转换"></a>3.类型转换</h2><p>类型转换有隐式和显式转换，下图为转换的规则：</p>
+<p><img src="http://7xj29n.com1.z0.glb.clouddn.com/类型转换.jpg" alt="http://7xj29n.com1.z0.glb.clouddn.com/类型转换.jpg"></p>
+<h3 id="显示转换"><a href="#显示转换" class="headerlink" title="显示转换"></a>显示转换</h3><p>做显示转换最简单的方法就是使用Boolean()、Number()、String()或Object()函数；</p>
+<p>注意这些函数与它们作为函数构造器是有区别的，作为函数构造器是使用new Number()，这种得出来的是属于包装对象；</p>
+<p>如下：</p>
+<pre><code>Number(&quot;3&quot;)
+new Number(&quot;3&quot;)
+typeof Number(&quot;3&quot;) // number
+typeof new Number(&quot;3&quot;) // object
+</code></pre><h3 id="隐式转换"><a href="#隐式转换" class="headerlink" title="隐式转换"></a>隐式转换</h3><p>隐式转换是通过上下语境或者运算符来转换的；</p>
+<p>例如‘+’运算符有一个操作数为字符串时，另一个操作数不为字符串时会隐式转换为字符串；’-‘运算符会隐式把两个操作数转换为数字;</p>
+<p>再如一元运算符‘！’会把操作数转换为布尔值并取反；如：</p>
+<pre><code>12 + &apos;1&apos; // &apos;121&apos;
+new Number(&quot;3&quot;) - [1] // 2
+!![] // true
+</code></pre><p>对应的转换规则如上面图中所示，下面只来说说对象转换为原始值的方式（<em>这里只谈原生对象，而非宿主对象的转换，宿主对象根据各自的算法进行转换</em>）；</p>
+<p>1.对象转换为字符串</p>
+<ul>
+<li>如果对象具有toString()方法，且调用这个方法返回一个原始值，则对象先转换为原始值，然后再通过上图的转换规则转换为字符串；</li>
+<li>否则JS会调用valueOf()方法，且调用这个方法返回一个原始值，则对象先转换为原始值，然后再通过上图的转换规则转换为字符串；</li>
+<li>如果对象无法从上面两个方法获得一个原始值，这时它将抛出一个类型错误异常；</li>
+</ul>
+<p>例如计算<code>[1, 2, 3] + &#39;abc&#39;</code>返回<code>&#39;1,2,3abc&#39;</code></p>
+<p>首先<code>[1, 2, 3]</code>调用<code>toString()</code>方法返回<code>‘1,2,3’</code>然后再执行字符串的+运算，返回<code>&#39;1,2,3abc&#39;</code></p>
+<p>2.对象转换为数字</p>
+<p>这个与上面转换为字符串相反，先调用valueOf()，失败再尝试toString()；</p>
+<ul>
+<li>否则JS会调用valueOf()方法，且调用这个方法返回一个原始值，则对象先转换为原始值，然后再通过上图的转换规则转换为字符串；</li>
+<li>如果对象具有toString()方法，且调用这个方法返回一个原始值，则对象先转换为原始值，然后再通过上图的转换规则转换为字符串；</li>
+<li>如果对象无法从上面两个方法获得一个原始值，这时它将抛出一个类型错误异常；</li>
+</ul>
+<p>例如计算<code>[1, 2, 3] - 1</code>返回<code>NaN</code></p>
+<p>首先<code>[1, 2, 3]</code>调用<code>valueOf()</code>方法，而此方法返回一个对象而不是原始值，则调用<code>toString()</code>方法，返回<code>‘1,2,3’</code>然后再转换为数字，根据字符串转换为数字的规则，为<code>NaN</code>,<code>NaN - 1</code>返回<code>NaN</code>。</p>
+<p>注意：日期对象有点特别，通过valueOf和toString方法返回的原始值将被直接使用；</p>
+<h2 id="4-后记"><a href="#4-后记" class="headerlink" title="4.后记"></a>4.后记</h2><p>通过上面的一些例子我们知道JS原始类型与对象类型的一些转换规则以及JS的内部实现，有机会再聊聊JS的常见运算符。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2015/10/19/DiveIntoJs_Events_propagation/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2105,7 +2351,7 @@ obj.valueOf = function() {return this.x + this.y + 100;};
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">18</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2116,7 +2362,7 @@ obj.valueOf = function() {return this.x + this.y + 100;};
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 
               </div>
@@ -2127,7 +2373,7 @@ obj.valueOf = function() {return this.x + this.y + 100;};
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
