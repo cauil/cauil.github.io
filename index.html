@@ -239,7 +239,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/11/21/2017-11-21-ES6之对象/">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/11/22/2017-11-22-ES6之Symbol/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="cauil">
@@ -258,7 +258,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/11/21/2017-11-21-ES6之对象/" itemprop="url">ES6之对象</a></h1>
+                <a class="post-title-link" href="/2017/11/22/2017-11-22-ES6之Symbol/" itemprop="url">ES6之Symbol</a></h1>
         
 
         <div class="post-meta">
@@ -270,8 +270,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-21T00:00:00+08:00">
-                2017-11-21
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-22T00:00:00+08:00">
+                2017-11-22
               </time>
             
 
@@ -332,41 +332,67 @@
       
         
           
-            <h2 id="对象字面量语法扩展"><a href="#对象字面量语法扩展" class="headerlink" title="对象字面量语法扩展"></a>对象字面量语法扩展</h2><h4 id="属性初始值的简写"><a href="#属性初始值的简写" class="headerlink" title="属性初始值的简写"></a>属性初始值的简写</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">function createPerson(name, age) &#123;</div><div class="line">  return &#123;</div><div class="line">    name: name,</div><div class="line">    age: age </div><div class="line">  &#125;;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>属性与为属性赋值的变量是重复的，可以简写为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">function createPerson(name, age) &#123;</div><div class="line">  return &#123;</div><div class="line">    name,</div><div class="line">    age </div><div class="line">  &#125;;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>这样可以避免命名错误以及不小心的拼写错误。</p>
-<h4 id="对象方法的简写"><a href="#对象方法的简写" class="headerlink" title="对象方法的简写"></a>对象方法的简写</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var person = &#123;</div><div class="line">    name: &quot;Nicholas&quot;,</div><div class="line">    sayName: function() &#123;</div><div class="line">        console.log(this.name);</div><div class="line">    &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
-<p>可以简写为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var person = &#123;</div><div class="line">    name: &quot;Nicholas&quot;,</div><div class="line">    sayName() &#123;</div><div class="line">        console.log(this.name);</div><div class="line">    &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<p>简写方法sayName里面可以使用super关键字；</p>
-<h4 id="可计算属性名"><a href="#可计算属性名" class="headerlink" title="可计算属性名"></a>可计算属性名</h4><p>ES5及早期版本的对象实例中，如果想要通过计算得到属性名，就需要用方括号代替点记法。并且有空格的字符串不能直接作为属性名，也需要方括号代替；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var person = &#123;&#125;,</div><div class="line">    lastName = &quot;last name&quot;;</div><div class="line">person[&quot;first name&quot;] = &quot;Nicholas&quot;;</div><div class="line">person[lastName] = &quot;Zakas&quot;;</div><div class="line">console.log(person[&quot;first name&quot;]);</div><div class="line">console.log(person[lastName]);</div></pre></td></tr></table></figure>
-<p>ES6中，可在对象字面量中使用可计算属性名称，其语法与引用对象实例的可计算属性名称相同，也是使用方括号。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">let lastName = &quot;last name&quot;;</div><div class="line">let person = &#123;</div><div class="line">    &quot;first name&quot;: &quot;Nicholas&quot;,</div><div class="line">    [lastName]: &quot;Zakas&quot;</div><div class="line">&#125;;</div><div class="line">console.log(person[&quot;first name&quot;]);</div><div class="line">console.log(person[lastName]);</div></pre></td></tr></table></figure>
-<h2 id="新增方法"><a href="#新增方法" class="headerlink" title="新增方法"></a>新增方法</h2><h4 id="Object-is"><a href="#Object-is" class="headerlink" title="Object.is"></a>Object.is</h4><p>在JS中比较两个值，使用===跟==比较多，但是===在有些情况也不完全准确；+0与-0在JS引擎中是两个完全不同的实体，<code>NaN === NaN</code> 返回值为false，需要用isNaN()才能检测出NaN;</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">console.log(+0 == -0);              // true</div><div class="line">console.log(+0 === -0);             // true</div><div class="line">console.log(Object.is(+0, -0));     // false</div><div class="line">console.log(NaN == NaN);            // false</div><div class="line">console.log(NaN === NaN);           // false</div><div class="line">console.log(Object.is(NaN, NaN));   // true</div><div class="line">console.log(5 == 5);                // true</div><div class="line">console.log(5 == &quot;5&quot;);              // true</div><div class="line">console.log(5 === 5);               // true</div><div class="line">console.log(5 === &quot;5&quot;);             // false</div><div class="line">console.log(Object.is(5, 5));       // true</div><div class="line">console.log(Object.is(5, &quot;5&quot;));     // false</div></pre></td></tr></table></figure>
-<h4 id="Object-assign"><a href="#Object-assign" class="headerlink" title="Object.assign"></a>Object.assign</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">var receiver = &#123;&#125;;</div><div class="line">var test = &#123;name: &apos;zakas&apos;&#125;;</div><div class="line">Object.assign(receiver,</div><div class="line">    &#123;</div><div class="line">      type: &quot;js&quot;,</div><div class="line">        name: &quot;file.js&quot;</div><div class="line">    &#125;,</div><div class="line">    &#123;</div><div class="line">      type: &quot;css&quot;,</div><div class="line">      data: test,</div><div class="line">    &#125; </div><div class="line">);</div><div class="line">console.log(receiver.type); // css</div><div class="line">console.log(receiver.name); // file.js</div><div class="line">console.log(receiver.data); // &#123;name: &apos;zakas&apos;&#125;</div><div class="line">test.name = &apos;hi&apos;;</div><div class="line">console.log(receiver.data); // &#123;name: &apos;hi&apos;&#125;</div></pre></td></tr></table></figure>
-<p>Object.assign参数后面的对象会覆盖前面的对象，并且为浅复制；</p>
-<p>Object.assign会把访问器属性复制为数据属性；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">var receiver = &#123;&#125;,</div><div class="line">  supplier = &#123;</div><div class="line">    get name() &#123;</div><div class="line">      return &quot;file.js&quot;</div><div class="line">    &#125; </div><div class="line">  &#125;;</div><div class="line">Object.assign(receiver, supplier);</div><div class="line">var descriptor = Object.getOwnPropertyDescriptor(receiver, &quot;name&quot;);</div><div class="line">console.log(descriptor.value);      // &quot;file.js&quot;</div><div class="line">console.log(descriptor.get);        // undefined</div></pre></td></tr></table></figure>
-<h2 id="重复的对象字面量属性"><a href="#重复的对象字面量属性" class="headerlink" title="重复的对象字面量属性"></a>重复的对象字面量属性</h2><p>ES5严格模式重复字面量属性会报错；ES6无论严格或者非严格模式下，重复属性都会选取最后一个取值；<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&quot;use strict&quot;;</div><div class="line">var person = &#123;</div><div class="line">  name: &quot;Nicholas&quot;,</div><div class="line">  name: &quot;Greg&quot;        // no error in ES6 strict mode</div><div class="line">&#125;;</div><div class="line">console.log(person.name); // Greg</div></pre></td></tr></table></figure></p>
-<h2 id="自有属性枚举顺序"><a href="#自有属性枚举顺序" class="headerlink" title="自有属性枚举顺序"></a>自有属性枚举顺序</h2><ol>
-<li>所有数字键按升序排列</li>
-<li>所有字符串键按照它们被加入对象的顺序排序</li>
-<li>所有symbol按照它们被加入的顺序排序</li>
+            <p>ES6引入了第6种原始类型：Symbol。起初，人们用它来创建对象的私有成员；在Symbol出现之前，人们一直通过属性名来访问所有属性，无论属性名由什么元素构成，全部通过一个字符串类型的名称来访问。</p>
+<p>私有名称原本是为了让开发者<strong>创建非字符串属性名称而设计</strong>的，但是<strong>一般的技术无法检测这些属性的私有名称</strong>。</p>
+<h2 id="创建Symbol"><a href="#创建Symbol" class="headerlink" title="创建Symbol"></a>创建Symbol</h2><p>可以通过全局的Symbol函数创建一个Symbol：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">let firstName = Symbol();</div><div class="line">let person = &#123;&#125;;</div><div class="line">person[firstName] = &quot;Nicholas&quot;;</div><div class="line">console.log(person[firstName]);</div></pre></td></tr></table></figure>
+<p>由于Symbol是原始值，因此调用new Symbol()会导致程序抛出错误。</p>
+<p>Symbol接受一个可选参数，其可以添加一段文本描述即将创建的Symbol，这段描述不可以用作属性访问，只是为了便于阅读和调试Symbol程序；symbol的描述被存储在内部的[[Description]]属性中，只有当调用Symbol的toString()方法时才可以读取这个属性；</p>
+<p>检测一个Symbol：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">let name = Symbol(&apos;hi&apos;);</div><div class="line">console.log(typeof name); // symbol</div></pre></td></tr></table></figure></p>
+<h2 id="Symbol的使用方法"><a href="#Symbol的使用方法" class="headerlink" title="Symbol的使用方法"></a>Symbol的使用方法</h2><p><strong>所有使用可计算属性名的地方，都可以使用Symbol</strong>。如Object.defineProperty等:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">let firstName = Symbol(&quot;first name&quot;);</div><div class="line">// use a computed object literal property</div><div class="line">let person = &#123;</div><div class="line">    [firstName]: &quot;Nicholas&quot;</div><div class="line">&#125;;</div><div class="line">// make the property read only</div><div class="line">Object.defineProperty(person, firstName, &#123; writable: false &#125;);</div><div class="line">let lastName = Symbol(&quot;last name&quot;);</div><div class="line">Object.defineProperties(person, &#123;</div><div class="line">    [lastName]: &#123;</div><div class="line">        value: &quot;Zakas&quot;,</div><div class="line">        writable: false</div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h2 id="Symbol共享体系"><a href="#Symbol共享体系" class="headerlink" title="Symbol共享体系"></a>Symbol共享体系</h2><p>在不同的代码中共享同一个Symbol，ES6提供了一个可以随时访问的全局Symbol注册表；如果要创建一个共享的Symbol，要使用Symbol.for方法，它只接受一个参数，也就是即将创建的Symbol的字符串标示，这个参数同样也被用作Symbol的描述；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">let uid = Symbol.for(&quot;uid&quot;);</div><div class="line">let object = &#123;&#125;;</div><div class="line">object[uid] = &quot;12345&quot;;</div><div class="line">console.log(object[uid]); // &apos;12345&apos;</div><div class="line">console.log(uid);         // &apos;Symbol(uid)&apos;</div></pre></td></tr></table></figure>
+<p>Symbol.for首先在全局Symbol注册表中搜索键为’uid’的Symbol，如果存在，直接返回已存在的，否则创建一个新的Symbol，并使用这个键在Symbol全局注册表中注册，随机返回新创建的Symbol。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">let uid = Symbol.for(&quot;uid&quot;);</div><div class="line">let uid2 = Symbol.for(&quot;uid&quot;);</div><div class="line">console.log(uid === uid2); // true</div><div class="line">console.log(uid2);         // &apos;Symbol(uid)&apos;</div></pre></td></tr></table></figure>
+<p>还有一个与Symbol共享有关的特性，Symbol.keyFor方法在Symbol全局注册表中检索与Symbol有关的键；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">let uid = Symbol.for(&quot;uid&quot;);</div><div class="line">console.log(Symbol.keyFor(uid)); // uid</div><div class="line">let uid2 = Symbol.for(&quot;uid&quot;);</div><div class="line">console.log(Symbol.keyFor(uid2));// uid</div><div class="line">let uid3 = Symbol(&quot;uid&quot;);</div><div class="line">console.log(Symbol.keyFor(uid3));// undefined</div></pre></td></tr></table></figure>
+<p>Symbol全局注册表中不存在uid3这个Symbol(没有通过Symbol.for注册)，返回undefined；</p>
+<h2 id="Symbol与类型强制转换"><a href="#Symbol与类型强制转换" class="headerlink" title="Symbol与类型强制转换"></a>Symbol与类型强制转换</h2><p>不能将Symbol强制转换为字符串和数字类型；Symbol在需要逻辑判断表达式中为真；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">var uid = Symbol.for(&quot;uid&quot;),</div><div class="line">          desc = uid + &quot;&quot;;  // Cannot convert a Symbol value to a string</div><div class="line">var sum = uid / 1; // Cannot convert a Symbol value to a number</div><div class="line">!!uid; // true</div></pre></td></tr></table></figure>
+<h2 id="Symbol属性检索"><a href="#Symbol属性检索" class="headerlink" title="Symbol属性检索"></a>Symbol属性检索</h2><p>Object.keys和Object.getOwnpropertyNames不能检索出Symbol属性，ES6中Object.getOwnpropertySymbols来支持这个功能，返回对象中的所有Symbol属性的数组；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">let uid = Symbol.for(&quot;uid&quot;);</div><div class="line">let object = &#123;</div><div class="line">    [uid]: &quot;12345&quot;</div><div class="line">&#125;;</div><div class="line">let symbols = Object.getOwnPropertySymbols(object);</div><div class="line">console.log(symbols.length); // 1</div><div class="line">console.log(symbols[0]);     // &apos;Symbol(uid)&apos;</div><div class="line">console.log(object[symbols[0]]);// &apos;12345&apos;</div></pre></td></tr></table></figure>
+<h2 id="通过well-known-Symbol暴露内部操作"><a href="#通过well-known-Symbol暴露内部操作" class="headerlink" title="通过well-known Symbol暴露内部操作"></a>通过well-known Symbol暴露内部操作</h2><p>ES6通过在原型链上定义与Symbol相关的属性来暴露更多的语言内部逻辑；开放了以前JS中常见的内部操作，并通过预定义一些well-known Symbol来表示。每一个这类Symbol都是symbol对象的一个属性，例如Symbol.match</p>
+<h4 id="Symbol-hasInstance"><a href="#Symbol-hasInstance" class="headerlink" title="Symbol.hasInstance"></a>Symbol.hasInstance</h4><p>一个在执行instanceof时调用的内部方法，用于检测对象的继承信息；</p>
+<p>Function.prototype中有一个Symbol.hasInstance方法，每一个函数都继承了这个方法，用于确定对象是否是函数的实例。该方法被定义为不可写，不可配置并且不可枚举。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Object.getOwnPropertyDescriptor(Function.prototype, Symbol.hasInstance); // &#123;writable: false, enumerable: false, configurable: false, value: ƒ&#125;</div></pre></td></tr></table></figure>
+<p>看一段代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Array.hasOwnProperty(Symbol.hasInstance);              // false</div><div class="line">Function.prototype.hasOwnProperty(Symbol.hasInstance); // true</div><div class="line">Array instanceof Function;                             // true</div></pre></td></tr></table></figure></p>
+<p>从上面可以看出Array是Function的实例；Function.prototype具有自有属性Symbol.hasInstance，Array没有Symbol.hasInstance;</p>
+<p><code>obj instanceof Array</code>实际等价于<code>Array[Symbol.hasInstance](obj)</code>，由于Array没有<code>Symbol.hasInstance</code>，所以会从原型链中寻找，最终在<code>Function.prototype</code>中找到，最终实际执行的就是<code>Function.prototype[Symbol.hasInstance](obj)</code>。</p>
+<p>明白了instanceof的实际调用过程，就可以按我们的意愿来定制一些内容，例如定义一个无实例的函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">function MyObject() &#123;</div><div class="line">    // empty</div><div class="line">&#125;</div><div class="line">Object.defineProperty(MyObject, Symbol.hasInstance, &#123;</div><div class="line">    value: function(v) &#123;</div><div class="line">             return false;</div><div class="line">    &#125;</div><div class="line">&#125;);</div><div class="line">let obj = new MyObject();</div><div class="line">console.log(obj instanceof MyObject); // false</div></pre></td></tr></table></figure>
+<h4 id="Symbol-isConcatSpreadable"><a href="#Symbol-isConcatSpreadable" class="headerlink" title="Symbol.isConcatSpreadable"></a>Symbol.isConcatSpreadable</h4><p>concat元素<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">let colors1 = [ &quot;red&quot;, &quot;green&quot; ],</div><div class="line">    colors2 = colors1.concat([ &quot;blue&quot;, &quot;black&quot; ]);</div><div class="line">console.log(colors2.length);    // 4</div><div class="line">console.log(colors2); [&quot;red&quot;,&quot;green&quot;,&quot;blue&quot;,&quot;black&quot;]</div></pre></td></tr></table></figure></p>
+<p>concat数组<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">let colors1 = [ &quot;red&quot;, &quot;green&quot; ],</div><div class="line">    colors2 = colors1.concat([ &quot;blue&quot;, &quot;black&quot; ], &quot;brown&quot;);</div><div class="line">console.log(colors2.length);    // 5</div><div class="line">console.log(colors2);           // [&quot;red&quot;,&quot;green&quot;,&quot;blue&quot;,&quot;black&quot;,&quot;brown&quot;]</div></pre></td></tr></table></figure></p>
+<p>JS规范声明，concat凡是传入了数组参数，就会自动将它们分解成独立元素，在ES6之前，我们根本无法调整这个特性；</p>
+<p>Symbol.isConcatSpreadable属性是一个布尔值，如果该属性为true，则表示对象由length属性和数字键，故它的数值型属性应该被独立添加到cancat()调用结果中；与其他well-known Symbol属性不同的是，这个Symbol属性默认情况下不会出现标准对象，它只是一个可选对象，用于增强作用于特定对象类型的concat()方法的功能，有效简化其默认特性；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">let collection = &#123;</div><div class="line">    0: &quot;Hello&quot;,</div><div class="line">    1: &quot;world&quot;,</div><div class="line">    length: 2,</div><div class="line">    [Symbol.isConcatSpreadable]: true</div><div class="line">&#125;;</div><div class="line">let messages = [ &quot;Hi&quot; ].concat(collection);</div><div class="line">console.log(messages.length);    // 3</div><div class="line">console.log(messages);           // [&quot;Hi&quot;,&quot;Hello&quot;,&quot;world&quot;]</div><div class="line"></div><div class="line">let collection1 = &#123;</div><div class="line">    0: &quot;Hello&quot;,</div><div class="line">    1: &quot;world&quot;,</div><div class="line">    length: 2,</div><div class="line">    [Symbol.isConcatSpreadable]: true</div><div class="line">&#125;;</div><div class="line">let messages = [ &quot;Hi&quot; ].concat(collection1);</div><div class="line">console.log(messages.length);    // 2</div><div class="line">console.log(messages);           // [&quot;Hi&quot;,&#123;...&#125;]</div></pre></td></tr></table></figure>
+<h4 id="Symbol-match-Symbol-replace-Symbol-search-Symbol-split"><a href="#Symbol-match-Symbol-replace-Symbol-search-Symbol-split" class="headerlink" title="Symbol.match Symbol.replace Symbol.search Symbol.split"></a>Symbol.match Symbol.replace Symbol.search Symbol.split</h4><p>这四个Symbol用在String对应的四个方法String.match/replace/search/split中且当参数为正则表达式时。</p>
+<p>可以定义一个对象的这四个Symbol属性方法，这对象就可以代替正则表达式来应用在上面的对应场景中；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">// effectively equivalent to /^.&#123;10&#125;$/ </div><div class="line">let hasLengthOf10 = &#123;</div><div class="line">  [Symbol.match]: function(value) &#123;</div><div class="line">    return value.length === 10 ? [value.substring(0, 10)] : null;</div><div class="line">  &#125;,</div><div class="line">  [Symbol.replace]: function(value, replacement) &#123;</div><div class="line">    return value.length === 10 ? replacement + value.substring(10) : value;</div><div class="line">  &#125;,</div><div class="line">  [Symbol.search]: function(value) &#123;</div><div class="line">    return value.length === 10 ? 0 : -1;</div><div class="line">  &#125;,</div><div class="line">  [Symbol.split]: function(value) &#123;</div><div class="line">    return value.length === 10 ? [&quot;&quot;, &quot;&quot;] : [value];</div><div class="line">  &#125; </div><div class="line">&#125;;</div><div class="line"></div><div class="line">let message1 = &quot;Hello world&quot;, // 11 characters </div><div class="line">message2 = &quot;Hello John&quot;; // 10 characters</div><div class="line">let match1 = message1.match(hasLengthOf10), </div><div class="line">match2 = message2.match(hasLengthOf10);</div><div class="line">console.log(match1); // null </div><div class="line">console.log(match2); // [&quot;Hello John&quot;]</div><div class="line">let replace1 = message1.replace(hasLengthOf10), </div><div class="line">replace2 = message2.replace(hasLengthOf10);</div><div class="line">console.log(replace1); // &quot;Hello world&quot; </div><div class="line">console.log(replace2); // &quot;Hello John&quot;</div><div class="line">let search1 = message1.search(hasLengthOf10), </div><div class="line">search2 = message2.search(hasLengthOf10);</div><div class="line">console.log(search1); // -1 </div><div class="line">console.log(search2); // 0</div><div class="line">let split1 = message1.split(hasLengthOf10), </div><div class="line">split2 = message2.split(hasLengthOf10);</div><div class="line">console.log(split1); // [&quot;Hello world&quot;] </div><div class="line">console.log(split2); // [&quot;&quot;, &quot;&quot;]</div></pre></td></tr></table></figure>
+<h4 id="Symbol-toPrimitive"><a href="#Symbol-toPrimitive" class="headerlink" title="Symbol.toPrimitive"></a>Symbol.toPrimitive</h4><p>JS引擎中，经常会尝试将对象转换到相应的原始值，例如比较一个对象与字符串；对象被转换为原始值，会有三种选择：数字，字符串或无类型偏好的值。对于大多数标准对象，当对象被转换为数字时：</p>
+<ol>
+<li>调用valueOf方法，如果结果为原始值，则返回</li>
+<li>否则，调用toString方法，如果结果值为原始值，则返回</li>
+<li>如果再无可选值，则抛出异常</li>
 </ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">var obj = &#123;</div><div class="line">    a: 1,</div><div class="line">    0: 1,</div><div class="line">    c: 1,</div><div class="line">    2: 1,</div><div class="line">    b: 1,</div><div class="line">    1: 1</div><div class="line">&#125;;</div><div class="line">obj.d = 1;</div><div class="line">console.log(Object.getOwnPropertyNames(obj).join(&quot;&quot;));</div><div class="line">// 012acbd</div></pre></td></tr></table></figure>
-<h2 id="增强对象原型"><a href="#增强对象原型" class="headerlink" title="增强对象原型"></a>增强对象原型</h2><h4 id="改变对象的原型setPrototypeOf"><a href="#改变对象的原型setPrototypeOf" class="headerlink" title="改变对象的原型setPrototypeOf"></a>改变对象的原型setPrototypeOf</h4><p>对象原型的真实值被储存在内部的专用属性[[Prototype]]中，调用Object.getPrototypeOf返回储存在其中的值，调用Object.setPrototypeOf方法改变其中的值；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">let person = &#123;</div><div class="line">    getGreeting() &#123;</div><div class="line">        return &quot;Hello&quot;;</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line">let dog = &#123;</div><div class="line">    getGreeting() &#123;</div><div class="line">        return &quot;Woof&quot;;</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line">// prototype is person</div><div class="line">let friend = Object.create(person);</div><div class="line">console.log(friend.getGreeting()); // Hello</div><div class="line">console.log(Object.getPrototypeOf(friend) === person); // true</div><div class="line">// set prototype to dog</div><div class="line">Object.setPrototypeOf(friend, dog);</div><div class="line">console.log(friend.getGreeting()); // &quot;Woof&quot;</div><div class="line">console.log(Object.getPrototypeOf(friend) === dog); // true</div></pre></td></tr></table></figure>
-<h4 id="简化原型访问的Super引用"><a href="#简化原型访问的Super引用" class="headerlink" title="简化原型访问的Super引用"></a>简化原型访问的Super引用</h4><p>ES6引入了super关键字，super引用相当于指向对象原型的指针，实际上也就是Object.getPrototypeOf()的效果；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">let friend = &#123;</div><div class="line">    getGreeting() &#123;</div><div class="line">        // in the previous example, this is the same as:</div><div class="line">        // Object.getPrototypeOf(this).getGreeting.call(this)</div><div class="line">        return super.getGreeting() + &quot;, hi!&quot;;</div><div class="line">&#125; &#125;;</div></pre></td></tr></table></figure>
-<p>super关键字必须要在使用简写方法的对象中使用super引用，如果在其他方法声明中使用会导致语法错误；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">let friend = &#123;</div><div class="line">    getGreeting: function() &#123;// syntax error</div><div class="line">        return super.getGreeting() + &quot;, hi!&quot;; // &apos;super&apos; keyword unexpected here</div><div class="line">    &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
-<h2 id="正式的方法定义"><a href="#正式的方法定义" class="headerlink" title="正式的方法定义"></a>正式的方法定义</h2><p>ES6正式将方法定义为一个函数，它会由一个内部的[[HomeObject]]属性来容纳这个方法从属的对象；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">let person = &#123;</div><div class="line">    // method</div><div class="line">    getGreeting() &#123;</div><div class="line">        return &quot;Hello&quot;;</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line">// not a method</div><div class="line">function shareGreeting() &#123;</div><div class="line">    return &quot;Hi!&quot;;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>上段代码的getGreeting方法的[[HomeObject]]属性值为person，而创建shareGreeting函数时，由于未将其赋值给一个对象，因为该方法没有明确定义[[HomeObject]]属性。</p>
-<p>super的所有引用都通过[[HomeObject]]属性调用Object.getPrototypeOf方法来检索原型的引用；然后搜寻原型找到同名函数；最后，设置this绑定并且调用相应的方法；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">let person = &#123;</div><div class="line">    getGreeting() &#123;</div><div class="line">        return &quot;Hello&quot;;</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line">// prototype is person</div><div class="line">let friend = &#123;</div><div class="line">    getGreeting() &#123;</div><div class="line">        return super.getGreeting() + &quot;, hi!&quot;;</div><div class="line">&#125; &#125;;</div><div class="line">Object.setPrototypeOf(friend, person);</div><div class="line">console.log(friend.getGreeting());</div></pre></td></tr></table></figure>
-<p><code>friend.getGreeting()</code>方法的[[HomeObject]]的属性值时friend,friend的原型是person，所以<code>super.getGreeting()</code>等价于<code>person.getGreeting.call(this)</code>;</p>
+<p>当对象被转换为字符串时：</p>
+<ol>
+<li>调用toSring方法，如果结果为原始值，则返回</li>
+<li>否则，调用valueOf方法，如果结果值为原始值，则返回</li>
+<li>如果再无可选值，则抛出异常</li>
+</ol>
+<p><strong>大多数情况下，标准对象会将默认模式按数字模式处理（除了Date对象）；默认模式只用于==运算，+运算及给Date构造函数传递一个参数时。</strong></p>
+<p>在ES6标准中，通过Symbol.toPrimitive方法可以更改那个暴露出来的原始值；Symbol.toPrimitive被定义在每一个标准类型的原型上，并且规定了当对象被转换为原始值时应该执行的操作。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">function Temperature(degrees) &#123;</div><div class="line">              this.degrees = degrees;</div><div class="line">&#125;</div><div class="line">Temperature.prototype[Symbol.toPrimitive] = function(hint) &#123;</div><div class="line">switch (hint) &#123;</div><div class="line">    case &quot;string&quot;:</div><div class="line">        return this.degrees + &quot;\u00b0&quot;; // degrees symbol</div><div class="line">    case &quot;number&quot;:</div><div class="line">        return this.degrees;</div><div class="line">    case &quot;default&quot;:</div><div class="line">        return this.degrees + &quot; degrees&quot;;</div><div class="line">&#125; &#125;;</div><div class="line">var freezing = new Temperature(32);</div><div class="line">console.log(freezing + &quot;!&quot;);    // &quot;32 degrees!&quot;</div><div class="line">console.log(freezing / 2);      // 16</div><div class="line">console.log(String(freezing));  // &quot;32°&quot;</div></pre></td></tr></table></figure>
+<h4 id="Symbol-toStringTag"><a href="#Symbol-toStringTag" class="headerlink" title="Symbol.toStringTag"></a>Symbol.toStringTag</h4><p>当检测一个数据的类型时，可能会用instanceof,这样在使用iframe标签情况下会有一定问题，不同的iframe代表不同的领域，不同领域的构造函数是不同的，当数据传递到不同的领域时，使用instanceof会得不到预期的结果；</p>
+<p>这时我们可能会用Object.prototype.toString.call来处理；</p>
+<p>如区分原生JSON对象和自建对象<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">function supportsNativeJSON() &#123;</div><div class="line">    return typeof JSON !== &quot;undefined&quot; &amp;&amp;</div><div class="line">        Object.prototype.toString.call(JSON) === &quot;[object JSON]&quot;;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在ES6中重新定义了原生对象过去的状态，通过Symbol.toStringTag改变了调用Object.prototype.toString方法时返回的身份标示；这个Symbol所代表的属性在每一个对象中都存在，其定义了调用对象的Object.prototype.toString.call方法时返回的值。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">function Person(name) &#123;</div><div class="line">    this.name = name;</div><div class="line">&#125;</div><div class="line">Person.prototype[Symbol.toStringTag] = &quot;Person&quot;;</div><div class="line">var me = new Person(&quot;Nicholas&quot;);</div><div class="line">console.log(me.toString());                     // [object Person]</div><div class="line">console.log(Object.prototype.toString.call(me)); // [object Person]</div></pre></td></tr></table></figure>
+<h4 id="Symbol-unscopables"><a href="#Symbol-unscopables" class="headerlink" title="Symbol.unscopables"></a>Symbol.unscopables</h4><p>The Symbol.unscopables well-known symbol is used to specify an object value of whose own and inherited property names are excluded from the with environment bindings of the associated object.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">var keys = [];</div><div class="line"></div><div class="line">with (Array.prototype) &#123;</div><div class="line">  keys.push(&apos;something&apos;);</div><div class="line">&#125;</div><div class="line"></div><div class="line">Object.keys(Array.prototype[Symbol.unscopables]); </div><div class="line">// [&quot;copyWithin&quot;, &quot;entries&quot;, &quot;fill&quot;, &quot;find&quot;, &quot;findIndex&quot;, &quot;includes&quot;, &quot;keys&quot;, &quot;values&quot;]</div></pre></td></tr></table></figure>
+<p>也可以改变对象的Symbol.unscopables属性：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">var obj = &#123; </div><div class="line">  foo: 1, </div><div class="line">  bar: 2 </div><div class="line">&#125;;</div><div class="line"></div><div class="line">obj[Symbol.unscopables] = &#123; </div><div class="line">  foo: false, </div><div class="line">  bar: true </div><div class="line">&#125;;</div><div class="line"></div><div class="line">with (obj) &#123;</div><div class="line">  console.log(foo); // 1</div><div class="line">  console.log(bar); // ReferenceError: bar is not defined</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 
           
         
@@ -549,6 +575,182 @@
 <h4 id="解构参数默认值"><a href="#解构参数默认值" class="headerlink" title="解构参数默认值"></a>解构参数默认值</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">function setCookie(name, value,</div><div class="line">    &#123;</div><div class="line">        secure = false,</div><div class="line">        path = &quot;/&quot;,</div><div class="line">        domain = &quot;example.com&quot;,</div><div class="line">        expires = new Date(Date.now() + 360000000)</div><div class="line">&#125; = &#123;&#125; )&#123;</div><div class="line">// empty </div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>也可以为第三个参数设置一个默认对象</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">const cookieDefault = &#123;</div><div class="line">  secure: false,</div><div class="line">  path: &apos;/&apos;,</div><div class="line">  domain: &apos;example.com&apos;,</div><div class="line">  expires: new Date(Date.now() + 360000000)</div><div class="line">&#125;;</div><div class="line">function setCookie(name, value,</div><div class="line">    &#123;</div><div class="line">        secure = cookieDefault.secure,</div><div class="line">        path = cookieDefault.path,</div><div class="line">        domain = cookieDefault.domain,</div><div class="line">        expires = cookieDefault.expires</div><div class="line">&#125; = cookieDefault )&#123;</div><div class="line">// empty </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/11/21/2017-11-21-ES6之对象/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cauil">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/abu.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cauil's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/11/21/2017-11-21-ES6之对象/" itemprop="url">ES6之对象</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-21T00:00:00+08:00">
+                2017-11-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JS/" itemprop="url" rel="index">
+                    <span itemprop="name">JS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="对象字面量语法扩展"><a href="#对象字面量语法扩展" class="headerlink" title="对象字面量语法扩展"></a>对象字面量语法扩展</h2><h4 id="属性初始值的简写"><a href="#属性初始值的简写" class="headerlink" title="属性初始值的简写"></a>属性初始值的简写</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">function createPerson(name, age) &#123;</div><div class="line">  return &#123;</div><div class="line">    name: name,</div><div class="line">    age: age </div><div class="line">  &#125;;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>属性与为属性赋值的变量是重复的，可以简写为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">function createPerson(name, age) &#123;</div><div class="line">  return &#123;</div><div class="line">    name,</div><div class="line">    age </div><div class="line">  &#125;;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这样可以避免命名错误以及不小心的拼写错误。</p>
+<h4 id="对象方法的简写"><a href="#对象方法的简写" class="headerlink" title="对象方法的简写"></a>对象方法的简写</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var person = &#123;</div><div class="line">    name: &quot;Nicholas&quot;,</div><div class="line">    sayName: function() &#123;</div><div class="line">        console.log(this.name);</div><div class="line">    &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>可以简写为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var person = &#123;</div><div class="line">    name: &quot;Nicholas&quot;,</div><div class="line">    sayName() &#123;</div><div class="line">        console.log(this.name);</div><div class="line">    &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>简写方法sayName里面可以使用super关键字；</p>
+<h4 id="可计算属性名"><a href="#可计算属性名" class="headerlink" title="可计算属性名"></a>可计算属性名</h4><p>ES5及早期版本的对象实例中，如果想要通过计算得到属性名，就需要用方括号代替点记法。并且有空格的字符串不能直接作为属性名，也需要方括号代替；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var person = &#123;&#125;,</div><div class="line">    lastName = &quot;last name&quot;;</div><div class="line">person[&quot;first name&quot;] = &quot;Nicholas&quot;;</div><div class="line">person[lastName] = &quot;Zakas&quot;;</div><div class="line">console.log(person[&quot;first name&quot;]);</div><div class="line">console.log(person[lastName]);</div></pre></td></tr></table></figure>
+<p>ES6中，可在对象字面量中使用可计算属性名称，其语法与引用对象实例的可计算属性名称相同，也是使用方括号。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">let lastName = &quot;last name&quot;;</div><div class="line">let person = &#123;</div><div class="line">    &quot;first name&quot;: &quot;Nicholas&quot;,</div><div class="line">    [lastName]: &quot;Zakas&quot;</div><div class="line">&#125;;</div><div class="line">console.log(person[&quot;first name&quot;]);</div><div class="line">console.log(person[lastName]);</div></pre></td></tr></table></figure>
+<h2 id="新增方法"><a href="#新增方法" class="headerlink" title="新增方法"></a>新增方法</h2><h4 id="Object-is"><a href="#Object-is" class="headerlink" title="Object.is"></a>Object.is</h4><p>在JS中比较两个值，使用===跟==比较多，但是===在有些情况也不完全准确；+0与-0在JS引擎中是两个完全不同的实体，<code>NaN === NaN</code> 返回值为false，需要用isNaN()才能检测出NaN;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">console.log(+0 == -0);              // true</div><div class="line">console.log(+0 === -0);             // true</div><div class="line">console.log(Object.is(+0, -0));     // false</div><div class="line">console.log(NaN == NaN);            // false</div><div class="line">console.log(NaN === NaN);           // false</div><div class="line">console.log(Object.is(NaN, NaN));   // true</div><div class="line">console.log(5 == 5);                // true</div><div class="line">console.log(5 == &quot;5&quot;);              // true</div><div class="line">console.log(5 === 5);               // true</div><div class="line">console.log(5 === &quot;5&quot;);             // false</div><div class="line">console.log(Object.is(5, 5));       // true</div><div class="line">console.log(Object.is(5, &quot;5&quot;));     // false</div></pre></td></tr></table></figure>
+<h4 id="Object-assign"><a href="#Object-assign" class="headerlink" title="Object.assign"></a>Object.assign</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">var receiver = &#123;&#125;;</div><div class="line">var test = &#123;name: &apos;zakas&apos;&#125;;</div><div class="line">Object.assign(receiver,</div><div class="line">    &#123;</div><div class="line">      type: &quot;js&quot;,</div><div class="line">        name: &quot;file.js&quot;</div><div class="line">    &#125;,</div><div class="line">    &#123;</div><div class="line">      type: &quot;css&quot;,</div><div class="line">      data: test,</div><div class="line">    &#125; </div><div class="line">);</div><div class="line">console.log(receiver.type); // css</div><div class="line">console.log(receiver.name); // file.js</div><div class="line">console.log(receiver.data); // &#123;name: &apos;zakas&apos;&#125;</div><div class="line">test.name = &apos;hi&apos;;</div><div class="line">console.log(receiver.data); // &#123;name: &apos;hi&apos;&#125;</div></pre></td></tr></table></figure>
+<p>Object.assign参数后面的对象会覆盖前面的对象，并且为浅复制；</p>
+<p>Object.assign会把访问器属性复制为数据属性；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">var receiver = &#123;&#125;,</div><div class="line">  supplier = &#123;</div><div class="line">    get name() &#123;</div><div class="line">      return &quot;file.js&quot;</div><div class="line">    &#125; </div><div class="line">  &#125;;</div><div class="line">Object.assign(receiver, supplier);</div><div class="line">var descriptor = Object.getOwnPropertyDescriptor(receiver, &quot;name&quot;);</div><div class="line">console.log(descriptor.value);      // &quot;file.js&quot;</div><div class="line">console.log(descriptor.get);        // undefined</div></pre></td></tr></table></figure>
+<h2 id="重复的对象字面量属性"><a href="#重复的对象字面量属性" class="headerlink" title="重复的对象字面量属性"></a>重复的对象字面量属性</h2><p>ES5严格模式重复字面量属性会报错；ES6无论严格或者非严格模式下，重复属性都会选取最后一个取值；<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&quot;use strict&quot;;</div><div class="line">var person = &#123;</div><div class="line">  name: &quot;Nicholas&quot;,</div><div class="line">  name: &quot;Greg&quot;        // no error in ES6 strict mode</div><div class="line">&#125;;</div><div class="line">console.log(person.name); // Greg</div></pre></td></tr></table></figure></p>
+<h2 id="自有属性枚举顺序"><a href="#自有属性枚举顺序" class="headerlink" title="自有属性枚举顺序"></a>自有属性枚举顺序</h2><ol>
+<li>所有数字键按升序排列</li>
+<li>所有字符串键按照它们被加入对象的顺序排序</li>
+<li>所有symbol按照它们被加入的顺序排序</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">var obj = &#123;</div><div class="line">    a: 1,</div><div class="line">    0: 1,</div><div class="line">    c: 1,</div><div class="line">    2: 1,</div><div class="line">    b: 1,</div><div class="line">    1: 1</div><div class="line">&#125;;</div><div class="line">obj.d = 1;</div><div class="line">console.log(Object.getOwnPropertyNames(obj).join(&quot;&quot;));</div><div class="line">// 012acbd</div></pre></td></tr></table></figure>
+<h2 id="增强对象原型"><a href="#增强对象原型" class="headerlink" title="增强对象原型"></a>增强对象原型</h2><h4 id="改变对象的原型setPrototypeOf"><a href="#改变对象的原型setPrototypeOf" class="headerlink" title="改变对象的原型setPrototypeOf"></a>改变对象的原型setPrototypeOf</h4><p>对象原型的真实值被储存在内部的专用属性[[Prototype]]中，调用Object.getPrototypeOf返回储存在其中的值，调用Object.setPrototypeOf方法改变其中的值；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">let person = &#123;</div><div class="line">    getGreeting() &#123;</div><div class="line">        return &quot;Hello&quot;;</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line">let dog = &#123;</div><div class="line">    getGreeting() &#123;</div><div class="line">        return &quot;Woof&quot;;</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line">// prototype is person</div><div class="line">let friend = Object.create(person);</div><div class="line">console.log(friend.getGreeting()); // Hello</div><div class="line">console.log(Object.getPrototypeOf(friend) === person); // true</div><div class="line">// set prototype to dog</div><div class="line">Object.setPrototypeOf(friend, dog);</div><div class="line">console.log(friend.getGreeting()); // &quot;Woof&quot;</div><div class="line">console.log(Object.getPrototypeOf(friend) === dog); // true</div></pre></td></tr></table></figure>
+<h4 id="简化原型访问的Super引用"><a href="#简化原型访问的Super引用" class="headerlink" title="简化原型访问的Super引用"></a>简化原型访问的Super引用</h4><p>ES6引入了super关键字，super引用相当于指向对象原型的指针，实际上也就是Object.getPrototypeOf()的效果；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">let friend = &#123;</div><div class="line">    getGreeting() &#123;</div><div class="line">        // in the previous example, this is the same as:</div><div class="line">        // Object.getPrototypeOf(this).getGreeting.call(this)</div><div class="line">        return super.getGreeting() + &quot;, hi!&quot;;</div><div class="line">&#125; &#125;;</div></pre></td></tr></table></figure>
+<p>super关键字必须要在使用简写方法的对象中使用super引用，如果在其他方法声明中使用会导致语法错误；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">let friend = &#123;</div><div class="line">    getGreeting: function() &#123;// syntax error</div><div class="line">        return super.getGreeting() + &quot;, hi!&quot;; // &apos;super&apos; keyword unexpected here</div><div class="line">    &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<h2 id="正式的方法定义"><a href="#正式的方法定义" class="headerlink" title="正式的方法定义"></a>正式的方法定义</h2><p>ES6正式将方法定义为一个函数，它会由一个内部的[[HomeObject]]属性来容纳这个方法从属的对象；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">let person = &#123;</div><div class="line">    // method</div><div class="line">    getGreeting() &#123;</div><div class="line">        return &quot;Hello&quot;;</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line">// not a method</div><div class="line">function shareGreeting() &#123;</div><div class="line">    return &quot;Hi!&quot;;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上段代码的getGreeting方法的[[HomeObject]]属性值为person，而创建shareGreeting函数时，由于未将其赋值给一个对象，因为该方法没有明确定义[[HomeObject]]属性。</p>
+<p>super的所有引用都通过[[HomeObject]]属性调用Object.getPrototypeOf方法来检索原型的引用；然后搜寻原型找到同名函数；最后，设置this绑定并且调用相应的方法；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">let person = &#123;</div><div class="line">    getGreeting() &#123;</div><div class="line">        return &quot;Hello&quot;;</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line">// prototype is person</div><div class="line">let friend = &#123;</div><div class="line">    getGreeting() &#123;</div><div class="line">        return super.getGreeting() + &quot;, hi!&quot;;</div><div class="line">&#125; &#125;;</div><div class="line">Object.setPrototypeOf(friend, person);</div><div class="line">console.log(friend.getGreeting());</div></pre></td></tr></table></figure>
+<p><code>friend.getGreeting()</code>方法的[[HomeObject]]的属性值时friend,friend的原型是person，所以<code>super.getGreeting()</code>等价于<code>person.getGreeting.call(this)</code>;</p>
 
           
         
@@ -1791,197 +1993,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/10/01/2017-10-01-从尺寸单位到移动端适配方案/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cauil">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/abu.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Cauil's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/10/01/2017-10-01-从尺寸单位到移动端适配方案/" itemprop="url">从尺寸单位到移动端适配方案</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-01T00:00:00+08:00">
-                2017-10-01
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/css/" itemprop="url" rel="index">
-                    <span itemprop="name">css</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="css尺寸单位"><a href="#css尺寸单位" class="headerlink" title="css尺寸单位"></a>css尺寸单位</h2><h4 id="绝对单位"><a href="#绝对单位" class="headerlink" title="绝对单位"></a>绝对单位</h4><p>在平常的前端开发中，在很多地方写css的时候，你都会用到长度尺寸单位，可能最典型的代表就是px；<br>其实这些单位主要分两类，绝对单位和相对单位；px就属于绝对单位，除了px之外，其他的你可能都很<br>少使用,如下：</p>
-<ul>
-<li>mm, cm, in: 毫米（Millimeters），厘米（centimeters），英寸（inches）</li>
-<li>pt, pc: 点（Points (1/72 of an inch)）， 十二点活字（ picas (12 points.)）</li>
-</ul>
-<h4 id="相对单位"><a href="#相对单位" class="headerlink" title="相对单位"></a>相对单位</h4><p>上面列举的主要是绝对单位，那相对单位是啥呢，顾名思义，相对单位就是基于某些参考物的单位；主要有：</p>
-<ul>
-<li>ex, ch: 分别是小写x的高度和数字0的宽度；</li>
-<li>em, rem: em和rem都是基于<code>font-size</code>的单位，但又有所不同，em是基于当前元素的<code>font-size</code>为参考物<br>的(如果当前font-size没有设置，就基于父元素，以此类推); rem是基于根元素为参考物，如果根元素没有设置，<br>大多数浏览器默认为16px；假如参考物的<code>font-size: 20px</code>, 那么<code>1em=20px</code>, <code>1.5rem=30px</code>;</li>
-<li>vw, vh, vmin, vmax: 这组单位都是基于视口为参考物，vw基于视口的宽度，vh基于视口的高度，vmin=min(vw, vh),<br>vmax=max(vw,vh)</li>
-</ul>
-<h2 id="在移动端的使用"><a href="#在移动端的使用" class="headerlink" title="在移动端的使用"></a>在移动端的使用</h2><p>目前市面的手机品类繁多，屏幕分辨率也各有不同，导致移动端开发难度加大，我们怎么开发来适配不同的手机？</p>
-<h4 id="rem"><a href="#rem" class="headerlink" title="rem"></a>rem</h4><p>以iphone三种尺寸手机为例: iphone4(320px),iphone6(375px),iphone6 plus(414px);</p>
-<p>普通的做法是根据不同比例的尺寸来等比例<br>缩放，例如iphone4文本大小是12px，那么iphone6就是<code>（375/320*12px=14px）</code>,iphone6 plus就是<code>（414/320*12px=15.5px）</code>;</p>
-<p>最开始的方法： 以一款尺寸做一版样式，然后用js去控制viewpoint的intial-scale(网页缩放比例); 天猫最初站点就是用这种<br>方法来进行移动端的开发的，这样有些不好的地方，如手机为大屏幕的时候图片文字会拉伸，导致页面模糊,在某些布局在不同<br>尺寸的屏幕也有可能导致布局错乱；</p>
-<p>为了最好的适配不同的手机尺寸，目前最普遍的做法就是应用到上一节说到的相对单位rem; </p>
-<h4 id="兼容性"><a href="#兼容性" class="headerlink" title="兼容性"></a>兼容性</h4><p>先来看看rem的兼容性：</p>
-<p><img src="/images/caniuse.png" alt="caniuse"></p>
-<p>从图中可以看出兼容性还是很不错的，大部分市面上主流浏览器都支持,我们可以比较放心的使用；</p>
-<p>rem官方文档上<a href="https://www.w3.org/TR/css3-values/#rem的解释是：" target="_blank" rel="external">https://www.w3.org/TR/css3-values/#rem的解释是：</a></p>
-<p><i>rem unit</i></p>
-<p><code>rem unit
-Equal to the computed value of font-size on the root element. When specified on the font-size property of the root element, the rem units refer to the property’s initial value.</code></p>
-<p>实际就是根据根元素来设置字体大小，然后其他设置了rem单位的就是利用这个来进行同等的变换；</p>
-<h2 id="适配实现方案"><a href="#适配实现方案" class="headerlink" title="适配实现方案"></a>适配实现方案</h2><h4 id="方案1-动态添加html样式"><a href="#方案1-动态添加html样式" class="headerlink" title="方案1 - 动态添加html样式"></a>方案1 - 动态添加html样式</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">(function() &#123;</div><div class="line">   var b = document.documentElement;</div><div class="line">   var a = document.createElement(&quot;style&quot;);</div><div class="line">   a.innerHTML = &quot;html &#123; font-size: &quot; + ((b.clientWidth &gt; 640 ? 640 : b.clientWidth) / 18.75) + &quot;px !important; &#125;&quot;;</div><div class="line">   b.firstElementChild.appendChild(a)</div><div class="line">&#125;)();</div></pre></td></tr></table></figure>
-<h4 id="方案2-利用media-query来设置"><a href="#方案2-利用media-query来设置" class="headerlink" title="方案2 - 利用media query来设置"></a>方案2 - 利用media query来设置</h4><p>利用css的media query也是可以来实现font-size的设置，如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">@media (min-device-width : 375px) and (max-device-width : 667px) and (-webkit-min-device-pixel-ratio : 2)&#123;</div><div class="line">      html&#123;font-size: 37.5px;&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h4 id="方案3-js动态设置"><a href="#方案3-js动态设置" class="headerlink" title="方案3 - js动态设置"></a>方案3 - js动态设置</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">document.getElementsByTagName(&apos;html&apos;)[0].style.fontSize = window.innerWidth / 10 + &apos;px&apos;;</div></pre></td></tr></table></figure>
-<h2 id="rem解决方案升级"><a href="#rem解决方案升级" class="headerlink" title="rem解决方案升级"></a>rem解决方案升级</h2><p>上面几个方案我们就实现了动态设置font-size并根据rem实现移动端不同尺寸的适配；</p>
-<p>但适用rem的方案还是有不足的地方的：</p>
-<ol>
-<li><p>大屏幕伸缩之后可能导致页面模糊</p>
-</li>
-<li><p>设计稿里面的px都要转换成rem</p>
-</li>
-</ol>
-<p>如何解决这些问题呢？</p>
-<p>提供高分辨率设计稿，一般采用的是宽度为750px的设计稿，刚好是375的两倍，并利用sass实现一个函数功能<br>为提供直接px到rem的转换;</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@function px2rem($px)&#123;</div><div class="line">    $rem : 75px;</div><div class="line">    @return ($px/$rem) + rem;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>设置基准font-size为75，传入参数px大小直接计算出rem的大小；</p>
-<p>这样我们就可以完全按照视觉稿上的尺寸来了, 不用除于2了，就解决了图片高清问题，并且不用手动转换单位；</p>
-<p>不过rem不是万能的，也还是具有不足之处的,如：</p>
-<ol>
-<li><p>一个App里native界面和Web界面混合使用时，rem在不同尺寸屏幕上的适配与native界面适配不一致;</p>
-</li>
-<li><p>rem在多屏幕尺寸适配上与当前两大平台的设计哲学不一致, 有些并不是理想的按照不同大小进行等比例缩放；</p>
-</li>
-</ol>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文我们一开始先讲了css尺寸单位，包括绝对单位与相对单位，并详细讲述了em和rem；接下来讲述了rem在现代<br>移动端开发的应用，最后讲述了rem的几种应用方案与不足之处；</p>
-<p>最后祝大家双节快乐，祖国越来越强大！</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2036,7 +2047,7 @@ Equal to the computed value of font-size on the root element. When specified on 
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-count">24</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
