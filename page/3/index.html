@@ -239,6 +239,587 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2015/05/24/js_journey_0105-Objects/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cauil">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/abu.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cauil's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2015/05/24/js_journey_0105-Objects/" itemprop="url">JS之旅（启程）：对象</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-05-24T00:00:00+08:00">
+                2015-05-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/js/" itemprop="url" rel="index">
+                    <span itemprop="name">js</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><strong>下面代码都在node.js测试</strong></p>
+<p>这一次我们来谈谈对象。</p>
+<h2 id="什么是对象"><a href="#什么是对象" class="headerlink" title="什么是对象"></a>什么是对象</h2><p>对象是一种复合值。</p>
+<p>对象是属性的无序集合，每个属性都是一个名/值对。</p>
+<p>对象不仅仅是字符串到值的映射，除了可以保持自有的属性，还可以从原型对象继承属性。这种原型式继承是JS的核心特征。</p>
+<p>对象是动态的，可以新增属性也可以删除属性。对象是可变，我们通过引用而非值来操作对象，如：</p>
+<pre><code>var x = {a:1, b:2};
+var y = x;
+y; // {a:1, b:2}
+y.b = 3;
+y; // {a:1, b:3}
+x; // {a:1, b:3}
+</code></pre><p>对象常见方法有：创建、设置、查找、删除、检测和枚举它的属性，接下来一一解析这些方法。</p>
+<p>对象属性特性（property attribute）：可写、可枚举、可配置。</p>
+<p>对象自身还拥有三个相关的对象特性（attribute）：原型、类、扩展标记。</p>
+<p>对象分类：内置对象、宿主对象、自定义对象。</p>
+<p>对象属性分类：自有属性、继承属性。</p>
+<h3 id="对象的KEY"><a href="#对象的KEY" class="headerlink" title="对象的KEY"></a>对象的KEY</h3><p>对象的key为字符串，即使不为字符串，也会转换为字符串类型。如：</p>
+<pre><code>var obj = {};
+obj[1] = 1;
+obj[&apos;1&apos;] = 2;
+obj; // Object {1: 2}
+
+obj[{}] = true; // {}会转换为字符串&apos;[object Object]&apos;
+obj[{x : 1}] = true; // {x: 1}会转换为字符串&apos;[object Object]&apos;
+obj; // Object {1: 2, [object Object]: true}
+</code></pre><p>对象中不能存在两个同名的属性，如：</p>
+<pre><code>var obj = {a: 1, a: 2};
+obj; // {a:2}
+</code></pre><h3 id="对象的结构"><a href="#对象的结构" class="headerlink" title="对象的结构"></a>对象的结构</h3><p>对象的属性有五个特征：</p>
+<p>writable、enumerable、configurable、value、get/set</p>
+<h2 id="对象的创建"><a href="#对象的创建" class="headerlink" title="对象的创建"></a>对象的创建</h2><p>可以通过对象直接量、关键字new和Object.create()函数来创建。</p>
+<h3 id="字面量创建"><a href="#字面量创建" class="headerlink" title="字面量创建"></a>字面量创建</h3><pre><code>var obj1 = {x: 1, y: 2};
+</code></pre><p>在ES5中，保留字可以用作不带引号的属性名；而ES3使用保留字作为属性名必须使用引号引起来。</p>
+<p>在ES5中，对象直接量最后一个属性后的逗号将忽略；且在ES3的大部分实现中也可以忽略这个逗号，而在IE中则报错。</p>
+<p><strong>注意</strong>：所有通过对象直接量创建的对象都具有同一个原型，原型指向<code>Object.prototype</code></p>
+<h3 id="new以及原型链"><a href="#new以及原型链" class="headerlink" title="new以及原型链"></a>new以及原型链</h3><p>通过关键字new和构造函数调用创建的对象的原型就是构造函数的prototype属性的值。通过new Array()创建的对象的原型就是Array.prototype,通过new Date()创建的对象原型就是Date.prototype。</p>
+<p>所有的内置构造函数（以及大部分自定义的构造函数）都具有一个继承自Object.prototype的原型。因此由new Date()创建的对象同时继承Array.prototype和Object.prototype。这一系列链接的原型对象就是所谓的原型链。</p>
+<h3 id="Object-create-ES5定义"><a href="#Object-create-ES5定义" class="headerlink" title="Object.create() ES5定义"></a>Object.create() ES5定义</h3><p>直接在花括号里传入所需的原型对象即可：</p>
+<pre><code>var obj = Object.create({x : 1});
+obj.x // 1
+typeof obj.toString // &quot;function&quot;
+obj.hasOwnProperty(&apos;x&apos;);// false
+</code></pre><p>可以通过传入参数null来创建一个没有原型的新对象，但通过这种方法创建的对象不会继承任何东西，甚至包括基础方法，如：</p>
+<pre><code>var obj = Object.create(null);
+obj.toString // undefined，注意与上面例子的比较
+</code></pre><p><strong>注意</strong>：obj原型为{x:1}，而{x:1}原型为Object.prototype，所以obj可以访问到toString方法</p>
+<p>如果想通过Object.create()来创建一个空对象，可以通过下面方法来创建：（也可以通过{}和new Object()来创建）</p>
+<pre><code>Object.create(Object.prototype)
+</code></pre><p>ES3模拟原型继承，不过inherit不能完全替代Object.create()，因为前者不能传入null来创建对象，也不能接受可选的第二个参数，下面为inherit的实现：</p>
+<pre><code>function inherit(p){
+    if(p == null){
+        throw TypeError();
+    }
+    if(Object.create){
+        return Object.create(p);
+    }
+    var t = typeof p;
+    if (t !== &quot;object&quot; &amp;&amp; t !== &quot;function&quot;){
+        throw TypeError();
+    }
+    function f(){};
+    f.prototype = p;
+    return new f();
+}
+</code></pre><h2 id="对象方法"><a href="#对象方法" class="headerlink" title="对象方法"></a>对象方法</h2><h3 id="属性的查询和设置"><a href="#属性的查询和设置" class="headerlink" title="属性的查询和设置"></a>属性的查询和设置</h3><p>可以通过.运算符或者方括号[]访问属性。对于.运算符来说，右侧必须是一个以属性名称命名的简单标识符；对于方括号来说，方括号内必须是一个计算结果为字符串的表达式（严格地讲，表达式必须返回字符串或返回一个可以转换为字符串的值），如：</p>
+<pre><code>var obj = {&apos;5&apos;: &quot;abc&quot;, &apos;7&apos;: &quot;cdf&quot;, c: 100};
+obj.c; // 100
+obj[&apos;c&apos;]; // 100
+obj[c]; // Error：c is not defined
+obj[1]; //  undefined,因为1会转换为字符串&apos;1&apos;
+obj[&apos;5&apos;]; // &apos;abc&apos;
+obj[1+4]; // &apos;abc&apos;
+</code></pre><p>在ES3中，点.后面的标识符不能是保留字，ES5放宽了，可以直接在.运算符后面直接使用保留字。</p>
+<h4 id="关联数组的对象"><a href="#关联数组的对象" class="headerlink" title="关联数组的对象"></a>关联数组的对象</h4><p>使用.运算符来访问对象的属性时，属性名用一个标识符来表示，由于标识符不是数据类型，因此程序无法修改它们。</p>
+<p>而通过[]来访问时，属性名通过字符串来表示，在程序运行时，可以修改和创建他们，如：</p>
+<pre><code>var addr = &quot;&quot;
+for(i=0; i&lt;4; i++){
+    addr += customer[&quot;address&quot; + i] + &apos;\n&apos;;
+}
+</code></pre><p>可以看见关联数组的方式来实现更强大、更灵活，推荐。</p>
+<h4 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h4><p>属性访问细节：</p>
+<p>假如要查询对象o的属性x，如果o中不存在x，那么将会继续在o的原型对象中查询属性x。如果原型对象中也没有x，但这个原型也有原型，那么继续在这个原型对象的原型上执行查询，直到找到x或者查找到一个原型是null的对象为止。如：</p>
+<pre><code>var o = {};
+o.x = 1;
+var p = Object.create(o);
+p.y = 2;
+var q = Object.create(p);
+q.z = 3;
+q.x + q.y //3 ，x和y分别继承自o和p
+</code></pre><p>属性赋值细节：</p>
+<p>1.假如对象o已经有属性x（这个属性不是继承来的），那么这个赋值操作只改变这个已有属性x的值。</p>
+<p>2.如果o不存在x，接着判断：</p>
+<p>(1)现在如果原型上有属性x且为可写，则会为o创建一个x属性；</p>
+<p>(2)如果原型上有属性x且不可写，则赋值失败；</p>
+<p>如：</p>
+<pre><code>var obj1 = {};
+Object.defineProperty(obj1, &apos;z&apos;, {value:1, writable:false, enumerable: true, configurable:true});
+obj1.z; // 1
+Object.keys(obj1); // [&apos;z&apos;]
+obj2 = Object.create(obj1);
+obj2.z; // 1
+obj2.z=2; // 赋值失败，则有下面的结果
+obj2.z; // 1
+obj2.hasOwnProperty(&apos;z&apos;); // false
+Object.defineProperty(obj1, &apos;z&apos;, {value:1, writable:true, enumerable: true, configurable:true});
+obj2.z=2; // 赋值成功，则有下面的结果
+obj2.z; // 2
+obj2.hasOwnProperty(&apos;z&apos;); // true
+</code></pre><p><strong>注意</strong>：如果原型上有属性x，而这个属性是一个具有setter方法的accessor属性，那么这时将调用setter方法而不是给o创建一个属性x。且setter是对象o调用的，因此setter方法的操作只是针对o本身，并不会修改原型链。（此处例子见下面set/get介绍）</p>
+<p><strong>注意</strong>：只有在查询属性时才会体会到继承的存在，而设置属性则和继承无关。</p>
+<h4 id="属性访问错误"><a href="#属性访问错误" class="headerlink" title="属性访问错误"></a>属性访问错误</h4><p>查询一个不存在的属性并不会报错，如：</p>
+<pre><code>var obj = {x : 1};
+obj.y; // undefined
+</code></pre><p>但是，如果对象不存在，那么试图查询这个不存在的对象的属性就会报错，如：</p>
+<pre><code>var yz = obj.y.z; // TypeError: Cannot read property &apos;z&apos; of undefined
+obj.y.z = 2; // TypeError: Cannot set property &apos;z&apos; of undefined
+</code></pre><p>处理方式：</p>
+<pre><code>var yz;
+    if (obj.y) {
+    yz = obj.y.z;
+}
+</code></pre><p>更简练的方式，可以使用&amp;&amp;的短路行为：</p>
+<pre><code>var yz = obj &amp;&amp; obj.y &amp;&amp; obj.y.z
+</code></pre><p>给null和undefined设置属性也会报类型错误。设置属性的失败操作都会抛出一个类型错误异常，除了一些对象例外，如：</p>
+<pre><code>Object.prototype = 1; 
+Object.prototype // {},赋值失败，但上面没有报错
+</code></pre><p>这是一个历史遗留bug，在严格模式下，任何设置属性的失败操作都会抛出一个类型错误异常。</p>
+<h3 id="属性的删除"><a href="#属性的删除" class="headerlink" title="属性的删除"></a>属性的删除</h3><p>delete可以删除对象的属性，如</p>
+<pre><code>var person = {age : 28, title : &apos;fe&apos;};
+delete person.age; // true
+delete person[&apos;title&apos;]; // true
+person.age; // undefined
+delete person.age; // true
+</code></pre><p>需要注意，delete只是断开属性和宿主对象的联系，而不会去操作属性中的属性，由于已经删除的属性的引用依然存在，可能因为这种不严谨的代码而造成内存泄露，如</p>
+<pre><code>var a = {p: {x:1}};
+var b = a.p;
+b; // {x:1}
+delete a.p;
+b; // {x:1}
+</code></pre><p>delete只能删除自有属性，而不能删除继承属性。</p>
+<p>delete不能删除那些可配置性为false的属性，在严格模式下，删除一个不可配置属性会报一类型错误，在非严格模式下，这些情况下的delete操作会返回一个false：</p>
+<pre><code>delete Object.prototype; // false,
+
+var descriptor = Object.getOwnPropertyDescriptor(Object, &apos;prototype&apos;);
+descriptor.configurable; // false
+</code></pre><p>另外，用var定义的全局变量或者局部变量也不能删除，全局函数或者局部函数也不能删除，如：</p>
+<pre><code>var globalVal = 1;
+delete globalVal; // false
+
+(function() {
+       var localVal = 1;
+    return delete localVal;
+}()); // false
+
+
+function fd() {}
+delete fd; // false
+
+(function() {
+    function fd() {};
+    return delete fd;
+}()); // false
+</code></pre><p>隐式定义的全局变量可以删除，如</p>
+<pre><code>ohNo = 1;
+ohNo; // 1
+delete ohNo; // true
+</code></pre><p><strong>注意</strong>：属性的删除由属性的特性configurable值来控制。</p>
+<h3 id="属性的检测"><a href="#属性的检测" class="headerlink" title="属性的检测"></a>属性的检测</h3><p>三种方法：in运算符、hasOwnProperty(是否是自有属性)、propertyIsEnumerable(检测是否为自有属性且可枚举)，如：</p>
+<pre><code>var cat = new Object;
+cat.legs = 4; // leg属性自有且可枚举
+Object.defineProperty(cat, &apos;age&apos;, {value:1, writable:true, enumerable: false, configurable:true}); // age属性为自有但不可枚举
+
+&apos;legs&apos; in cat; // true
+&apos;age&apos; in cat; // true
+&apos;abc&apos; in cat; // false
+&quot;toString&quot; in cat; // true, inherited property!!!
+
+cat.hasOwnProperty(&apos;legs&apos;); // true
+cat.hasOwnProperty(&apos;age&apos;); // true
+cat.hasOwnProperty(&apos;toString&apos;); // false
+
+cat.propertyIsEnumerable(&apos;legs&apos;); // true
+cat.propertyIsEnumerable(&apos;age&apos;); // false
+cat.propertyIsEnumerable(&apos;toString&apos;); // false
+
+Object.keys(cat); //legs
+</code></pre><p>属性设置方法（用defineProperty设置的属性默认是不可枚举）：</p>
+<pre><code>Object.defineProperty(cat, &apos;price&apos;, {value : 1000});
+Object.getOwnPropertyDescriptor(cat, &apos;price&apos;); // {value: 1000, writable: false, enumerable: false, configurable: false}
+cat.propertyIsEnumerable(&apos;price&apos;); // false
+cat.hasOwnProperty(&apos;price&apos;); // true
+</code></pre><p>除了使用in运算符外，另一种更简单的方法是使用“!==”判断一个属性是否是undefined，但当一个属性值刚好为undefined时无效，这时用in运算符才准确，如：</p>
+<pre><code>var o = {x:1}
+o.x !== undefined; // true
+o.y !== undefined; // false
+
+var o = {x: undefined}
+o.x !== undefined; // false
+o.y !== undefined; // false
+&quot;x&quot; in o; // true
+&quot;y&quot; in o; // false
+</code></pre><p><strong>注意</strong>：!=不是严格等于，undefined与null相等，所以有下面的：</p>
+<pre><code>if (cat.legs != undefined) {
+    // !== undefined, or, !== null
+}
+</code></pre><h3 id="属性的枚举"><a href="#属性的枚举" class="headerlink" title="属性的枚举"></a>属性的枚举</h3><p>对象继承的内置方法不可枚举，但在代码中给对象添加的属性都是可枚举的（除了defineProperty这类情况），见例子：</p>
+<pre><code>var o = {x : 1, y : 2, z : 3};
+&apos;toString&apos; in o; // true
+o.propertyIsEnumerable(&apos;toString&apos;); // false
+var key;
+for (key in o) {
+    console.log(key); // x, y, z
+}
+</code></pre><p>for..in..会去原型链上枚举所有特征Enumerable为true的属性，如：</p>
+<pre><code>var obj = Object.create(o);
+obj.a = 4;
+var key;
+for (key in obj) {
+    console.log(key); // a, x, y, z
+}
+</code></pre><p>只枚举出是自己属性的：</p>
+<pre><code>var obj = Object.create(o);
+obj.a = 4;
+var key;
+for (key in obj) {
+    if (obj.hasOwnProperty(key)) {
+        console.log(key); // a
+    }
+}
+</code></pre><p>ES5增加了两个用于枚举属性名称的函数，Object.keys()和Object.getOwnPropertyNames(),如：</p>
+<pre><code>Object.defineProperty(obj, &apos;b&apos;, {value:1}) // 属性b不可枚举
+Object.keys(obj); // [&apos;a&apos;],枚举出特性为可枚举的自有属性
+Object.getOwnPropertyNames(obj); // [&apos;a&apos;, &apos;b&apos;]，所有自有属性，不管特性是否可枚举
+</code></pre><h3 id="get、set方法"><a href="#get、set方法" class="headerlink" title="get、set方法"></a>get、set方法</h3><p>对象的属性分为数据属性和存取器属性，存取器属性就是属性值可以用一个或两个方法替代，这两个方法就是setter、getter</p>
+<p>读取存取器属性的值是，调用getter方法（无参数），这个方法的返回值就是存取器属性的值；当程序设置一个存取器属性的值时，JS调用setter方法，将赋值表达式右侧的值当做参数传入setter，可以忽略setter的返回值。</p>
+<p>读取只写属性总是返回undefined，如：</p>
+<pre><code>var o = { set a(value){}};
+o.a; // undefined
+</code></pre><p>先看一个例子：</p>
+<pre><code>var man = {
+    name : &apos;cauil&apos;,
+    weibo : &apos;@cauil&apos;,
+    get age() {
+        return new Date().getFullYear() - 1989;
+    },
+    set age(val) {
+        console.log(&apos;Age can\&apos;t be set to &apos; + val);
+    }
+}
+
+console.log(man.age); // 
+man.age = 100; // Age can&apos;t be set to 100
+console.log(man.age); // still 27
+</code></pre><p>再来看一个例子：</p>
+<pre><code>var man = {
+    weibo : &apos;@cauil&apos;,
+    $age : null,
+    get age() {
+        if (this.$age == undefined) {
+            return new Date().getFullYear() - 1989;
+        } else {
+            return this.$age;
+        }
+    },
+    set age(val) {
+        val = +val;
+        if (!isNaN(val) &amp;&amp; val &gt; 0 &amp;&amp; val &lt; 150) {
+            this.$age = val;
+        } else {
+            throw new Error(&apos;Incorrect val = &apos; + val);
+        }
+    }
+}
+
+console.log(man.age); // 27
+man.age = 100;
+console.log(man.age); // 100;
+man.age = &apos;abc&apos;; // error:Incorrect val = NaN
+</code></pre><p>get/set与原型链, 本身对象属性不存在时，会去原型上查找，尝试赋值时，会去读取原型链上的set方法，是原型调用：</p>
+<pre><code>function foo(){};
+
+Object.defineProperty(foo.prototype, &apos;z&apos;, 
+    {get: function(){return 1;}});
+var obj = new foo();
+
+obj.z; // 1
+obj.z = 10;
+obj.z; // still 1
+
+Object.defineProperty(obj, &apos;z&apos;, 
+{value : 100, configurable: true});
+obj.z; // 100;
+delete obj.z;
+obj.z; //back to 1
+</code></pre><p>如果o继承自一个只读属性x，那么赋值操作是不允许的，如果允许属性赋值，它也只是在原始对象上创建属性或对已有的属性赋值，而不会去修改原型链，如：</p>
+<pre><code>var o = {};
+Object.defineProperty(o, &apos;x&apos;, {value : 1}); // writable=false, configurable=false
+var obj = Object.create(o);
+obj.x; // 1
+obj.x = 200;
+obj.x; // still 1, can&apos;t change it
+
+Object.defineProperty(obj, &apos;x&apos;, {writable:true, configurable:true, value : 100});
+obj.x; // 100
+obj.x = 500;
+obj.x; // 500
+</code></pre><h2 id="属性特性"><a href="#属性特性" class="headerlink" title="属性特性"></a>属性特性</h2><p>数据属性具有四个特性：value、writable、enumerable、configurable</p>
+<p>存取器属性具有四个特性：set、get、enumerable、configurable</p>
+<h3 id="Object-getOwnPropertyDescriptor"><a href="#Object-getOwnPropertyDescriptor" class="headerlink" title="Object.getOwnPropertyDescriptor()"></a>Object.getOwnPropertyDescriptor()</h3><p>可以获取某个对象特定属性的属性描述符,如：</p>
+<pre><code>var o = {x:1, get y(){}, set y(value){}}
+// { value: 1, writable: true, enumerable: true, configurable: true }
+Object.getOwnPropertyDescriptor(o, &quot;x&quot;); 
+
+// { get: [Function: y], set: [Function: y], enumerable: true, configurable: true } 
+Object.getOwnPropertyDescriptor(o, &quot;y&quot;);
+</code></pre><p>对于不存在和继承的属性，返回undefined，如：</p>
+<pre><code>Object.getOwnPropertyDescriptor(o, &quot;z&quot;); // undefined
+Object.getOwnPropertyDescriptor(o, &quot;toString&quot;); // undefined
+</code></pre><h3 id="Object-defineProperty"><a href="#Object-defineProperty" class="headerlink" title="Object.defineProperty()"></a>Object.defineProperty()</h3><p>此方法是设置属性的特性，或者让新建对象具有某种特性，使用这种方法设置的属性，如果没有定义的特性，则默认为false，先看一个例子：</p>
+<pre><code>Object.getOwnPropertyDescriptor({pro : true}, &apos;pro&apos;);
+// Object {value: true, writable: true, enumerable: true, configurable: true}
+Object.getOwnPropertyDescriptor({pro : true}, &apos;a&apos;); // undefined
+</code></pre><p>再看一个例子：</p>
+<pre><code>var person = {};
+Object.defineProperty(person, &apos;name&apos;, {
+    configurable : false,
+    writable : false,
+    enumerable : true,
+    value : &quot;Bosn Ma&quot;
+});
+
+person.name; // Bosn Ma
+person.name = 1;
+person.name; // still Bosn Ma
+delete person.name; // false，因为name特性为不可配置
+</code></pre><h3 id="Object-keys"><a href="#Object-keys" class="headerlink" title="Object.keys()"></a>Object.keys()</h3><p>Object.keys(person)获取person的所有可枚举自有属性，如：</p>
+<pre><code>Object.defineProperty(person, &apos;type&apos;, {
+    configurable : true,
+    writable : true,
+    enumerable : false,
+    value : &quot;Object&quot;
+});
+
+Object.keys(person); // 只有[&quot;name&quot;]
+</code></pre><h3 id="Object-defineProperties-定义多个对象"><a href="#Object-defineProperties-定义多个对象" class="headerlink" title="Object.defineProperties()定义多个对象"></a>Object.defineProperties()定义多个对象</h3><pre><code>Object.defineProperties(person, {
+    title : {value : &apos;fe&apos;, enumerable : true},
+    corp : {value : &apos;BABA&apos;, enumerable : true},
+    salary : {value : 50000, enumerable : true, writable : true}
+});
+
+Object.getOwnPropertyDescriptor(person, &apos;salary&apos;);
+// Object {value: 50000, writable: true, enumerable: true, configurable: false}
+</code></pre><h3 id="特征定义"><a href="#特征定义" class="headerlink" title="特征定义"></a>特征定义</h3><p>configurable主要控制是否可以delete、是否可以修改get/set方法，是否可以修改特征值（如writable和configurable）的属性。</p>
+<p>writable主要控制属性值是否可以修改值。</p>
+<p><strong>注意</strong>：有一个特例，当configurable为false时，writable可以从true修改为false，其他情况都不能配置特征的值。</p>
+<h2 id="对象本身特征与序列化（待整理修改）"><a href="#对象本身特征与序列化（待整理修改）" class="headerlink" title="对象本身特征与序列化（待整理修改）"></a>对象本身特征与序列化（待整理修改）</h2><h3 id="原型"><a href="#原型" class="headerlink" title="原型"></a>原型</h3><p>获取对象的原型，使用Object.getPrototypeOf(),只会返回原型，不会返回原型链，如</p>
+<pre><code>var o = { x:1, y:2};
+var p = new Array();
+var q = Object.create(o);
+
+Object.getPrototypeOf(o); // {}
+Object.getPrototypeOf(p); // []
+Object.getPrototypeOf(q); // {x:1, y:2}
+</code></pre><p>判断x是否为y的原型，使用x.isPrototypeof(y)</p>
+<pre><code>var o = {x:1}
+var p = Object.create(o);
+
+o.isPrototypeOf(p); // true
+Object.prototype.isPrototypeOf(p); // true
+</code></pre><h3 id="class"><a href="#class" class="headerlink" title="class"></a>class</h3><p>对象的类属性是一个字符串，用以表示对象的类型信息，如：</p>
+<pre><code>var toString = Object.prototype.toString;
+function getType(o){return toString.call(o).slice(8,-1);};
+
+
+toString.call(null); // &quot;[object Null]&quot;
+getType(null); // &quot;Null&quot;
+getType(undefined); // &quot;Undefined&quot;
+getType(1); // &quot;Number&quot;
+getType(new Number(1)); // &quot;Number&quot;
+typeof new Number(1); // &quot;object&quot;
+getType(true); // &quot;Boolean&quot;
+getType(new Boolean(true)); // &quot;Boolean&quot;
+</code></pre><p>其中new Number(1)为Object Number</p>
+<h3 id="extensible"><a href="#extensible" class="headerlink" title="extensible"></a>extensible</h3><p>Object.preventExtensions会设置对象是否不可扩展，如：</p>
+<pre><code>var obj = {x : 1, y : 2};
+Object.isExtensible(obj); // true
+Object.preventExtensions(obj);
+Object.isExtensible(obj); // false
+obj.z = 1;
+obj.z; // undefined, add new property failed
+Object.getOwnPropertyDescriptor(obj, &apos;x&apos;);
+// Object {value: 1, writable: true, enumerable: true, configurable: true}
+</code></pre><p><code>Object.seal</code>会在<code>preventExtensions</code>基础上添加<code>configurable:false</code>特征，如：</p>
+<pre><code>Object.seal(obj);
+Object.getOwnPropertyDescriptor(obj, &apos;x&apos;);
+// Object {value: 1, writable: true, enumerable: true, configurable: false}
+Object.isSealed(obj); // true
+</code></pre><p><code>Object.freeze</code>会在<code>preventExtensions</code>基础上添加<code>configurable:false，writable:false</code>特征，如：</p>
+<pre><code>Object.freeze(obj);
+Object.getOwnPropertyDescriptor(obj, &apos;x&apos;);
+// Object {value: 1, writable: false, enumerable: true, configurable: false}
+Object.isFrozen(obj); // true
+</code></pre><h3 id="序列化"><a href="#序列化" class="headerlink" title="序列化"></a>序列化</h3><p>对象系列化可以使用<code>JSON.stringfy(obj)</code>,如：</p>
+<pre><code>var obj = {x : 1, y : true, z : [1, 2, 3], nullVal : null};
+JSON.stringify(obj); // &quot;{&quot;x&quot;:1,&quot;y&quot;:true,&quot;z&quot;:[1,2,3],&quot;nullVal&quot;:null}&quot;
+</code></pre><p>序列化的一个属性值为<code>undefined</code>时，会忽略；时间对象会转化为UTC格式；<code>NaN/infinity</code>会转化为<code>null</code>，如：</p>
+<pre><code>obj = {val : undefined, a : NaN, b : Infinity, c : new Date()};
+JSON.stringify(obj); // &quot;{&quot;a&quot;:null,&quot;b&quot;:null,&quot;c&quot;:&quot;2015-01-20T14:15:43.910Z&quot;}&quot;
+</code></pre><p>JSON转化为javascipt对象，需要用引号引起来，如：</p>
+<pre><code>obj = JSON.parse(&apos;{&quot;x&quot; : 1}&apos;);
+obj.x; // 1
+</code></pre><p>自定义：</p>
+<pre><code>var obj = {
+    x : 1,
+    y : 2,
+    o : {
+        o1 : 1,
+        o2 : 2,
+        toJSON : function () {
+            return this.o1 + this.o2;
+        }
+    }
+};
+JSON.stringify(obj); // &quot;{&quot;x&quot;:1,&quot;y&quot;:2,&quot;o&quot;:3}&quot;
+</code></pre><p>定义自己对象上的toString方法和valueOf方法，如：</p>
+<pre><code>var obj = {x : 1, y : 2};
+obj.toString(); // &quot;[object Object]&quot;
+obj.toString = function() {return this.x + this.y};
+&quot;Result &quot; + obj; // &quot;Result 3&quot;, by toString
+
++obj; // 3, from toString
+
+obj.valueOf = function() {return this.x + this.y + 100;};
++obj; // 103, from valueOf
+
+&quot;Result &quot; + obj; // still &quot;Result 3&quot;
+</code></pre><p>如果运算的对象的<code>valueof</code>和<code>toString</code>都存在，当进行一元‘+’和二元‘+’运算的时候，会进行转换字符串的操作；</p>
+<p>如果<code>valueOf</code>方法存在返回的是基本类型的值，以<code>valueOf</code>的值为结果，反之，valueOf不存在或者返回的是对象，则会去找<code>toString</code>方法，如果两者都不存在或者返回对象，就会报错。</p>
+<p>不过一般都会继承<code>Object.prototype.toString</code>的方法。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2015/04/16/life_Epitaph/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -424,7 +1005,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-count">22</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

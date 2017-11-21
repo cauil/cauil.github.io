@@ -239,6 +239,182 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/11/21/2017-11-21-ES6之对象/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cauil">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/abu.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cauil's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/11/21/2017-11-21-ES6之对象/" itemprop="url">ES6之对象</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-21T00:00:00+08:00">
+                2017-11-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JS/" itemprop="url" rel="index">
+                    <span itemprop="name">JS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="对象字面量语法扩展"><a href="#对象字面量语法扩展" class="headerlink" title="对象字面量语法扩展"></a>对象字面量语法扩展</h2><h4 id="属性初始值的简写"><a href="#属性初始值的简写" class="headerlink" title="属性初始值的简写"></a>属性初始值的简写</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">function createPerson(name, age) &#123;</div><div class="line">  return &#123;</div><div class="line">    name: name,</div><div class="line">    age: age </div><div class="line">  &#125;;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>属性与为属性赋值的变量是重复的，可以简写为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">function createPerson(name, age) &#123;</div><div class="line">  return &#123;</div><div class="line">    name,</div><div class="line">    age </div><div class="line">  &#125;;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这样可以避免命名错误以及不小心的拼写错误。</p>
+<h4 id="对象方法的简写"><a href="#对象方法的简写" class="headerlink" title="对象方法的简写"></a>对象方法的简写</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var person = &#123;</div><div class="line">    name: &quot;Nicholas&quot;,</div><div class="line">    sayName: function() &#123;</div><div class="line">        console.log(this.name);</div><div class="line">    &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>可以简写为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var person = &#123;</div><div class="line">    name: &quot;Nicholas&quot;,</div><div class="line">    sayName() &#123;</div><div class="line">        console.log(this.name);</div><div class="line">    &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>简写方法sayName里面可以使用super关键字；</p>
+<h4 id="可计算属性名"><a href="#可计算属性名" class="headerlink" title="可计算属性名"></a>可计算属性名</h4><p>ES5及早期版本的对象实例中，如果想要通过计算得到属性名，就需要用方括号代替点记法。并且有空格的字符串不能直接作为属性名，也需要方括号代替；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var person = &#123;&#125;,</div><div class="line">    lastName = &quot;last name&quot;;</div><div class="line">person[&quot;first name&quot;] = &quot;Nicholas&quot;;</div><div class="line">person[lastName] = &quot;Zakas&quot;;</div><div class="line">console.log(person[&quot;first name&quot;]);</div><div class="line">console.log(person[lastName]);</div></pre></td></tr></table></figure>
+<p>ES6中，可在对象字面量中使用可计算属性名称，其语法与引用对象实例的可计算属性名称相同，也是使用方括号。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">let lastName = &quot;last name&quot;;</div><div class="line">let person = &#123;</div><div class="line">    &quot;first name&quot;: &quot;Nicholas&quot;,</div><div class="line">    [lastName]: &quot;Zakas&quot;</div><div class="line">&#125;;</div><div class="line">console.log(person[&quot;first name&quot;]);</div><div class="line">console.log(person[lastName]);</div></pre></td></tr></table></figure>
+<h2 id="新增方法"><a href="#新增方法" class="headerlink" title="新增方法"></a>新增方法</h2><h4 id="Object-is"><a href="#Object-is" class="headerlink" title="Object.is"></a>Object.is</h4><p>在JS中比较两个值，使用===跟==比较多，但是===在有些情况也不完全准确；+0与-0在JS引擎中是两个完全不同的实体，<code>NaN === NaN</code> 返回值为false，需要用isNaN()才能检测出NaN;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">console.log(+0 == -0);              // true</div><div class="line">console.log(+0 === -0);             // true</div><div class="line">console.log(Object.is(+0, -0));     // false</div><div class="line">console.log(NaN == NaN);            // false</div><div class="line">console.log(NaN === NaN);           // false</div><div class="line">console.log(Object.is(NaN, NaN));   // true</div><div class="line">console.log(5 == 5);                // true</div><div class="line">console.log(5 == &quot;5&quot;);              // true</div><div class="line">console.log(5 === 5);               // true</div><div class="line">console.log(5 === &quot;5&quot;);             // false</div><div class="line">console.log(Object.is(5, 5));       // true</div><div class="line">console.log(Object.is(5, &quot;5&quot;));     // false</div></pre></td></tr></table></figure>
+<h4 id="Object-assign"><a href="#Object-assign" class="headerlink" title="Object.assign"></a>Object.assign</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">var receiver = &#123;&#125;;</div><div class="line">var test = &#123;name: &apos;zakas&apos;&#125;;</div><div class="line">Object.assign(receiver,</div><div class="line">    &#123;</div><div class="line">      type: &quot;js&quot;,</div><div class="line">        name: &quot;file.js&quot;</div><div class="line">    &#125;,</div><div class="line">    &#123;</div><div class="line">      type: &quot;css&quot;,</div><div class="line">      data: test,</div><div class="line">    &#125; </div><div class="line">);</div><div class="line">console.log(receiver.type); // css</div><div class="line">console.log(receiver.name); // file.js</div><div class="line">console.log(receiver.data); // &#123;name: &apos;zakas&apos;&#125;</div><div class="line">test.name = &apos;hi&apos;;</div><div class="line">console.log(receiver.data); // &#123;name: &apos;hi&apos;&#125;</div></pre></td></tr></table></figure>
+<p>Object.assign参数后面的对象会覆盖前面的对象，并且为浅复制；</p>
+<p>Object.assign会把访问器属性复制为数据属性；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">var receiver = &#123;&#125;,</div><div class="line">  supplier = &#123;</div><div class="line">    get name() &#123;</div><div class="line">      return &quot;file.js&quot;</div><div class="line">    &#125; </div><div class="line">  &#125;;</div><div class="line">Object.assign(receiver, supplier);</div><div class="line">var descriptor = Object.getOwnPropertyDescriptor(receiver, &quot;name&quot;);</div><div class="line">console.log(descriptor.value);      // &quot;file.js&quot;</div><div class="line">console.log(descriptor.get);        // undefined</div></pre></td></tr></table></figure>
+<h2 id="重复的对象字面量属性"><a href="#重复的对象字面量属性" class="headerlink" title="重复的对象字面量属性"></a>重复的对象字面量属性</h2><p>ES5严格模式重复字面量属性会报错；ES6无论严格或者非严格模式下，重复属性都会选取最后一个取值；<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&quot;use strict&quot;;</div><div class="line">var person = &#123;</div><div class="line">  name: &quot;Nicholas&quot;,</div><div class="line">  name: &quot;Greg&quot;        // no error in ES6 strict mode</div><div class="line">&#125;;</div><div class="line">console.log(person.name); // Greg</div></pre></td></tr></table></figure></p>
+<h2 id="自有属性枚举顺序"><a href="#自有属性枚举顺序" class="headerlink" title="自有属性枚举顺序"></a>自有属性枚举顺序</h2><ol>
+<li>所有数字键按升序排列</li>
+<li>所有字符串键按照它们被加入对象的顺序排序</li>
+<li>所有symbol按照它们被加入的顺序排序</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">var obj = &#123;</div><div class="line">    a: 1,</div><div class="line">    0: 1,</div><div class="line">    c: 1,</div><div class="line">    2: 1,</div><div class="line">    b: 1,</div><div class="line">    1: 1</div><div class="line">&#125;;</div><div class="line">obj.d = 1;</div><div class="line">console.log(Object.getOwnPropertyNames(obj).join(&quot;&quot;));</div><div class="line">// 012acbd</div></pre></td></tr></table></figure>
+<h2 id="增强对象原型"><a href="#增强对象原型" class="headerlink" title="增强对象原型"></a>增强对象原型</h2><h4 id="改变对象的原型setPrototypeOf"><a href="#改变对象的原型setPrototypeOf" class="headerlink" title="改变对象的原型setPrototypeOf"></a>改变对象的原型setPrototypeOf</h4><p>对象原型的真实值被储存在内部的专用属性[[Prototype]]中，调用Object.getPrototypeOf返回储存在其中的值，调用Object.setPrototypeOf方法改变其中的值；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">let person = &#123;</div><div class="line">    getGreeting() &#123;</div><div class="line">        return &quot;Hello&quot;;</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line">let dog = &#123;</div><div class="line">    getGreeting() &#123;</div><div class="line">        return &quot;Woof&quot;;</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line">// prototype is person</div><div class="line">let friend = Object.create(person);</div><div class="line">console.log(friend.getGreeting()); // Hello</div><div class="line">console.log(Object.getPrototypeOf(friend) === person); // true</div><div class="line">// set prototype to dog</div><div class="line">Object.setPrototypeOf(friend, dog);</div><div class="line">console.log(friend.getGreeting()); // &quot;Woof&quot;</div><div class="line">console.log(Object.getPrototypeOf(friend) === dog); // true</div></pre></td></tr></table></figure>
+<h4 id="简化原型访问的Super引用"><a href="#简化原型访问的Super引用" class="headerlink" title="简化原型访问的Super引用"></a>简化原型访问的Super引用</h4><p>ES6引入了super关键字，super引用相当于指向对象原型的指针，实际上也就是Object.getPrototypeOf()的效果；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">let friend = &#123;</div><div class="line">    getGreeting() &#123;</div><div class="line">        // in the previous example, this is the same as:</div><div class="line">        // Object.getPrototypeOf(this).getGreeting.call(this)</div><div class="line">        return super.getGreeting() + &quot;, hi!&quot;;</div><div class="line">&#125; &#125;;</div></pre></td></tr></table></figure>
+<p>super关键字必须要在使用简写方法的对象中使用super引用，如果在其他方法声明中使用会导致语法错误；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">let friend = &#123;</div><div class="line">    getGreeting: function() &#123;// syntax error</div><div class="line">        return super.getGreeting() + &quot;, hi!&quot;; // &apos;super&apos; keyword unexpected here</div><div class="line">    &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<h2 id="正式的方法定义"><a href="#正式的方法定义" class="headerlink" title="正式的方法定义"></a>正式的方法定义</h2><p>ES6正式将方法定义为一个函数，它会由一个内部的[[HomeObject]]属性来容纳这个方法从属的对象；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">let person = &#123;</div><div class="line">    // method</div><div class="line">    getGreeting() &#123;</div><div class="line">        return &quot;Hello&quot;;</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line">// not a method</div><div class="line">function shareGreeting() &#123;</div><div class="line">    return &quot;Hi!&quot;;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上段代码的getGreeting方法的[[HomeObject]]属性值为person，而创建shareGreeting函数时，由于未将其赋值给一个对象，因为该方法没有明确定义[[HomeObject]]属性。</p>
+<p>super的所有引用都通过[[HomeObject]]属性调用Object.getPrototypeOf方法来检索原型的引用；然后搜寻原型找到同名函数；最后，设置this绑定并且调用相应的方法；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">let person = &#123;</div><div class="line">    getGreeting() &#123;</div><div class="line">        return &quot;Hello&quot;;</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line">// prototype is person</div><div class="line">let friend = &#123;</div><div class="line">    getGreeting() &#123;</div><div class="line">        return super.getGreeting() + &quot;, hi!&quot;;</div><div class="line">&#125; &#125;;</div><div class="line">Object.setPrototypeOf(friend, person);</div><div class="line">console.log(friend.getGreeting());</div></pre></td></tr></table></figure>
+<p><code>friend.getGreeting()</code>方法的[[HomeObject]]的属性值时friend,friend的原型是person，所以<code>super.getGreeting()</code>等价于<code>person.getGreeting.call(this)</code>;</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/11/19/2017-11-19-ES6之函数/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1813,244 +1989,6 @@ Equal to the computed value of font-size on the root element. When specified on 
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2016/02/21/linkedList/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cauil">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/abu.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Cauil's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2016/02/21/linkedList/" itemprop="url">leetcode之linked list</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-02-21T00:00:00+08:00">
-                2016-02-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/algorithm/" itemprop="url" rel="index">
-                    <span itemprop="name">algorithm</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="链表javascript实现"><a href="#链表javascript实现" class="headerlink" title="链表javascript实现"></a>链表javascript实现</h2><p>链表（Linked list）是一种常见的基础数据结构，是一种线性表，但是并不会按线性的顺序存储数据，而是在每一个节点里存到下一个节点的指针(Pointer)。由于不必须按顺<br>序存储，链表在插入的时候可以达到O(1)的复杂度，比另一种线性表顺序表快得多，但是查找一个节点或者访问特定编号的节点则需要O(n)的时间，而顺序表相应的时间复杂度<br>分别是O(logn)和O(1)。</p>
-<p>javascript实现可以通过下面的方法：</p>
-<pre><code>function ListNode(val) {
-    this.val = val;
-    this.next = null;
-}
-</code></pre><p>下面我们看看链表题目的基本类型:</p>
-<h2 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h2><p>删除的题目有19, 83, 203, 237, 82</p>
-<p>删除其实就是找到要删除元素的前一个元素pre;</p>
-<pre><code>pre.next = pre.next.next;
-</code></pre><p>不过还有一种是假删除，找前一个元素比较麻烦，我们可以直接把要删除元素的下一个元素的值赋给当前删除，然后删除下一个元素；</p>
-<pre><code>cur.val = cur.next.val;
-cur.next = cur.next.next;
-</code></pre><p>看一个典型例题<a href="https://leetcode.com/problems/remove-nth-node-from-end-of-list/" target="_blank" rel="external">19. Remove Nth Node From End of List</a>:</p>
-<p>Given a linked list, remove the nth node from the end of list and return its head.<br>For example,</p>
-<pre><code>Given linked list: 1-&gt;2-&gt;3-&gt;4-&gt;5, and n = 2.
-After removing the second node from the end, the linked list becomes 1-&gt;2-&gt;3-&gt;5.
-</code></pre><p>这个题目我们可以通过设置两个变量，fast变量先走n步，然后fast和slow变量同时走，直到fast为null; 此时slow就是到达了倒数第n个元素，执行删除即可；代码如下：</p>
-<pre><code>var removeNthFromEnd = function(head, n) {
-    var left, before, right = head;
-    left = before = {next: head}; 
-    while (n--) right = right.next;
-    while (right) {
-        right = right.next;
-        left = left.next;
-    }
-    left.next = left.next.next;
-    return before.next;
-};
-</code></pre><h2 id="查找"><a href="#查找" class="headerlink" title="查找"></a>查找</h2><p>查找题目有：160, 141, 142</p>
-<p>我们来看看<a href="https://leetcode.com/problems/linked-list-cycle/" target="_blank" rel="external">141. Linked List Cycle</a>，判断是否🈶️环，我们可以通过设置两个指针fast和slow，slow一次走一步，fast一次走两部，如果🈶️环，fast必定在环内追上slow；于是：</p>
-<pre><code>var hasCycle = function(head) {
-    var slow = head;
-    var fast = head;
-
-    while(fast &amp;&amp; fast.next) {
-        fast = fast.next.next;
-        slow = slow.next;
-        if(fast === slow) {
-            return true;
-        }
-    }
-    return false;
-};
-</code></pre><h2 id="翻转"><a href="#翻转" class="headerlink" title="翻转"></a>翻转</h2><p>翻转题目有234，206，24，92，61</p>
-<p><a href="https://leetcode.com/problems/palindrome-linked-list/" target="_blank" rel="external">234. Palindrome Linked List</a>其实是一个判断是否是回文的题目，但是我们可以利用翻转来判断；</p>
-<p>首先利用两个变量来找到中间点，然后分为两个链表，把后面的链表翻转过来，并同时遍历两个链表比较：</p>
-<pre><code>var isPalindrome = function(head) {
-    function reverse(curr) {
-        var prev = null;
-        var next;
-        while(curr) {
-            next = curr.next;
-            curr.next = prev;
-            prev = curr;
-            curr = next;
-        }
-        return prev;
-    }
-    var fast = head;
-    var slow = head;
-    while(fast &amp;&amp; fast.next) {
-        fast = fast.next.next;
-        slow = slow.next;
-    }
-    if(fast) slow = slow.next;
-
-    slow = reverse(slow);
-    while(slow &amp;&amp; head.val === slow.val) {
-        head = head.next;
-        slow = slow.next;
-    }
-    return slow === null;
-};
-</code></pre><h2 id="合并"><a href="#合并" class="headerlink" title="合并"></a>合并</h2><p>合并的题目有：21，328，86，148，2，92，143</p>
-<p><a href="https://leetcode.com/problems/partition-list/" target="_blank" rel="external">86. Partition List</a>这个题目是让我们把指定元素后面的都小于它的元素放到指定元素前面去；</p>
-<p>我们可以设置两个表头，遍历链表，把小于指定元素的链接到第一个表，反之，链接到第二个表，最后把第二个链表链接到第一个链表后面；</p>
-<pre><code>var partition = function(head, x) {
-    var hd1 = new ListNode(0);
-    var hd2 = new ListNode(0);
-    var p1 = hd1;
-    var p2 = hd2;
-    while(head) {
-        if(head.val &lt; x) {
-            p1.next = head;
-            p1 = p1.next;
-        } else {
-            p2.next = head;
-            p2 = p2.next;
-        }
-        head = head.next;
-    }
-    p2.next = null;
-    p1.next = hd2.next;
-    return hd1.next;
-};
-</code></pre><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>其实链表的操作就是那几种：删除／查找／翻转／合并, 只要掌握链表的基本操作并配合标记或者特定题目的一些特性，基本都可以解决；</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2105,7 +2043,7 @@ After removing the second node from the end, the linked list becomes 1-&gt;2-&gt
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-count">22</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
