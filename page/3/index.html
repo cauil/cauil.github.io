@@ -239,6 +239,261 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2015/08/21/css_notes_2-float/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cauil">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/abu.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cauil's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2015/08/21/css_notes_2-float/" itemprop="url">CSS：浮动</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-08-21T00:00:00+08:00">
+                2015-08-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/css/" itemprop="url" rel="index">
+                    <span itemprop="name">css</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>什么是浮动，浮动有什么作用？</p>
+<h2 id="1-浮动的前世今生"><a href="#1-浮动的前世今生" class="headerlink" title="1.浮动的前世今生"></a>1.浮动的前世今生</h2><p>从Netscape1以来，就可以通过声明让图像浮动，如：</p>
+<pre><code>&lt;img src=&quot;b5.gif&quot; align=&quot;right&quot;&gt;
+</code></pre><p>这会导致一个图像浮动到右边，而允许其他内容如文本“围绕”该图像。</p>
+<p>可见浮动的初衷是为了实现文字环绕效果；</p>
+<p>过去只可能浮动图像。但CSS允许浮动任何元素，从图像到段落再到列表，所有元素都可以浮动。在CSS中，这种行为是用属性float实现。</p>
+<h2 id="2-float取值"><a href="#2-float取值" class="headerlink" title="2.float取值"></a>2.float取值</h2><p>值：left、right、none、inherit</p>
+<p>初始值：none</p>
+<p>应用于：所有元素</p>
+<p>继承值：无</p>
+<p>计算值：根据指定确定</p>
+<h2 id="3-浮动的特性：包裹与破坏"><a href="#3-浮动的特性：包裹与破坏" class="headerlink" title="3.浮动的特性：包裹与破坏"></a>3.浮动的特性：包裹与破坏</h2><p>什么是包裹（对本身而言）：包裹是收缩、坚挺（有高度了）、隔绝（内部内容与外界不相关）</p>
+<p>具有包裹的其他小伙伴：</p>
+<ul>
+<li><p>display: inline-block/table-cell/…</p>
+</li>
+<li><p>position: absolute/fixed/sticky</p>
+</li>
+<li><p>overflow: hidden/scroll</p>
+</li>
+</ul>
+<p>什么是破坏（对父元素而言）：容器被破坏，父元素的高度塌陷</p>
+<p>具有破坏的其他小伙伴：</p>
+<ul>
+<li><p>display: none</p>
+</li>
+<li><p>position: absolute/fixed/sticky</p>
+</li>
+</ul>
+<p>对于浮动元素有几点要记住。</p>
+<p>首先，会以某种方式将浮动元素从文档的正常流中删除，不过它还是会影响布局。</p>
+<p>采用CSS的特有方式，浮动元素几乎自成一派，不过它们还是对文档的其他元素有影响。</p>
+<h2 id="4-清除浮动"><a href="#4-清除浮动" class="headerlink" title="4.清除浮动"></a>4.清除浮动</h2><p>由于浮动具有破坏性，那我们怎么清楚浮动带来的影响；有以下三种方式：</p>
+<p>(1)浮动元素脚底插入clear：both</p>
+<p><strong>注意：脚底插入的标签是要为block元素；</strong></p>
+<p>直接把<code>&lt;div style=&quot;clear:both;&quot;&gt;&lt;/div&gt;</code>放到当作最后一个子标签放到父标签那儿，此方法兼容性强，使用方便，但是浪费了一个标签，而且只能使用一次，而且有时候如果不注意中间多了个空格会产生一段空白高度。</p>
+<p>优点：通俗易懂，容易掌握；</p>
+<p>缺点：可以想象通过此方法，会添加多少无意义的空标签，有违结构与表现的分离，在后期维护中将是噩梦；<strong>只是解决了浮动，但新添加的标签会与父元素外面的元素发生margin重叠；</strong></p>
+<p>(2)使用after伪对象清除浮动（与第一种方法原理相同）</p>
+<p>该方法只适用于非IE浏览器，因为IE6/IE7不认识伪元素,具体写法可参照下面例;</p>
+<pre><code>.fix{zoom:1;}
+.fix:after{
+    display:block;
+    content:&apos;.&apos;;
+    clear:both;
+    line-height:0;
+    visibility:hidden;
+}
+</code></pre><p>对于伪元素可以使用下面的方案，不用写太多东西：</p>
+<pre><code>.clearfix:after { content: &apos;&apos;; **display: table**; clear: both; }
+.clearfix { *zoom: 1; }
+</code></pre><p>使用中需注意以下几点：</p>
+<p>a.该方法中必须为需要清除浮动元素的伪对象中设置 height:0，否则该元素会比实际高出若干像素；</p>
+<p>b.content属性是必须的，但其值可以为空，蓝色理想讨论该方法的时候content属性的值 设为”.”，但我发现为空亦是可以的。</p>
+<p>c.line-height:0写成height:0也是可以的。不会影响任何其他样式，通用性强，覆盖面广;</p>
+<p>(3)BFC/haslayout解决</p>
+<p>例如给包含浮动元素的<strong>父标签</strong>添加css属性<code>.clearfix{overflow:hidden; zoom:1;}</code></p>
+<p>其中<code>zoom:1</code>用于让IE6/IE7haslayout又不影响形体的神器。</p>
+<p>此方法优点在于代码简洁，涵盖所有浏览器，可是对于overflow:hidden;要是里面的元素要是想来个margin负值定位或是负的绝对定位，岂不是直接被裁掉了，所以此方法是有不小的局限性的。</p>
+<p>优点：不存在结构和语义化问题，代码量极少；<strong>父元素把子元素都包裹起来了，子元素不会与外层的元素发生margin重叠；</strong></p>
+<p>缺点：内容增多时候容易造成不会自动换行导致内容被隐藏掉，无法显示需要溢出的元素。</p>
+<p>BFC/haslayout通常有以下声明：</p>
+<ul>
+<li>float:left/right</li>
+<li>position:absolute/fixed</li>
+<li>overflow:hidden/scroll(IE7+)</li>
+<li>display:inline-block/table-cell(IE8+)</li>
+<li>width/height/zoom:1/…(IE6/IE7)</li>
+</ul>
+<p>(4)总结：</p>
+<p>此三种方法各有利弊，使用时应择优选择，比较之下第二种方法更为可取；</p>
+<p>可以使用兼容性的解决方案：</p>
+<pre><code>.clearfix:after { // 解决IE8+
+content: &apos;&apos;; 
+display: block; 
+height: 0; 
+overflow: hidden; 
+clear: both
+}
+.clearfix {*zoom: 1;} // 解决IE6/IE7
+</code></pre><h2 id="5-浮动的滥用"><a href="#5-浮动的滥用" class="headerlink" title="5.浮动的滥用"></a>5.浮动的滥用</h2><p>浮动的两大特性：元素block块状化（砌砖头）、破坏造成的紧密排列特性（去空格化）</p>
+<p>block化即当元素增加浮动属性，其display属性转化为block;</p>
+<p>去空格化是指当元素增加浮动属性，后面的空格&amp;nbsp或者换行符\n都被移到后面了，实现了文字环绕效果；而换行符在标签的末尾没有任何表现，&amp;nbsp可以选中；</p>
+<p>砌砖布局的问题：</p>
+<pre><code>妙脆角-嘎吱脆； // 容错性比较糟糕，容易出问题
+
+吝啬鬼-重用废； // 尺寸限定，模块到另外一个尺寸容器中，不配对，要重新整，完全没有重用性；
+
+洋葱头-IE7飙泪； // 在低版本的IE有很多问题
+</code></pre><h2 id="6-float与流体布局"><a href="#6-float与流体布局" class="headerlink" title="6.float与流体布局"></a>6.float与流体布局</h2><p>单侧固定（有两种方式）：</p>
+<pre><code>width+float // 这一种是设置紧跟元素的width并设置为右浮动
+padding-left/margin-left // 这一种是不设置width，只设置margin-left\
+或者padding-left，让其自然适应
+</code></pre><p>DOM与显示位置匹配的单侧固定布局：</p>
+<pre><code>width:100% + float // 外层
+    padding-left/margin-left //设置margin-right，以防父元素的后面元素margin-left进父元素后，内容被父元素内容覆盖
+width + float + margin负值 // 设置width和margin-left负值，使其进入上面元素内
+</code></pre><p>高级进化 – 智能自适应尺寸（推荐）：</p>
+<pre><code>float
+display: table-cell; width: 2000px;          IE8+
+*display: inline-block; *width: auto;       IE7-
+</code></pre><h2 id="7-浮动与兼容型"><a href="#7-浮动与兼容型" class="headerlink" title="7.浮动与兼容型"></a>7.浮动与兼容型</h2><p>IE7的浮动问题：</p>
+<ul>
+<li><p>含clear的浮动元素包裹不正确的问题</p>
+</li>
+<li><p>浮动元素倒数两个莫名垂直间距问题</p>
+</li>
+<li><p>浮动元素最后一个字符重复问题</p>
+</li>
+<li><p>浮动元素楼梯排列问题</p>
+</li>
+<li><p>浮动元素和文本不在同一行的问题</p>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2015/08/13/css_notes_1-layout/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1386,7 +1641,7 @@ obj.valueOf = function() {return this.x + this.y + 100;};
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-count">25</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
