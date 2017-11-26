@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="JS,ES6," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="为啥引入Set与Map在ES6之前，当想使用非数值型索引，就会用非数组对象创建所需的数据结构； ES5中set集合：123456var set = Object.create(null);set.foo = true;// checking for existenceif (set.foo) &amp;#123;    // code to execute&amp;#125; Map集合： 12345var ma">
+<meta name="keywords" content="JS,ES6">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ES6之Set与Map">
+<meta property="og:url" content="http://cauil.github.io/2017/11/27/2017-11-27-ES6之Set与Map/index.html">
+<meta property="og:site_name" content="Cauil&#39;s Blog">
+<meta property="og:description" content="为啥引入Set与Map在ES6之前，当想使用非数值型索引，就会用非数组对象创建所需的数据结构； ES5中set集合：123456var set = Object.create(null);set.foo = true;// checking for existenceif (set.foo) &amp;#123;    // code to execute&amp;#125; Map集合： 12345var ma">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-11-26T06:15:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ES6之Set与Map">
+<meta name="twitter:description" content="为啥引入Set与Map在ES6之前，当想使用非数值型索引，就会用非数组对象创建所需的数据结构； ES5中set集合：123456var set = Object.create(null);set.foo = true;// checking for existenceif (set.foo) &amp;#123;    // code to execute&amp;#125; Map集合： 12345var ma">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://cauil.github.io/2017/11/27/2017-11-27-ES6之Set与Map/"/>
+
+
+
+
+
+  <title>ES6之Set与Map | Cauil's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Cauil's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">陌上花开，可缓缓归矣</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/11/27/2017-11-27-ES6之Set与Map/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cauil">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/abu.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cauil's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ES6之Set与Map</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-27T00:00:00+08:00">
+                2017-11-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JS/" itemprop="url" rel="index">
+                    <span itemprop="name">JS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="为啥引入Set与Map"><a href="#为啥引入Set与Map" class="headerlink" title="为啥引入Set与Map"></a>为啥引入Set与Map</h2><p>在ES6之前，当想使用非数值型索引，就会用非数组对象创建所需的数据结构；</p>
+<p>ES5中set集合：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var set = Object.create(null);</div><div class="line">set.foo = true;</div><div class="line">// checking for existence</div><div class="line">if (set.foo) &#123;</div><div class="line">    // code to execute</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>Map集合：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">var map = Object.create(null);</div><div class="line">map.foo = &quot;bar&quot;;</div><div class="line">// retrieving a value</div><div class="line">var value = map.foo;</div><div class="line">console.log(value);         // &quot;bar&quot;</div></pre></td></tr></table></figure>
+<p>用这种方法的确可以模拟Set集合与Map集合，但这种<strong>所有对象的属性名必须是字符串类型，必须确保每个键名都是字符串类型且在对象中是唯一的</strong>。如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">var map = Object.create(null);</div><div class="line">map[5] = &quot;foo&quot;;</div><div class="line">console.log(map[&quot;5&quot;]);      // &quot;foo&quot;</div><div class="line"></div><div class="line">var map = Object.create(null),</div><div class="line">    key1 = &#123;&#125;,</div><div class="line">    key2 = &#123;&#125;;</div><div class="line">map[key1] = &quot;foo&quot;;</div><div class="line">console.log(map[key2]); // &quot;foo&quot;</div></pre></td></tr></table></figure>
+<p>对于Map集合中，如果它的属性值是假值，则要求使用布尔值的情况下，会被自动转换成false。当在判断Map结合中是否有某些属性场景会有问题：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var map = Object.create(null);</div><div class="line">map.count = 0;</div><div class="line">// checking for the existence of &quot;count&quot; or for a nonzero value?</div><div class="line">if (map.count) &#123;</div><div class="line">   // code to execute</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="ES6中Set"><a href="#ES6中Set" class="headerlink" title="ES6中Set"></a>ES6中Set</h2><h4 id="添加元素"><a href="#添加元素" class="headerlink" title="添加元素"></a>添加元素</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">let set = new Set();</div><div class="line">set.add(5);</div><div class="line">set.add(&quot;5&quot;);</div><div class="line">console.log(set.size);</div></pre></td></tr></table></figure>
+<h4 id="移除元素"><a href="#移除元素" class="headerlink" title="移除元素"></a>移除元素</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">let set = new Set();</div><div class="line">set.add(5);</div><div class="line">set.add(&quot;5&quot;);</div><div class="line">console.log(set.has(5)); // true</div><div class="line">set.delete(5);</div><div class="line">console.log(set.has(5)); // false</div><div class="line">console.log(set.size);   // 1</div><div class="line">set.clear();</div><div class="line">console.log(set.has(&quot;5&quot;));  // false</div><div class="line">console.log(set.size);      // 0</div></pre></td></tr></table></figure>
+<h4 id="forEach"><a href="#forEach" class="headerlink" title="forEach"></a>forEach</h4><p>需要注意的是回调函数中的前两个参数value与key是一样的；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">let set = new Set([1, 2]);</div><div class="line">set.forEach(function(value, key, ownerSet) &#123;</div><div class="line">    console.log(key + &quot; &quot; + value);</div><div class="line">    console.log(ownerSet === set);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h4 id="转换为数组"><a href="#转换为数组" class="headerlink" title="转换为数组"></a>转换为数组</h4><p>在前面的迭代器中有讲到可迭代对象可以展开，同样Set可以：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">let set = new Set([1, 2, 3, 3, 3, 4, 5]),</div><div class="line">    array = [...set];</div><div class="line">console.log(array);  // [1, 2, 3, 4, 5]</div></pre></td></tr></table></figure>
+<h4 id="Weak-Set集合"><a href="#Weak-Set集合" class="headerlink" title="Weak Set集合"></a>Weak Set集合</h4><p>为啥要引入Weak Set？先看一个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">let set = new Set(),</div><div class="line">    key = &#123;&#125;;</div><div class="line">set.add(key);</div><div class="line">console.log(set.size);      // 1</div><div class="line">// eliminate original reference</div><div class="line">key = null;</div><div class="line">console.log(set.size);      // 1</div><div class="line">// get the original reference back</div><div class="line">key = [...set][0];</div></pre></td></tr></table></figure>
+<p>上面例子将变量key设置null时消除了对初识对象的引用，但是Set集合却保留了这个引用；</p>
+<p>有时我们希望当其他所有引用都不再存在时，让Set集合的这些引用随之消失；为了解决这个问题，ES6额外引入了一个类型：Weak Set集合（弱引用Set集合）。</p>
+<p>Weak Set集合只存储对象的弱引用，并且不可以存储原始值；集合中的弱引用如果是对象唯一的引用，则会被回收并释放相应内存；</p>
+<p>Weak Set支持add has和delete方法；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">let set = new WeakSet(),</div><div class="line">    key = &#123;&#125;;</div><div class="line">// add the object to the set</div><div class="line">set.add(key);</div><div class="line">console.log(set.has(key));</div><div class="line">set.delete(key);</div><div class="line">console.log(set.has(key));</div></pre></td></tr></table></figure>
+<p>Weak Set与Set区别：</p>
+<ul>
+<li>Weak Set实例中，只能含有对象参数；非对象参数会报错</li>
+<li>Weak Set不可迭代；</li>
+<li>Weak Set不暴露任何迭代器</li>
+<li>Weak Set不支持forEach方法</li>
+<li>Weak Set不支持size属性</li>
+<li><strong>最大区别是Weak Set保存的是对象的弱引用</strong></li>
+</ul>
+<h2 id="ES6中Map"><a href="#ES6中Map" class="headerlink" title="ES6中Map"></a>ES6中Map</h2><h4 id="支持的方法has-delete-clear"><a href="#支持的方法has-delete-clear" class="headerlink" title="支持的方法has delete clear"></a>支持的方法has delete clear</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">let map = new Map();</div><div class="line">map.set(&quot;name&quot;, &quot;Nicholas&quot;);</div><div class="line">map.set(&quot;age&quot;, 25);</div><div class="line">console.log(map.size); // 2</div><div class="line">console.log(map.has(&quot;name&quot;)); // true</div><div class="line">console.log(map.get(&quot;name&quot;)); // &apos;Nicholas&apos;</div><div class="line">console.log(map.has(&quot;age&quot;)); // true</div><div class="line">console.log(map.get(&quot;age&quot;)); // 25</div><div class="line">map.delete(&quot;name&quot;);</div><div class="line">console.log(map.has(&quot;name&quot;)); // false</div><div class="line">console.log(map.get(&quot;name&quot;)); // undefined</div><div class="line">console.log(map.size); // 1</div><div class="line">map.clear();</div><div class="line">console.log(map.has(&quot;name&quot;)); // false</div><div class="line">console.log(map.get(&quot;name&quot;)); // undefined</div><div class="line">console.log(map.has(&quot;age&quot;)); // false</div><div class="line">console.log(map.get(&quot;age&quot;)); // undefined</div><div class="line">console.log(map.size); // 0</div></pre></td></tr></table></figure>
+<h4 id="Map集合初始化"><a href="#Map集合初始化" class="headerlink" title="Map集合初始化"></a>Map集合初始化</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">let map = new Map([[&quot;name&quot;, &quot;Nicholas&quot;], [&quot;age&quot;, 25]]);</div><div class="line">console.log(map.has(&quot;name&quot;)); // true</div><div class="line">console.log(map.get(&quot;name&quot;)); // &apos;Nicholas&apos;</div><div class="line">console.log(map.has(&quot;age&quot;)); // true</div><div class="line">console.log(map.get(&quot;age&quot;)); // 25</div><div class="line">console.log(map.size); // 2</div></pre></td></tr></table></figure>
+<h4 id="Map集合的forEach"><a href="#Map集合的forEach" class="headerlink" title="Map集合的forEach"></a>Map集合的forEach</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">let map = new Map([[&quot;name&quot;, &quot;Nicholas&quot;], [&quot;age&quot;, 25]]);</div><div class="line">map.forEach(function(value, key, ownerMap) &#123;</div><div class="line">    console.log(key + &quot; &quot; + value);</div><div class="line">    console.log(ownerMap === map);</div><div class="line">&#125;);</div><div class="line">// name Nicholas</div><div class="line">// true</div><div class="line">// age 25</div><div class="line">// true</div></pre></td></tr></table></figure>
+<h4 id="Weak-Map"><a href="#Weak-Map" class="headerlink" title="Weak Map"></a>Weak Map</h4><p>Weak Map与Map的不同之处和Weak Set与Set的不同类似</p>
+<ul>
+<li>Weak Map实例中，只能含有对象参数；非对象参数会报错</li>
+<li>Weak Map不可迭代；</li>
+<li>Weak Map不暴露任何迭代器</li>
+<li>Weak Map不支持forEach方法</li>
+<li>Weak Map不支持size属性,不支持clear</li>
+<li><strong>最大区别是Weak Map保存的是对象的弱引用</strong></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JS/" rel="tag"># JS</a>
+          
+            <a href="/tags/ES6/" rel="tag"># ES6</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/26/2017-11-26-ES6之迭代器与生成器/" rel="next" title="ES6之迭代器与生成器">
+                <i class="fa fa-chevron-left"></i> ES6之迭代器与生成器
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/abu.jpg"
+                alt="cauil" />
+            
+              <p class="site-author-name" itemprop="name">cauil</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/cauil" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://weibo.com/cauil" target="_blank" title="Weibo">
+                    
+                      <i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://douban.com/people/cauil" target="_blank" title="DouBan">
+                    
+                      <i class="fa fa-fw fa-douban"></i>DouBan</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#为啥引入Set与Map"><span class="nav-number">1.</span> <span class="nav-text">为啥引入Set与Map</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ES6中Set"><span class="nav-number">2.</span> <span class="nav-text">ES6中Set</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#添加元素"><span class="nav-number">2.0.1.</span> <span class="nav-text">添加元素</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#移除元素"><span class="nav-number">2.0.2.</span> <span class="nav-text">移除元素</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#forEach"><span class="nav-number">2.0.3.</span> <span class="nav-text">forEach</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#转换为数组"><span class="nav-number">2.0.4.</span> <span class="nav-text">转换为数组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Weak-Set集合"><span class="nav-number">2.0.5.</span> <span class="nav-text">Weak Set集合</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ES6中Map"><span class="nav-number">3.</span> <span class="nav-text">ES6中Map</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#支持的方法has-delete-clear"><span class="nav-number">3.0.1.</span> <span class="nav-text">支持的方法has delete clear</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Map集合初始化"><span class="nav-number">3.0.2.</span> <span class="nav-text">Map集合初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Map集合的forEach"><span class="nav-number">3.0.3.</span> <span class="nav-text">Map集合的forEach</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Weak-Map"><span class="nav-number">3.0.4.</span> <span class="nav-text">Weak Map</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cauil</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

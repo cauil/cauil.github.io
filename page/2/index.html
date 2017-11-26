@@ -239,6 +239,192 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/10/29/2017-10-19-JS之异步1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cauil">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/abu.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cauil's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/10/29/2017-10-19-JS之异步1/" itemprop="url">JS之异步1</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-29T00:00:00+08:00">
+                2017-10-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JS/" itemprop="url" rel="index">
+                    <span itemprop="name">JS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="什么是异步"><a href="#什么是异步" class="headerlink" title="什么是异步"></a>什么是异步</h2><p>异步：一种通讯方式， 一个可以无需等待被调用函数的返回值就让操作继续进行的方法.</p>
+<p>在操作系统中对设备的处理，很多就是利用异步来处理的；比如中断，计算机的网卡接受从网络中发过来的数据，如果让cpu一直轮询等待数据的传输完成，这个很费时间, 浪费cpu的效率，<br>在网卡接受网络数据的时候，可以让cpu自己先忙其他的，等网络数据接受完毕之后才让网卡发起一个中断请求让cpu介入进行处理；这就是异步。</p>
+<h2 id="JS中的异步"><a href="#JS中的异步" class="headerlink" title="JS中的异步"></a>JS中的异步</h2><p>谈起JS的异步，就不得不说JS引擎是基于单线程事件循环的概念构建的。跟上面举的例子一样，为了让JS更有效率，响应更及时，JS中加入了异步。</p>
+<p>JS引擎同一时刻只能执行一个代码块,所以需要跟踪即将运行的代码，那些代码被放在一个任务队列中，每当一段代码准备执行是，都会被添加到任务队列中。每当JS引擎中的一段代码执行结束时，<br>事件循环会执行队列中的下一个任务。如下图可示：</p>
+<p><img src="/images/eventqueue.jpg" alt=""></p>
+<p>JS中有哪些异步呢？</p>
+<p>setTimeout(), setInterval(), ajax请求，dom事件这些都是JS中比较常见的异步.</p>
+<h2 id="事件模型"><a href="#事件模型" class="headerlink" title="事件模型"></a>事件模型</h2><p>用户点击按钮或按下键盘上的按钮会触发类似onclick这样的事件，它会向任务队列添加一个新任务来响应用户的操作。如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">let button = document.getElementById(&quot;my-btn&quot;);</div><div class="line">button.onclick = function(event) &#123;</div><div class="line">    console.log(&quot;clicked&quot;);</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>这段代码中当按钮被点击的时候，会触发onclick事件，执行函数(clickFn)会被添加到任务队列中，当任务队列执行到clickFn的时候打印出clicked;</p>
+<p>如下图:</p>
+<p><img src="/images/eventstack.png" alt=""></p>
+<p>事件模型适用于响应用户交互和完成类似的低频功能，但其对于更复杂的需求来说却不是很灵活。</p>
+<h2 id="setTimeout与setInterval"><a href="#setTimeout与setInterval" class="headerlink" title="setTimeout与setInterval"></a>setTimeout与setInterval</h2><p>这两个区别不大，我们看一段代码:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">setTimeout(function() &#123;</div><div class="line">    console.log(&apos;settimeout&apos;);</div><div class="line">&#125;, 1000)</div><div class="line">var sTime = new Date().getTime();</div><div class="line">console.log(new Date());</div><div class="line">console.log(&apos;test1&apos;);</div><div class="line">while(new Date().getTime() - sTime &lt; 2000) &#123;</div><div class="line">&#125;</div><div class="line">console.log(new Date())</div></pre></td></tr></table></figure>
+<p>执行结果显示打印出:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">// Sun Oct 29 2017 20:24:29 GMT+0800 (CST)</div><div class="line">// test1</div><div class="line">// Sun Oct 29 2017 20:24:31 GMT+0800 (CST)</div><div class="line">// settimeout</div></pre></td></tr></table></figure>
+<p>从中可以看出：</p>
+<ol>
+<li>先打印test1，setTimeout的确是异步过程，会在1秒后加入任务队列;</li>
+<li>只有在任务队列中的前面任务执行完，才会执行加入的任务(这段代码是过了两秒);</li>
+</ol>
+<p>setTimeout也是一种异步的方式，但是不能很好的把控。</p>
+<h2 id="回调模式"><a href="#回调模式" class="headerlink" title="回调模式"></a>回调模式</h2><p>回调模式与事件模式类似，只不过回调模式中被调用的函数是作为参数传入的，如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">fs.readFile(&apos;example.txt&apos;, function(err, contents) &#123;</div><div class="line">    if(err) &#123;</div><div class="line">        throw err;</div><div class="line">    &#125;</div><div class="line">    console.log(contents)</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>文件example.txt读取完毕后会把回调加入任务队列中，如果此时任务队列为空，直接执行回调，如果不为空，等前面的任务执行完再执行回调；</p>
+<p>但是这有一个问题，当我们的需求是，先读取文件1，然后需要把读出的文件1作为内容进行网络转发；那就会：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">fs.readFile(&apos;example.txt&apos;, function(err, contents) &#123;</div><div class="line">    if(err) &#123;</div><div class="line">        throw err;</div><div class="line">    &#125;;</div><div class="line">    console.log(contents);</div><div class="line">    ajax(&#123;</div><div class="line">        url: &apos;xxx.json&apos;</div><div class="line">        data: contents,</div><div class="line">        success: function() &#123;</div><div class="line">            doSomething()</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>这样看起来还是，当时如果这样的需求是叠加的，那就可能会形成传说中的回调地狱了。如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">fn1(function(err, result) &#123;</div><div class="line">    if(err) &#123;throw err;&#125;</div><div class="line"></div><div class="line">    fn2(function(err, result) &#123;</div><div class="line">        if(err) &#123;throw err;&#125;</div><div class="line"></div><div class="line">        fn3(function(err, result) &#123;</div><div class="line">            if(err) &#123;throw err;&#125;</div><div class="line"></div><div class="line">            fn4(function(err, result) &#123;</div><div class="line">                if(err) &#123;throw err;&#125;</div><div class="line">            &#125;)</div><div class="line">            ...</div><div class="line">        &#125;)</div><div class="line">    &#125;)</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>像上面这样嵌套多个方法调用，会创建出一堆难于理解和调试的代码。</p>
+<h2 id="异步之生成器"><a href="#异步之生成器" class="headerlink" title="异步之生成器"></a>异步之生成器</h2><h4 id="生成器简单介绍"><a href="#生成器简单介绍" class="headerlink" title="生成器简单介绍"></a>生成器简单介绍</h4><p>有时间会深入讲述一下生成器，这里只是简单说一下生成器的概念。下面就是一个生成器函数的栗子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">function *test() &#123; // 生成器函数</div><div class="line">    yield 1;</div><div class="line">    yield 2;</div><div class="line">&#125;</div><div class="line">var iter = test() // 迭代器</div></pre></td></tr></table></figure>
+<p>上面就是一个简单的生成器函数，当执行会生成一个迭代器，迭代器可参考之前写过的一片文章谈谈遍历与迭代协议.</p>
+<p>迭代器每次调用next方法会执行生成器函数，并且每次执行完yield关键词就停止，只在当下一次调用next的时候才回到之前执行停止的地方继续执行；</p>
+<p>如若需要回调或者系列化一序列的异步操作，生成器和yield语句就派上用场了。</p>
+<h4 id="生成器处理异步操作"><a href="#生成器处理异步操作" class="headerlink" title="生成器处理异步操作"></a>生成器处理异步操作</h4><p>任务处理器:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">function run(taskDef) &#123;</div><div class="line">    let task = taskDef();      // 1.外层生成器函数执行  创建一个无使用限制的迭代器</div><div class="line"></div><div class="line">    let result = task.next(); // 2. 开始任务，执行到第一个yield</div><div class="line"></div><div class="line">    // 循环调用next</div><div class="line">    function step() &#123;</div><div class="line">        if(!result.done) &#123; // 3.判断是否迭代完毕（没有yield或者return）</div><div class="line">            if(typeof result.value === &apos;function&apos;) &#123; // 4.下面包裹函数return的函数</div><div class="line">                result.value(function(err, data) &#123; // 5.调用return的函数, 传入回调函数到callback</div><div class="line">                    if(err) &#123;</div><div class="line">                        result = task.throw(err);</div><div class="line">                        return;</div><div class="line">                    &#125;</div><div class="line">                    result = task.next(data); // 6.异步回调完，继续执行到下一个yield</div><div class="line">                    step(); // 7. 循环执行 </div><div class="line">                &#125;)</div><div class="line">            &#125;</div><div class="line">        &#125; else &#123;</div><div class="line">            result = task.next(result.value);</div><div class="line">            step(); // 循环执行</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    step(); // 启动</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然后把异步操作包裹起来，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">let fs = require(&apos;sf&apos;);</div><div class="line"></div><div class="line">function readFile(filename) &#123;</div><div class="line">    return function(callback) &#123;</div><div class="line">        fs.readFile(filename, callback)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>下面是最终的调用方式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">run(function *() &#123;</div><div class="line">    let contents = yield readFile(&apos;config.json&apos;);</div><div class="line">    doSomethingWith(contents);</div><div class="line">    yield readMoreFile(&apos;xxx.json&apos;);</div><div class="line">    console.log(&apos;Done&apos;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>这样就可以很好的解决回调地狱的问题了，并且把异步操作通过同步的形式来调用。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>上面谈了JS的异步，并分别讲了事件模型／setTimeout／回调模型，最后讲述了怎么用生成器来处理回调地狱，并可以用同步的操作方式.</p>
+<p>上面这种处理形式还是比较麻烦，需要把异步函数包裹起来，并且无法区分用作任务执行器回调函数的返回值和一个不是回调函数的返回值。</p>
+<p>这种方式在场景使用中还是有局限性，如果需求需要并行执行两个异步操作或者同时进行两个异步操作并且只取优先完成的操作；这种就不太好处理了，会在下一篇中讲述解决的办法.</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/10/19/2017-10-19-mongo/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2136,252 +2322,6 @@ console.log(bar()); // undefined
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2015/10/19/DiveIntoJs_compare/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cauil">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/abu.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Cauil's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2015/10/19/DiveIntoJs_compare/" itemprop="url">深入理解Javascript： 比较</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-10-19T00:00:00+08:00">
-                2015-10-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/js/" itemprop="url" rel="index">
-                    <span itemprop="name">js</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>开始这个之前我们先看几个例子</p>
-<pre><code>var a = [1, 2]
-var b = [1, 2]
-a == [1, 2] // false
-a == b // false
-
-var c = {a: 1, b: 2}
-var d = {a: 1, b: 2}
-c == d // false
-
-var str = &apos;test&apos;
-str == &apos;test&apos; // true
-
-str.toUpperCase() // &apos;TEST&apos;
-str // &apos;test&apos;
-</code></pre><p>为什么有这种现象发生呢？</p>
-<h2 id="1-JS的原始值与对象"><a href="#1-JS的原始值与对象" class="headerlink" title="1.JS的原始值与对象"></a>1.JS的原始值与对象</h2><p>原来JS分为两种对象，一个是原始类型，有undefined、null、布尔值、数字和字符串；一个是对象类型（数组、函数等）；</p>
-<p>原始类型值是不可更改的，任何方法都无法更改一个原始值，如上面例子中str经过转换大写之后还是‘test’；原始类型值的比较是值的比较；</p>
-<p>对象类型值的比较并非值的比较，即使两个对象包含同样的属性及相同的值，如上例子的a与b、c与d的比较都为false；</p>
-<p>对象的比较为引用的比较，当且仅当它们引用同一个基对象时，它们才相等，如下：</p>
-<pre><code>var a = [1, 2]
-var b = a
-a == b // true
-</code></pre><h2 id="2-与"><a href="#2-与" class="headerlink" title="2.== 与 ==="></a>2.<code>==</code> 与 <code>===</code></h2><p>再来看一个例子：</p>
-<pre><code>1 == &apos;1&apos; // true
-1 === &apos;1&apos; // false
-var undefined;
-undefined == null; // true
-1 == true;   // true
-2 == true;   // false
-0 == false;  // true
-0 == &apos;&apos;;     // true
-NaN == NaN;  // false
-[] == false; // true
-[] == ![];   // true
-</code></pre><p>为啥会有前面两行的结果呢？</p>
-<p>原来‘==’运算符用来检测两个操作数是否相等，这里相等的定义非常宽松，可以允许进行类型转换；</p>
-<p>而‘===’运算符用来检测两个操作数是否<strong>严格</strong>相等，会比较两个操作数的类型是否相同；</p>
-<h3 id="运算规则"><a href="#运算规则" class="headerlink" title="===运算规则"></a><code>===</code>运算规则</h3><p>‘===’运算符首先计算其操作数的值，然后比较这两个值，比较过程没有任何类型转换；</p>
-<ul>
-<li><p>如果两个值类型不同，返回false；</p>
-</li>
-<li><p>如果两个值都为null或者undefined，返回true；</p>
-</li>
-<li><p>如果两个值都为布尔值true或者false，返回true；</p>
-</li>
-<li><p>如果其中一个为NaN,则返回false，即使另一个也为NaN；</p>
-</li>
-<li><p>如果两个值为数字且数值相等，则返回true，0与-0也返回true；</p>
-</li>
-<li><p>如果两个字符串的长度或者内容不同，则返回false；</p>
-</li>
-<li><p>如果两个引用值指向同一个对象，则返回true，其他对象比较都返回false；</p>
-</li>
-</ul>
-<h3 id="运算规则-1"><a href="#运算规则-1" class="headerlink" title="==运算规则"></a><code>==</code>运算规则</h3><p>‘==’运算符跟‘===’类似，不过比较并不严格。如果两个操作数类型相同，则和上文所述的严格相等的比较规则一样；</p>
-<p>如果两个操作数不是同一类型，那么相等运算符会尝试进行一些类型转换，然后进行比较：</p>
-<ul>
-<li><p>如果一个值为null，另一个为undefined，则它们相等；</p>
-</li>
-<li><p>如果一个值是数字，另一个是字符串，先将字符串转换为数字，然后使用转换后的值进行比较；</p>
-</li>
-<li><p>如果其中一个是true，则将其转换为1再进行比较；如果是false，则转换为0再进行比较；</p>
-</li>
-<li><p>如果一个值为对象，另一个值是数字或字符串，则使用下一小节要讲的类型转换规则转换为原始值，然后再进行比较；对象通过toString()方法或valueOf方法转换为原始值；JS语言核心的内置类首先尝试使用valueOf()，再尝试toString()，除了日期类，日期类只使用toString()转换。那些不是内置对象则通过各自实现中定义的方法转换为原始值；</p>
-</li>
-<li><p>其他不同类型之间的比较均不相等；</p>
-</li>
-</ul>
-<p>如<code>&#39;1&#39; == true</code>返回true，其中true转换为1，‘1’转换为1，因为两个数字的值相等，所以返回true。</p>
-<h2 id="3-类型转换"><a href="#3-类型转换" class="headerlink" title="3.类型转换"></a>3.类型转换</h2><p>类型转换有隐式和显式转换，下图为转换的规则：</p>
-<p><img src="http://7xj29n.com1.z0.glb.clouddn.com/类型转换.jpg" alt="http://7xj29n.com1.z0.glb.clouddn.com/类型转换.jpg"></p>
-<h3 id="显示转换"><a href="#显示转换" class="headerlink" title="显示转换"></a>显示转换</h3><p>做显示转换最简单的方法就是使用Boolean()、Number()、String()或Object()函数；</p>
-<p>注意这些函数与它们作为函数构造器是有区别的，作为函数构造器是使用new Number()，这种得出来的是属于包装对象；</p>
-<p>如下：</p>
-<pre><code>Number(&quot;3&quot;)
-new Number(&quot;3&quot;)
-typeof Number(&quot;3&quot;) // number
-typeof new Number(&quot;3&quot;) // object
-</code></pre><h3 id="隐式转换"><a href="#隐式转换" class="headerlink" title="隐式转换"></a>隐式转换</h3><p>隐式转换是通过上下语境或者运算符来转换的；</p>
-<p>例如‘+’运算符有一个操作数为字符串时，另一个操作数不为字符串时会隐式转换为字符串；’-‘运算符会隐式把两个操作数转换为数字;</p>
-<p>再如一元运算符‘！’会把操作数转换为布尔值并取反；如：</p>
-<pre><code>12 + &apos;1&apos; // &apos;121&apos;
-new Number(&quot;3&quot;) - [1] // 2
-!![] // true
-</code></pre><p>对应的转换规则如上面图中所示，下面只来说说对象转换为原始值的方式（<em>这里只谈原生对象，而非宿主对象的转换，宿主对象根据各自的算法进行转换</em>）；</p>
-<p>1.对象转换为字符串</p>
-<ul>
-<li>如果对象具有toString()方法，且调用这个方法返回一个原始值，则对象先转换为原始值，然后再通过上图的转换规则转换为字符串；</li>
-<li>否则JS会调用valueOf()方法，且调用这个方法返回一个原始值，则对象先转换为原始值，然后再通过上图的转换规则转换为字符串；</li>
-<li>如果对象无法从上面两个方法获得一个原始值，这时它将抛出一个类型错误异常；</li>
-</ul>
-<p>例如计算<code>[1, 2, 3] + &#39;abc&#39;</code>返回<code>&#39;1,2,3abc&#39;</code></p>
-<p>首先<code>[1, 2, 3]</code>调用<code>toString()</code>方法返回<code>‘1,2,3’</code>然后再执行字符串的+运算，返回<code>&#39;1,2,3abc&#39;</code></p>
-<p>2.对象转换为数字</p>
-<p>这个与上面转换为字符串相反，先调用valueOf()，失败再尝试toString()；</p>
-<ul>
-<li>否则JS会调用valueOf()方法，且调用这个方法返回一个原始值，则对象先转换为原始值，然后再通过上图的转换规则转换为字符串；</li>
-<li>如果对象具有toString()方法，且调用这个方法返回一个原始值，则对象先转换为原始值，然后再通过上图的转换规则转换为字符串；</li>
-<li>如果对象无法从上面两个方法获得一个原始值，这时它将抛出一个类型错误异常；</li>
-</ul>
-<p>例如计算<code>[1, 2, 3] - 1</code>返回<code>NaN</code></p>
-<p>首先<code>[1, 2, 3]</code>调用<code>valueOf()</code>方法，而此方法返回一个对象而不是原始值，则调用<code>toString()</code>方法，返回<code>‘1,2,3’</code>然后再转换为数字，根据字符串转换为数字的规则，为<code>NaN</code>,<code>NaN - 1</code>返回<code>NaN</code>。</p>
-<p>注意：日期对象有点特别，通过valueOf和toString方法返回的原始值将被直接使用；</p>
-<h2 id="4-后记"><a href="#4-后记" class="headerlink" title="4.后记"></a>4.后记</h2><p>通过上面的一些例子我们知道JS原始类型与对象类型的一些转换规则以及JS的内部实现，有机会再聊聊JS的常见运算符。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2015/10/19/DiveIntoJs_Events_propagation/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2675,7 +2615,7 @@ new Number(&quot;3&quot;) - [1] // 2
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-count">27</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
