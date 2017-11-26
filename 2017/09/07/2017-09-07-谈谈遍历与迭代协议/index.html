@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="Cauil&#39;s Blog">
 <meta property="og:description" content="谈谈遍历与迭代其实遍历与迭代是意义很近的一组词，但为啥要要把它们都列出来呢？先要从遍历说起： 遍历在js中的形式The for loopfor循环是最普遍的遍历方式, 下面是一个简单的栗子； 12345const digits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];for (let i = 0; i &amp;lt; digits.length; i++) &amp;#123;  co">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-10-11T05:11:42.000Z">
+<meta property="og:updated_time" content="2017-11-26T03:56:47.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="谈谈遍历与迭代协议">
 <meta name="twitter:description" content="谈谈遍历与迭代其实遍历与迭代是意义很近的一组词，但为啥要要把它们都列出来呢？先要从遍历说起： 遍历在js中的形式The for loopfor循环是最普遍的遍历方式, 下面是一个简单的栗子； 12345const digits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];for (let i = 0; i &amp;lt; digits.length; i++) &amp;#123;  co">
@@ -379,7 +379,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">var someString = &apos;hi&apos;;</div><div class="line">for(let v of something) &#123;</div><div class="line">    console.log(v);</div><div class="line">&#125;</div><div class="line">// h i</div></pre></td></tr></table></figure>
 <p>适用于元素展开:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">var set1 = new Set([0, 1, 2]);</div><div class="line">var set2 = new Set([2, 3, 4, 5]);</div><div class="line">var arr = [...set1, ...set2]; // [0, 1, 2, 2, 3, 4, 5]</div></pre></td></tr></table></figure></p>
 <p>转换数组<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Array.from(new Set([&apos;a&apos;, 1, &apos;b&apos;, 2]))</div></pre></td></tr></table></figure></p>
-<p>转换成生成器<br>```<br>var arr = [1,2,3];<br>var iter = arr<a href="">Symbol.iterator</a>;<br>iter.next(); // {value: 1, done: false}<br>iter.next(); // {value: 2, done: false}<br>iter.next(); // {value: 3, done: false}<br>iter.next(); // {value: undefined, done: true}</p>
+<p>转换成生成器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var arr = [1,2,3];</div><div class="line">var iter = arr[Symbol.iterator]();</div><div class="line">iter.next(); // &#123;value: 1, done: false&#125;</div><div class="line">iter.next(); // &#123;value: 2, done: false&#125;</div><div class="line">iter.next(); // &#123;value: 3, done: false&#125;</div><div class="line">iter.next(); // &#123;value: undefined, done: true&#125;</div></pre></td></tr></table></figure></p>
 
       
     </div>
