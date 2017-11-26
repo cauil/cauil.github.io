@@ -239,6 +239,171 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/10/19/2017-10-19-mongo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cauil">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/abu.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cauil's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/10/19/2017-10-19-mongo/" itemprop="url">mongo</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-19T00:00:00+08:00">
+                2017-10-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/sql/" itemprop="url" rel="index">
+                    <span itemprop="name">sql</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="what-is-mongo"><a href="#what-is-mongo" class="headerlink" title="what is mongo"></a>what is mongo</h2><p>MongoDB is  NoSQL database, NoSQL = not only sql.</p>
+<p>And from wikipedia:</p>
+<p><code>The term NoSQL was used by Carlo Strozzi in 1998 to name his lightweight, Strozzi NoSQL open-source relational database that did not expose the standard Structured Query Language (SQL) interface, but was still relational.[16] His NoSQL RDBMS is distinct from the circa-2009 general concept of NoSQL databases. Strozzi suggests that, because the current NoSQL movement &quot;departs from the relational model altogether, it should therefore have been called more appropriately &#39;NoREL&#39;,[17] referring to &#39;No Relational&#39;.</code></p>
+<p>MongoDB is document database:</p>
+<ul>
+<li>not .PDF or .DOC/.DOCX</li>
+<li>is a associative array</li>
+<li>document == json object</li>
+<li>document == php array</li>
+<li>document == python dict</li>
+<li>document == ruby hash</li>
+</ul>
+<h2 id="Why-mongo"><a href="#Why-mongo" class="headerlink" title="Why mongo"></a>Why mongo</h2><ul>
+<li>flexible schema</li>
+<li>oriented toward programmers</li>
+<li>flexible deployment</li>
+<li>designed for big data</li>
+</ul>
+<h2 id="Install-mongo"><a href="#Install-mongo" class="headerlink" title="Install mongo"></a>Install mongo</h2><p>mac: <code>brew intall mongo</code></p>
+<h2 id="Usage"><a href="#Usage" class="headerlink" title="Usage"></a>Usage</h2><p>We can use PyMongo to communicate with mongo in python.</p>
+<p>Use <code>pip install PyMongo</code> command to install PyMongo.</p>
+<p>And:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">from pymongo import MongoClient</div><div class="line">client = MongoClient(&apos;localhost:27017&apos;)</div><div class="line">db = client[db_name]</div></pre></td></tr></table></figure>
+<p>So now we can use db to read/create/update/delete the data.</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/10/10/hello-world/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1971,258 +2136,6 @@ console.log(bar()); // undefined
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2015/10/19/DiveIntoJs_Events_propagation/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cauil">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/abu.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Cauil's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2015/10/19/DiveIntoJs_Events_propagation/" itemprop="url">深入理解Javascript：DOM事件之事件传播</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-10-19T00:00:00+08:00">
-                2015-10-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/js/" itemprop="url" rel="index">
-                    <span itemprop="name">js</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>客户端Javascript程序采用异步事件驱动编程模型。</p>
-<p>那首先什么是异步事件驱动编程模型呢？</p>
-<p>在这种设计风格下，当文档、浏览器、元素或与之相关的对象发生某些有趣的事情时，Web浏览器就会产生事件。</p>
-<p>这些对象等待事件发生，然后他们相应，这就是所谓的异步驱动风格。</p>
-<h2 id="1-事件是什么呢？"><a href="#1-事件是什么呢？" class="headerlink" title="1.事件是什么呢？"></a>1.事件是什么呢？</h2><p>事件就是Web浏览器通知应用程序发生了什么事情。</p>
-<p>事件类型：是一个用来说明发生什么类型事件的字符串；例如‘mousemove’表示用户移动鼠标，由于事件类型只是一个字符串，有时也可称为事件名字。</p>
-<p>事件目标：发生的事件或者与之相关的对象。在JS应用程序中，Windows、Document、Element对象是最常见的事件目标。</p>
-<p>下面的代码就是弹出事件目标与类型的方法：</p>
-<pre><code>&lt;div id=&apos;box&apos;&gt;
-    &lt;button&gt;按钮&lt;/button&gt;
-&lt;/div&gt;
-&lt;script&gt;
-    var bt = document.getElementsByTagName(&apos;button&apos;)[0];
-
-    bt.addEventListener(&apos;click&apos;,function(event){
-        alert(&apos;事件目标:&apos; + event.target);
-        alert(&apos;事件类型：&apos; + event.type);
-    })
-&lt;/script&gt;
-</code></pre><p>事件处理程序：处理或相应事件的函数。当在特定的事件目标上发生特定类型的事件时，浏览器会调用对应的事件处理程序。</p>
-<p>事件对象：与特定事件相关且包含有关该事件详细信息的对象；例如，鼠标事件的相关对象会包含鼠标指针的坐标。</p>
-<p>事件传播：浏览器决定哪个对象触发其事件处理程序的过程：</p>
-<ul>
-<li>对于单个对象的特定事件（比如windows的load事件），必须是不能传播的；</li>
-<li>事件传播向上传播，即冒泡传播；</li>
-<li>事件处理程序能够通过调用方法或者设置事件对象属性来阻止事件传播，这样就能停止冒泡；</li>
-</ul>
-<p>事件捕获：事件传播的另外一种形式，在容器元素上注册的特定处理程序有机会在事件传播到真实目标之前捕获它。IE8或之前的版本不支持事件捕获，所以不常用它。</p>
-<h2 id="2-事件传播"><a href="#2-事件传播" class="headerlink" title="2.事件传播"></a>2.事件传播</h2><p>上面介绍了什么是事件，下面详细介绍事件的传播机制；</p>
-<p>当事件目标是Windows对象或其他的一些单独对象（如XMLHTTPRequest）时，浏览器简单的通过调用对象上适当的处理程序相应事件。</p>
-<p>当事件目标是文档或者文档元素时，情况不同：</p>
-<p>事件传播有三个阶段：</p>
-<p>捕获阶段，发生在目标处理程序调用之前，称为‘捕获’阶段，为<strong>第一阶段</strong>；</p>
-<p>目标对象本身的时间处理程序调用是<strong>第二个阶段</strong>；</p>
-<p>事件冒泡是事件传播的<strong>第三个阶段</strong>；</p>
-<p><img src="http://7xj29n.com1.z0.glb.clouddn.com/事件传播.jpg" alt="http://7xj29n.com1.z0.glb.clouddn.com/事件传播.jpg"></p>
-<h2 id="3-事件冒泡"><a href="#3-事件冒泡" class="headerlink" title="3.事件冒泡"></a>3.事件冒泡</h2><p>事件最开始由具体的元素（即事件发生的对象）接受，然后逐级向上传播至最不具体的那个节点。</p>
-<p>下面是html：</p>
-<pre><code>&lt;body&gt;
-    &lt;div id=&apos;box&apos;&gt;
-        &lt;button&gt;按钮&lt;/button&gt;
-    &lt;/div&gt;
-&lt;/body&gt;
-</code></pre><p>比如当点击上面HTML中的按钮，事件会一直向上冒泡，寻找注册了clink的事件处理程序的元素：</p>
-<pre><code>button --&gt;　box --&gt;　body --&gt; html --&gt; document root
-</code></pre><h2 id="4-事件捕获"><a href="#4-事件捕获" class="headerlink" title="4.事件捕获"></a>4.事件捕获</h2><p>事件捕获像反向的冒泡阶段；最先调用windows对象的捕获处理程序，然后是Document对象的捕获处理程序，接着是body对象的，再然后是DOM树向下，依次类推，直到调用事件目标的父元素的捕获事件处理程序。</p>
-<p>事件捕获只能用于addEventListener()注册且第三个参数是true的事件处理程序中。意味着事件捕获无法在IE9之前的IE中使用。因为IE9之前的IE中不支持addEventListener。</p>
-<pre><code>&lt;body&gt;
-    &lt;div id=&apos;box&apos;&gt;
-        &lt;button&gt;按钮&lt;/button&gt;
-    &lt;/div&gt;
-&lt;/body&gt;
-</code></pre><p>当点击上面html的按钮时，事件捕获阶段会从上到下寻找注册了click事件捕获处理程序的元素：</p>
-<pre><code>document root --&gt; html --&gt; body --&gt; box --&gt; button
-</code></pre><h2 id="5-事件的取消"><a href="#5-事件的取消" class="headerlink" title="5.事件的取消"></a>5.事件的取消</h2><p>取消事件的浏览器默认操作有三种方式：</p>
-<ul>
-<li>设置事件处理程序的返回值为false；</li>
-<li>在支持addEventListener的浏览器中，也能通过调用事件对象的preventDefault()方法取消事件的默认行为</li>
-<li>在IE9之前的IE中，可以设置事件对象的returnValue属性为false</li>
-</ul>
-<p>取消事件的传播可以通过：</p>
-<ul>
-<li>在支持addEventListener的浏览器中，也能通过调用事件对象的一个stopPropagation()方法取消事件的继续传播；如果在同一对象上定义了其他处理程序，剩下的处理程序将依旧被调用，但调用stopPropagation方法之后其他任何对象的事件处理程序将不会调用</li>
-<li>IE9之前不支持上一种方法的可以通过IE事件对象的cancelBubble属性设置为true能阻止事件进一步冒泡（这些版本事件传播不支持事件的捕获阶段）</li>
-</ul>
-<h2 id="6-综合例子"><a href="#6-综合例子" class="headerlink" title="6.综合例子"></a>6.综合例子</h2><p>下面是一个综合例子：</p>
-<p>当点击按钮时，会依次弹出对话框：‘事件捕获阶段body’、‘事件捕获阶段box’、‘事件捕获阶段：button’、‘事件调用阶段：button’、‘事件冒泡阶段：box’、‘事件冒泡阶段：body’；</p>
-<p>当点击box时，会依次弹出对话框：‘事件捕获阶段body’、‘事件捕获阶段box’、‘事件冒泡阶段：box’、‘事件冒泡阶段：body’；</p>
-<pre><code>&lt;html&gt;
-    &lt;head&gt;
-        &lt;title&gt;事件流&lt;/title&gt;
-        &lt;meta charset=&quot;utf-8&quot;&gt;
-        &lt;style&gt;
-            #box {height:100px;width: 100px;border: solid 1px red; text-align: center;background-color: burlywood}
-            #button {border: solid 1px red;}
-        &lt;/style&gt;
-    &lt;/head&gt;
-
-    &lt;body id=&quot;body&quot;&gt;
-        &lt;div id=&quot;box&quot;&gt;box
-            &lt;button id=&quot;button&quot;&gt;按钮&lt;/button&gt;
-        &lt;/div&gt;
-        &lt;script&gt;
-            var bt = document.getElementById(&apos;button&apos;);
-            var bx = document.getElementById(&apos;box&apos;);
-            var bd = document.getElementById(&apos;body&apos;);
-
-            bt.addEventListener(&apos;click&apos;, function(){
-                alert(&quot;事件捕获阶段：button&quot;);
-            }, true);
-            bx.addEventListener(&apos;click&apos;, function(){
-                alert(&quot;事件捕获阶段box&quot;);
-            },true);
-            bd.addEventListener(&apos;click&apos;, function(){
-                alert(&quot;事件捕获阶段body&quot;);
-                // event.stopPropagation();
-            },true);
-
-            bt.addEventListener(&apos;click&apos;, function(){
-                alert(&quot;事件调用阶段：button&quot;);
-            }, false);
-            bx.addEventListener(&apos;click&apos;, function(){
-                alert(&quot;事件冒泡阶段：box&quot;);
-            },false);
-            bd.addEventListener(&apos;click&apos;, function(){
-                alert(&quot;事件冒泡阶段：body&quot;);
-            },false);
-        &lt;/script&gt;
-    &lt;/body&gt;
-
-&lt;/html&gt;
-</code></pre>
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2015/10/19/DiveIntoJs_compare/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2469,7 +2382,7 @@ new Number(&quot;3&quot;) - [1] // 2
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2015/09/22/css_notes_3-overflow/">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2015/10/19/DiveIntoJs_Events_propagation/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="cauil">
@@ -2488,7 +2401,7 @@ new Number(&quot;3&quot;) - [1] // 2
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2015/09/22/css_notes_3-overflow/" itemprop="url">CSS：overflow</a></h1>
+                <a class="post-title-link" href="/2015/10/19/DiveIntoJs_Events_propagation/" itemprop="url">深入理解Javascript：DOM事件之事件传播</a></h1>
         
 
         <div class="post-meta">
@@ -2500,8 +2413,8 @@ new Number(&quot;3&quot;) - [1] // 2
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-09-22T00:00:00+08:00">
-                2015-09-22
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-10-19T00:00:00+08:00">
+                2015-10-19
               </time>
             
 
@@ -2523,8 +2436,8 @@ new Number(&quot;3&quot;) - [1] // 2
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/css/" itemprop="url" rel="index">
-                    <span itemprop="name">css</span>
+                  <a href="/categories/js/" itemprop="url" rel="index">
+                    <span itemprop="name">js</span>
                   </a>
                 </span>
 
@@ -2562,78 +2475,118 @@ new Number(&quot;3&quot;) - [1] // 2
       
         
           
-            <h2 id="1-overflow基本属性"><a href="#1-overflow基本属性" class="headerlink" title="1.overflow基本属性"></a>1.overflow基本属性</h2><p>值：<code>visible、hidden、scroll、auto、inherit</code></p>
-<p>初始值：<code>visible</code></p>
-<p>应用于：块级元素和替换元素</p>
-<p>继承值：无</p>
-<p>计算值：根据指定确定</p>
-<h3 id="overflow-x和overflow-y"><a href="#overflow-x和overflow-y" class="headerlink" title="overflow-x和overflow-y"></a>overflow-x和overflow-y</h3><p>当容器高宽都不足以容下图片时，<code>overflow-x:hidden</code>会把x方向的隐藏掉、y方向出现滚动条；为什么会出现这种情况呢？</p>
-<p>如果<code>overflow-x</code>和<code>overflow-y</code>值相同，则等同于<code>overflow</code>；</p>
-<p>如果<code>overflow-x</code>和<code>overflow-y</code>值不同，且其中一个值为<code>visible</code>，另一个值为<code>hidden、scroll、auto</code>，则<code>visible</code>会被重置为<code>auto</code>；这就是为什么上面的y方向出现滚动条；</p>
-<h3 id="兼容性"><a href="#兼容性" class="headerlink" title="兼容性"></a>兼容性</h3><p>不同浏览器滚动条的表现不一样；</p>
-<p>宽度设定机制，见下面一个例子：</p>
-<pre><code>&lt;div class=&quot;box&quot;&gt;&lt;div class=&quot;content&quot;&gt;&lt;/div&gt;&lt;/div&gt;
-
-.box { width: 400px; height: 100px; overflow: auto; }
-.content { width: 100%; height: 200px; background-color: #beceeb; }
-</code></pre><p>在IE7中，垂直和水平方向都出现了滚动条；这是宽度设定机制差异导致的，IE7浏览器把100%宽度算成了外部容器的400px，而垂直方向出现滚动条后，会占用宽度的，从而外部容器水平方向没有400px，从而水平方向出现了滚动条。</p>
-<p>如何避免这种情况呢，直接去掉<code>width: 100%</code>就好了。</p>
-<p>IE8没有这种情况；</p>
-<h3 id="如何使overflow属性有效"><a href="#如何使overflow属性有效" class="headerlink" title="如何使overflow属性有效"></a>如何使overflow属性有效</h3><ul>
-<li><p>非<code>display： inline</code>水平</p>
-</li>
-<li><p>对应方位的尺寸限制；<code>width/height/max-width/max-height/absolute</code>拉伸；</p>
-</li>
-<li><p>对于单元格td等，还需要table为<code>table-layout：fixed</code>状态才行；</p>
-</li>
-</ul>
-<p>两个IE7的bug：</p>
-<p>(1)IE7浏览器下，按钮里的文字越多，按钮两侧的padding留白就越大！</p>
-<p>解决方案：给所有按钮添加css样式<code>overflow:visible</code></p>
-<p>(2)</p>
-<pre><code>.size{ max-width: 200px; max-height: 300px; overflow: auto; }
-&lt;div class=&apos;size&apos;&gt;&lt;img src=&quot;mm1.jpg&quot; width=&quot;256&quot; height=&quot;191&quot;&gt;&lt;/div&gt;
-</code></pre><p>按理论只有水平出现滚动条，结果垂直方向也出现了；</p>
-<h2 id="2-overflow与滚动条"><a href="#2-overflow与滚动条" class="headerlink" title="2.overflow与滚动条"></a>2.overflow与滚动条</h2><h3 id="滚动条出现的条件"><a href="#滚动条出现的条件" class="headerlink" title="滚动条出现的条件"></a>滚动条出现的条件</h3><p>1.<code>overflow:auto/overflow:scroll  //&lt;html&gt;、&lt;textarea&gt;</code></p>
-<p>2.当子元素的水平或者垂直方向超过容器对应方向的最大限度；</p>
-<h3 id="body-html与滚动条"><a href="#body-html与滚动条" class="headerlink" title="body/html与滚动条"></a>body/html与滚动条</h3><p>无论什么浏览器，<strong>默认滚动条均来自<code>&lt;html&gt;</code></strong>而不是<code>&lt;body&gt;</code>标签；</p>
-<p>原因：新建一个空白HTML页面，<code>&lt;body&gt;</code>默认<code>.5em margin</code>值，如果滚动条来自<code>&lt;body&gt;</code>，则应该滚动条与浏览器边框有边距；而事实是滚动条是紧贴着浏览器边框的；</p>
-<p>IE7-浏览器默认类似： <code>html { overflow-y: scroll; }</code><br>IE8+等浏览器默认：<code>html { overflow: hidden; }</code></p>
-<p>所以，如果我们想要去除页面默认滚动条，只需要：</p>
-<pre><code>html { overflow: hidden; }
-</code></pre><p>而没必要把<body>也拉下水：</body></p>
-<pre><code>html, body { overflow: hidden; } //不需要body标签
-</code></pre><h3 id="JS与滚动高度"><a href="#JS与滚动高度" class="headerlink" title="JS与滚动高度"></a>JS与滚动高度</h3><p>chrome浏览器是：<code>document.body.scrollTop</code>;</p>
-<p>其他浏览器是：<code>document.documentElement.scrollTop</code>;</p>
-<p>目前，两者不会同时存在，因此，有人会写成：</p>
-<pre><code>var st = document.body.scrollTop +　document.documentElement.scrollTop
-</code></pre><p>建议使用：</p>
-<pre><code>var st = document.body.scrollTop ||　document.documentElement.scrollTop
-</code></pre><h3 id="overflow的padding-bottom缺失现象"><a href="#overflow的padding-bottom缺失现象" class="headerlink" title="overflow的padding-bottom缺失现象"></a>overflow的padding-bottom缺失现象</h3><pre><code>.box { width: 400px; height: 100px; padding: 100px 0; overflow: auto; }
-</code></pre><p>在chrome浏览器下面的padding-bottom可以滚动出来；而其他浏览器都不存在；</p>
-<p>可能导致的： 不一样的scrollHeight(元素内容高度)</p>
-<h3 id="滚动条的宽度机制"><a href="#滚动条的宽度机制" class="headerlink" title="滚动条的宽度机制"></a>滚动条的宽度机制</h3><p>滚动条会占用容器的可用宽度和高度；</p>
-<p>下面这种方法可以计算滚动条的宽度：</p>
-<pre><code>.box {width: 400px; overflow: scroll; }
-.in {*zoom: 1; /* for IE7 */}
-
-&lt;div class=&quot;box&quot;&gt;
-    &lt;div id=&quot;in&quot; class=&quot;in&quot;&gt;&lt;/div&gt;
+            <p>客户端Javascript程序采用异步事件驱动编程模型。</p>
+<p>那首先什么是异步事件驱动编程模型呢？</p>
+<p>在这种设计风格下，当文档、浏览器、元素或与之相关的对象发生某些有趣的事情时，Web浏览器就会产生事件。</p>
+<p>这些对象等待事件发生，然后他们相应，这就是所谓的异步驱动风格。</p>
+<h2 id="1-事件是什么呢？"><a href="#1-事件是什么呢？" class="headerlink" title="1.事件是什么呢？"></a>1.事件是什么呢？</h2><p>事件就是Web浏览器通知应用程序发生了什么事情。</p>
+<p>事件类型：是一个用来说明发生什么类型事件的字符串；例如‘mousemove’表示用户移动鼠标，由于事件类型只是一个字符串，有时也可称为事件名字。</p>
+<p>事件目标：发生的事件或者与之相关的对象。在JS应用程序中，Windows、Document、Element对象是最常见的事件目标。</p>
+<p>下面的代码就是弹出事件目标与类型的方法：</p>
+<pre><code>&lt;div id=&apos;box&apos;&gt;
+    &lt;button&gt;按钮&lt;/button&gt;
 &lt;/div&gt;
+&lt;script&gt;
+    var bt = document.getElementsByTagName(&apos;button&apos;)[0];
 
-console.log(400 - document.getElementById(&quot;in&quot;).clientWidth);
-</code></pre><p>测得的结果：IE7+/Chrome/FireFox(win7)-均是17像素；</p>
-<h3 id="overflow-auto的潜在布局隐患"><a href="#overflow-auto的潜在布局隐患" class="headerlink" title="overflow:auto的潜在布局隐患"></a>overflow:auto的潜在布局隐患</h3><p>滚动条会占用容器尺寸，原本和谐的布局，滚动条出现后可能挂掉；</p>
-<h3 id="水平居中跳动问题"><a href="#水平居中跳动问题" class="headerlink" title="水平居中跳动问题"></a>水平居中跳动问题</h3><pre><code>.container { width: 1150px; margin: 0 auto; }
-</code></pre><p>问题的修复：</p>
-<p>1.<code>html { overflow-y: scroll; }</code> // 太丑</p>
-<p>2.<code>.container { padding-left: calc(100vw - 100%);}</code></p>
-<h2 id="3-overflow与BFC"><a href="#3-overflow与BFC" class="headerlink" title="3.overflow与BFC"></a>3.overflow与BFC</h2><p>BFC(block formatting context) - ‘块级格式化上下面’</p>
-<p>BFC有一个特点：页面之结界，内部元素再怎么翻云覆雨都不会影响外部；</p>
-<h3 id="overflow与BFC"><a href="#overflow与BFC" class="headerlink" title="overflow与BFC"></a>overflow与BFC</h3><p>overflow有三种属性会触发BFC：<code>auto、scroll、hidden</code></p>
-<p>有三种常用用途：</p>
-<p>清楚浮动影响、避免margin穿透问题、两栏自适应布局</p>
+    bt.addEventListener(&apos;click&apos;,function(event){
+        alert(&apos;事件目标:&apos; + event.target);
+        alert(&apos;事件类型：&apos; + event.type);
+    })
+&lt;/script&gt;
+</code></pre><p>事件处理程序：处理或相应事件的函数。当在特定的事件目标上发生特定类型的事件时，浏览器会调用对应的事件处理程序。</p>
+<p>事件对象：与特定事件相关且包含有关该事件详细信息的对象；例如，鼠标事件的相关对象会包含鼠标指针的坐标。</p>
+<p>事件传播：浏览器决定哪个对象触发其事件处理程序的过程：</p>
+<ul>
+<li>对于单个对象的特定事件（比如windows的load事件），必须是不能传播的；</li>
+<li>事件传播向上传播，即冒泡传播；</li>
+<li>事件处理程序能够通过调用方法或者设置事件对象属性来阻止事件传播，这样就能停止冒泡；</li>
+</ul>
+<p>事件捕获：事件传播的另外一种形式，在容器元素上注册的特定处理程序有机会在事件传播到真实目标之前捕获它。IE8或之前的版本不支持事件捕获，所以不常用它。</p>
+<h2 id="2-事件传播"><a href="#2-事件传播" class="headerlink" title="2.事件传播"></a>2.事件传播</h2><p>上面介绍了什么是事件，下面详细介绍事件的传播机制；</p>
+<p>当事件目标是Windows对象或其他的一些单独对象（如XMLHTTPRequest）时，浏览器简单的通过调用对象上适当的处理程序相应事件。</p>
+<p>当事件目标是文档或者文档元素时，情况不同：</p>
+<p>事件传播有三个阶段：</p>
+<p>捕获阶段，发生在目标处理程序调用之前，称为‘捕获’阶段，为<strong>第一阶段</strong>；</p>
+<p>目标对象本身的时间处理程序调用是<strong>第二个阶段</strong>；</p>
+<p>事件冒泡是事件传播的<strong>第三个阶段</strong>；</p>
+<p><img src="http://7xj29n.com1.z0.glb.clouddn.com/事件传播.jpg" alt="http://7xj29n.com1.z0.glb.clouddn.com/事件传播.jpg"></p>
+<h2 id="3-事件冒泡"><a href="#3-事件冒泡" class="headerlink" title="3.事件冒泡"></a>3.事件冒泡</h2><p>事件最开始由具体的元素（即事件发生的对象）接受，然后逐级向上传播至最不具体的那个节点。</p>
+<p>下面是html：</p>
+<pre><code>&lt;body&gt;
+    &lt;div id=&apos;box&apos;&gt;
+        &lt;button&gt;按钮&lt;/button&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+</code></pre><p>比如当点击上面HTML中的按钮，事件会一直向上冒泡，寻找注册了clink的事件处理程序的元素：</p>
+<pre><code>button --&gt;　box --&gt;　body --&gt; html --&gt; document root
+</code></pre><h2 id="4-事件捕获"><a href="#4-事件捕获" class="headerlink" title="4.事件捕获"></a>4.事件捕获</h2><p>事件捕获像反向的冒泡阶段；最先调用windows对象的捕获处理程序，然后是Document对象的捕获处理程序，接着是body对象的，再然后是DOM树向下，依次类推，直到调用事件目标的父元素的捕获事件处理程序。</p>
+<p>事件捕获只能用于addEventListener()注册且第三个参数是true的事件处理程序中。意味着事件捕获无法在IE9之前的IE中使用。因为IE9之前的IE中不支持addEventListener。</p>
+<pre><code>&lt;body&gt;
+    &lt;div id=&apos;box&apos;&gt;
+        &lt;button&gt;按钮&lt;/button&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+</code></pre><p>当点击上面html的按钮时，事件捕获阶段会从上到下寻找注册了click事件捕获处理程序的元素：</p>
+<pre><code>document root --&gt; html --&gt; body --&gt; box --&gt; button
+</code></pre><h2 id="5-事件的取消"><a href="#5-事件的取消" class="headerlink" title="5.事件的取消"></a>5.事件的取消</h2><p>取消事件的浏览器默认操作有三种方式：</p>
+<ul>
+<li>设置事件处理程序的返回值为false；</li>
+<li>在支持addEventListener的浏览器中，也能通过调用事件对象的preventDefault()方法取消事件的默认行为</li>
+<li>在IE9之前的IE中，可以设置事件对象的returnValue属性为false</li>
+</ul>
+<p>取消事件的传播可以通过：</p>
+<ul>
+<li>在支持addEventListener的浏览器中，也能通过调用事件对象的一个stopPropagation()方法取消事件的继续传播；如果在同一对象上定义了其他处理程序，剩下的处理程序将依旧被调用，但调用stopPropagation方法之后其他任何对象的事件处理程序将不会调用</li>
+<li>IE9之前不支持上一种方法的可以通过IE事件对象的cancelBubble属性设置为true能阻止事件进一步冒泡（这些版本事件传播不支持事件的捕获阶段）</li>
+</ul>
+<h2 id="6-综合例子"><a href="#6-综合例子" class="headerlink" title="6.综合例子"></a>6.综合例子</h2><p>下面是一个综合例子：</p>
+<p>当点击按钮时，会依次弹出对话框：‘事件捕获阶段body’、‘事件捕获阶段box’、‘事件捕获阶段：button’、‘事件调用阶段：button’、‘事件冒泡阶段：box’、‘事件冒泡阶段：body’；</p>
+<p>当点击box时，会依次弹出对话框：‘事件捕获阶段body’、‘事件捕获阶段box’、‘事件冒泡阶段：box’、‘事件冒泡阶段：body’；</p>
+<pre><code>&lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;事件流&lt;/title&gt;
+        &lt;meta charset=&quot;utf-8&quot;&gt;
+        &lt;style&gt;
+            #box {height:100px;width: 100px;border: solid 1px red; text-align: center;background-color: burlywood}
+            #button {border: solid 1px red;}
+        &lt;/style&gt;
+    &lt;/head&gt;
 
+    &lt;body id=&quot;body&quot;&gt;
+        &lt;div id=&quot;box&quot;&gt;box
+            &lt;button id=&quot;button&quot;&gt;按钮&lt;/button&gt;
+        &lt;/div&gt;
+        &lt;script&gt;
+            var bt = document.getElementById(&apos;button&apos;);
+            var bx = document.getElementById(&apos;box&apos;);
+            var bd = document.getElementById(&apos;body&apos;);
+
+            bt.addEventListener(&apos;click&apos;, function(){
+                alert(&quot;事件捕获阶段：button&quot;);
+            }, true);
+            bx.addEventListener(&apos;click&apos;, function(){
+                alert(&quot;事件捕获阶段box&quot;);
+            },true);
+            bd.addEventListener(&apos;click&apos;, function(){
+                alert(&quot;事件捕获阶段body&quot;);
+                // event.stopPropagation();
+            },true);
+
+            bt.addEventListener(&apos;click&apos;, function(){
+                alert(&quot;事件调用阶段：button&quot;);
+            }, false);
+            bx.addEventListener(&apos;click&apos;, function(){
+                alert(&quot;事件冒泡阶段：box&quot;);
+            },false);
+            bd.addEventListener(&apos;click&apos;, function(){
+                alert(&quot;事件冒泡阶段：body&quot;);
+            },false);
+        &lt;/script&gt;
+    &lt;/body&gt;
+
+&lt;/html&gt;
+</code></pre>
           
         
       
@@ -2722,7 +2675,7 @@ console.log(400 - document.getElementById(&quot;in&quot;).clientWidth);
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
