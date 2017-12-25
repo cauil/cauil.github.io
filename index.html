@@ -239,6 +239,401 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/12/25/2017-12-25-koa1探秘/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cauil">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/abu.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cauil's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/25/2017-12-25-koa1探秘/" itemprop="url">koa1探秘</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-25T00:00:00+08:00">
+                2017-12-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/node/" itemprop="url" rel="index">
+                    <span itemprop="name">node</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="背景知识"><a href="#背景知识" class="headerlink" title="背景知识"></a>背景知识</h2><p>掌握这些背景知识对理解koa1源码有帮助：</p>
+<ul>
+<li>原型链查找 闭包 高阶函数(返回函数的函数) getter/setter call/apply</li>
+<li>代理委托</li>
+<li>promise 异步函数 迭代器 委托生成器(yield *)</li>
+<li>co模块处理</li>
+<li>node http模块</li>
+</ul>
+<h2 id="koa使用"><a href="#koa使用" class="headerlink" title="koa使用"></a>koa使用</h2><p>先从koa1开始</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">const Koa = require(&apos;koa&apos;);</div><div class="line">const app = new Koa();</div><div class="line"></div><div class="line">// response</div><div class="line">app.use(function *() &#123;</div><div class="line">  console.log(&apos;1-1&apos;);</div><div class="line">  yield next;</div><div class="line">  console.log(&apos;1-2&apos;);</div><div class="line">&#125;);</div><div class="line">app.use(function *() &#123;</div><div class="line">  console.log(&apos;2-1&apos;);</div><div class="line">  yield next;</div><div class="line">  console.log(&apos;2-2&apos;);</div><div class="line">&#125;);</div><div class="line">app.listen(3000);</div><div class="line"></div><div class="line">// 1-1</div><div class="line">// 2-1</div><div class="line">// 2-2</div><div class="line">// 1-2</div></pre></td></tr></table></figure>
+<p>上面代码加了两个中间件，执行过程是：</p>
+<p>每一个请求到达服务器后初始化请求上下文对象，然后按照中间件添加的顺序，一个一个执行：</p>
+<ul>
+<li>执行中间件1，next之前的逻辑</li>
+<li><p>next</p>
+<ul>
+<li>执行中间2的逻辑</li>
+</ul>
+</li>
+<li><p>执行中间件1，next之后的逻辑</p>
+</li>
+</ul>
+<p>其他的过程都是模拟上面的流程。</p>
+<h2 id="koa的方法"><a href="#koa的方法" class="headerlink" title="koa的方法"></a>koa的方法</h2><p>koa有公共方法use／listen，私有方法callback等；</p>
+<p>其中use是添加中间件，listen是创建服务、监听端口，callback初始化中间件形成闭包并返回网络请求到达时的回调函数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">app.use = function(fn)&#123;</div><div class="line">  this.middleware.push(fn);</div><div class="line">  return this;</div><div class="line">&#125;;</div><div class="line">app.listen = function() &#123;</div><div class="line">  var server = http.createServer(this.callback());</div><div class="line">  return server.listen.apply(server, arguments);</div><div class="line">&#125;;</div><div class="line">app.callback = function()&#123;</div><div class="line">  var fn = co.wrap(compose(this.middleware))</div><div class="line">  var self = this;</div><div class="line">  </div><div class="line">  return function handleRequest(req, res)&#123;</div><div class="line">    res.statusCode = 404;</div><div class="line">    var ctx = self.createContext(req, res);</div><div class="line">    onFinished(res, ctx.onerror);</div><div class="line">    fn.call(ctx).then(function handleResponse() &#123;</div><div class="line">      respond.call(ctx);</div><div class="line">    &#125;).catch(ctx.onerror);</div><div class="line">  &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<h2 id="koa实现原理"><a href="#koa实现原理" class="headerlink" title="koa实现原理"></a>koa实现原理</h2><p>其实koa中间件调用过程实现原理就是根据之前写过一篇文章<a href="http://cauil.github.io/2017/10/29/2017-10-19-JS%E4%B9%8B%E5%BC%82%E6%AD%A51/">JS之异步1</a>中讲述的异步生成器。</p>
+<p>但是koa实现有所不同，koa采用的是根据promise来实现；一步一步看看上面关键<code>callback</code>做了什么工作；</p>
+<h4 id="co-wrap"><a href="#co-wrap" class="headerlink" title="co.wrap"></a>co.wrap</h4><p>上面关键代码<code>var fn = co.wrap(compose(this.middleware))</code>实现中间件的封装，其中<code>co.warp</code>其实就是返回一个函数，这个返回函数的函数体是把fn执行得到的结果作为参数传入co并执行:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">co.wrap = function (fn) &#123;</div><div class="line">  return createPromise;</div><div class="line">  function createPromise() &#123;</div><div class="line">    return co.call(this, fn.apply(this, arguments));</div><div class="line">  &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<h4 id="compose"><a href="#compose" class="headerlink" title="compose"></a>compose</h4><p>其中<code>compose(this.middleware)</code>实现的是一个迭代器的嵌套调用（这里有个背景知识，生成器函数执行是生成一个迭代器，也就是就是<code>middleware[i].call</code>的结果）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">function compose(middleware)&#123;</div><div class="line">  return function *(next)&#123;</div><div class="line">    if (!next) next = noop();</div><div class="line"></div><div class="line">    var i = middleware.length;</div><div class="line"></div><div class="line">    while (i--) &#123;</div><div class="line">      next = middleware[i].call(this, next);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    return yield *next;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>执行compose实际生成的可以看作返回了一个异步函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">*function() &#123;</div><div class="line">  return yield * itor1(itor2(itor3))</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这个异步函数其实就是传入到co.wrap中的参数fn</p>
+<h4 id="再看最后一个关键函数co"><a href="#再看最后一个关键函数co" class="headerlink" title="再看最后一个关键函数co"></a>再看最后一个关键函数co</h4><p>co其实就是实现koa’剥洋葱’执行流程的执行体；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">function co(gen) &#123;</div><div class="line">  var ctx = this;</div><div class="line">  var args = slice.call(arguments, 1)</div><div class="line"></div><div class="line">  return new Promise(function(resolve, reject) &#123;</div><div class="line">    if (typeof gen === &apos;function&apos;) gen = gen.apply(ctx, args);</div><div class="line">    if (!gen || typeof gen.next !== &apos;function&apos;) return resolve(gen);</div><div class="line"></div><div class="line">    onFulfilled();</div><div class="line"></div><div class="line">    /**</div><div class="line">     * @param &#123;Mixed&#125; res</div><div class="line">     * @return &#123;Promise&#125;</div><div class="line">     * @api private</div><div class="line">     */</div><div class="line"></div><div class="line">    function onFulfilled(res) &#123;</div><div class="line">      var ret;</div><div class="line">      try &#123;</div><div class="line">        ret = gen.next(res);</div><div class="line">      &#125; catch (e) &#123;</div><div class="line">        return reject(e);</div><div class="line">      &#125;</div><div class="line">      next(ret);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * @param &#123;Error&#125; err</div><div class="line">     * @return &#123;Promise&#125;</div><div class="line">     * @api private</div><div class="line">     */</div><div class="line"></div><div class="line">    function onRejected(err) &#123;</div><div class="line">      var ret;</div><div class="line">      try &#123;</div><div class="line">        ret = gen.throw(err);</div><div class="line">      &#125; catch (e) &#123;</div><div class="line">        return reject(e);</div><div class="line">      &#125;</div><div class="line">      next(ret);</div><div class="line">    &#125;</div><div class="line">    function next(ret) &#123;</div><div class="line">      if (ret.done) return resolve(ret.value);</div><div class="line">      var value = toPromise.call(ctx, ret.value);</div><div class="line">      if (value &amp;&amp; isPromise(value)) return value.then(onFulfilled, onRejected);</div><div class="line">      return onRejected(new TypeError(&apos;You may only yield a function, promise, generator, array, or object, &apos;</div><div class="line">        + &apos;but the following object was passed: &quot;&apos; + String(ret.value) + &apos;&quot;&apos;));</div><div class="line">    &#125;</div><div class="line">  &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>当co执行的时候，迭代器gen被传入，gen的值为上面compose生成的异步函数执行得到的迭代器，为啥是迭代器，因为co执行的时候，传入的是fn.call(…); </p>
+<p>再回顾一下compose生成的异步函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">*function() &#123;</div><div class="line">  return yield * itor1(itor2(itor3))</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>co执行过程：</p>
+<ol>
+<li>返回一个promise，promise中包括的执行流程是：</li>
+<li>如果gen是普通函数，直接执行；如果gen是不为空的值并且gen.next不为function也就是说gen不是迭代器，直接返回resolve(), 这个实际是co返回promise的resolve，也就是总的出口；</li>
+<li>gen是迭代器，执行gen.next()，也就是会执行yield <em> itor1(itor2(noop_itor))，**yield \</em>实际上是委托生成器; 会直接执行到itor1第一个yield next处<strong>；并且此时gen.next()得到ret；</strong>并且ret.value就是next的值，也就是itor1的传入的实参itor2(itor3);**</li>
+<li>我们快要接近剥洋葱的流程了，只要itor2重复前面的流程，怎么实现呢，实际就是toPromise的工作了，且看next(ret)；</li>
+<li>next函数中：如果ret.done === true, 直接退出, 这也是一个出口；否则把ret.value转换为promise对象，当ret.value是一个迭代器的时候，toPromise主要工作是重复co.call(this, ret.value); <strong> 这样就重复的执行每个中间件的yield next前面的代码，直到执行到noop并层层返回；这实际有点类似二叉树的先序遍历过程；</strong></li>
+<li>最后会回到第一次返回promise的函数中，并且resolve，这样就可以执行<code>fn.call(ctx).then(function handleResponse() {respond.call(ctx);}).catch(ctx.onerror);</code>的then处理了，否则catch处理；</li>
+<li>自此一个网络请求后的中间件处理完毕；</li>
+</ol>
+<h4 id="总执行过程"><a href="#总执行过程" class="headerlink" title="总执行过程"></a>总执行过程</h4><ul>
+<li>请求到来</li>
+<li>…</li>
+<li>执行fn.call(ctx)，实际上就是执行<code>co.wrap(compose(this.middleware)).call(ctx)</code>, 而<code>co.wrap(...).call(ctx)</code>实际就是上面的co函数的执行过程；</li>
+<li>中间件处理完毕, 然后执行respond.call(ctx);</li>
+</ul>
+<h2 id="koa的上下文"><a href="#koa的上下文" class="headerlink" title="koa的上下文"></a>koa的上下文</h2><p>koa服务每当一个新的网络请求来临的时候会生成一个新的上下文，也就是代码中的多次出现的ctx；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">var ctx = self.createContext(req, res);</div><div class="line">app.createContext = function(req, res)&#123;</div><div class="line">  var context = Object.create(this.context);</div><div class="line">  var request = context.request = Object.create(this.request);</div><div class="line">  var response = context.response = Object.create(this.response);</div><div class="line">  context.app = request.app = response.app = this;</div><div class="line">  context.req = request.req = response.req = req;</div><div class="line">  context.res = request.res = response.res = res;</div><div class="line">  request.ctx = response.ctx = context;</div><div class="line">  request.response = response;</div><div class="line">  response.request = request;</div><div class="line">  context.onerror = context.onerror.bind(context);</div><div class="line">  context.originalUrl = request.originalUrl = req.url;</div><div class="line">  context.cookies = new Cookies(req, res, &#123;</div><div class="line">    keys: this.keys,</div><div class="line">    secure: request.secure</div><div class="line">  &#125;);</div><div class="line">  context.accept = request.accept = accepts(req);</div><div class="line">  context.state = &#123;&#125;;</div><div class="line">  return context;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>这个context是以koa的实例服务app.context为原型，并且对ctx(即context)的属性request、response也设计了原型，这有什么用处呢？</p>
+<p>实际上我们获取ctx.header、ctx.method或者设置ctx.method等的值，就是通过这里来的；举一个例子，获取ctx.header</p>
+<ul>
+<li>1 ctx中没有，从原型app.context中寻找</li>
+<li><p>2 app.context从静态类context中寻找</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">function Application() &#123;</div><div class="line">  if (!(this instanceof Application)) return new Application;</div><div class="line">  ...</div><div class="line">  **this.context = Object.create(context);**</div><div class="line">  this.request = Object.create(request);</div><div class="line">  this.response = Object.create(response);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>3 context中的header代理了request静态类的属性header；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">delegate(proto, &apos;request&apos;)</div><div class="line">  .method(&apos;acceptsLanguages&apos;)</div><div class="line">  ... // 省略</div><div class="line">  .getter(&apos;header&apos;)</div><div class="line">  ...</div><div class="line">  .getter(&apos;ip&apos;);</div><div class="line"></div><div class="line">Delegator.prototype.getter = function(name)&#123;</div><div class="line">  var proto = this.proto;</div><div class="line">  var target = this.target;</div><div class="line">  this.getters.push(name);</div><div class="line"></div><div class="line">  proto.__defineGetter__(name, function()&#123;</div><div class="line">    return this[target][name];</div><div class="line">  &#125;);</div><div class="line">  return this;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+</li>
+<li><p>4 也就是ctx[‘request’][‘header’]</p>
+</li>
+<li><p>5 寻找ctx[‘request’][‘header’]也就是从ctx[‘request’]的原型app.request寻找，接着到静态类request中寻找</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">get header() &#123;</div><div class="line">  return this.req.headers;</div><div class="line">&#125;,</div></pre></td></tr></table></figure>
+</li>
+<li><p>6 也就是return ctx.request.req.headers, 其中ctx.request.req实际就是网络请求传入的req对象</p>
+</li>
+<li>7 获取header成功</li>
+</ul>
+<p>koa利用原型链查找、委托代理等手段，设置了很多方面快捷的属性获取、属性设置和方法调用；</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文讲述了下面几方面内容：</p>
+<ul>
+<li>koa简单使用</li>
+<li>koa中间件执行过程</li>
+<li>koa中间件执行原理</li>
+<li>koa上下文ctx</li>
+<li>koa快捷过程</li>
+</ul>
+<p>不过koa也有不足之处，如果上层中间件设置了多次yield next，虽然后面的迭代器已经执行到<code>done:true</code>，但每次重新到下层中间件也是一种不必要的开销；koa1的代码也比较繁杂，理解起来比较困难；不过这些koa2都有所改善，koa2见。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/11/30/2017-11-30-Vue之实例化流程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cauil">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/abu.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cauil's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/11/30/2017-11-30-Vue之实例化流程/" itemprop="url">Vue实例化过程</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-30T00:00:00+08:00">
+                2017-11-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Vue/" itemprop="url" rel="index">
+                    <span itemprop="name">Vue</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>vue是一个灵活渐进的mvvm框架，其实际内容可以用 <code>UI=f(State)</code>这个公式来表示。</p>
+<p>今天第一篇关于vue的剖析，从其实例化的过程来展开。</p>
+<h2 id="vue实例化"><a href="#vue实例化" class="headerlink" title="vue实例化"></a>vue实例化</h2><p>vue核心是声明式渲染，其初始化的实例为后面的过程准备了各种条件，看下面一段简单的vue例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">&lt;div id=&quot;app&quot;&gt;</div><div class="line">  &#123;&#123; message &#125;&#125;</div><div class="line">&lt;/div&gt;</div><div class="line"></div><div class="line">var app = new Vue(&#123;</div><div class="line">  el: &apos;#app&apos;,</div><div class="line">  data: &#123;</div><div class="line">    message: &apos;Hello Vue!&apos;</div><div class="line">  &#125;</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>第一段代码是要初始化的template，第二段是实例的真正初始化内容，最终template会被渲染成<code>Hello Vue!</code>；</p>
+<p>那当执行<code>new Vue(options)</code>时里面到底执行了什么？</p>
+<h2 id="实例化流程"><a href="#实例化流程" class="headerlink" title="实例化流程"></a>实例化流程</h2><p>实际<code>new Vue(options)</code>是调用了<code>Vue.prototype._init</code>方法:</p>
+<p>主要流程有：</p>
+<h4 id="merge-options"><a href="#merge-options" class="headerlink" title="merge options"></a>merge options</h4><p>第一个流程先简单剖析下，流程过程主要是初始化实例vm的$options, 把构造函数<code>Vue.options({components:..., directives:..., filters:..., _base:...})</code>和options合并赋值给vm.$options;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">if (options &amp;&amp; options._isComponent) &#123;</div><div class="line">  // optimize internal component instantiation</div><div class="line">  // since dynamic options merging is pretty slow, and none of the</div><div class="line">  // internal component options needs special treatment.</div><div class="line">  initInternalComponent(vm, options);</div><div class="line">&#125; else &#123;</div><div class="line">  vm.$options = mergeOptions(</div><div class="line">    resolveConstructorOptions(vm.constructor),</div><div class="line">    options || &#123;&#125;,</div><div class="line">    vm</div><div class="line">  );</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="设置代理initProxy-vm"><a href="#设置代理initProxy-vm" class="headerlink" title="设置代理initProxy(vm)"></a>设置代理initProxy(vm)</h4><h4 id="初始化声明周期initLifecycle-vm"><a href="#初始化声明周期initLifecycle-vm" class="headerlink" title="初始化声明周期initLifecycle(vm)"></a>初始化声明周期initLifecycle(vm)</h4><p>主要是初始化与vm声明周期有关的值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">vm.$parent = parent;</div><div class="line">vm.$root = parent ? parent.$root : vm;</div><div class="line"></div><div class="line">vm.$children = [];</div><div class="line">vm.$refs = &#123;&#125;;</div><div class="line"></div><div class="line">vm._watcher = null;</div><div class="line">vm._inactive = null;</div><div class="line">vm._directInactive = false;</div><div class="line">vm._isMounted = false;</div><div class="line">vm._isDestroyed = false;</div><div class="line">vm._isBeingDestroyed = false;</div></pre></td></tr></table></figure>
+<h4 id="initEvents-vm"><a href="#initEvents-vm" class="headerlink" title="initEvents(vm)"></a>initEvents(vm)</h4><p>初始化事件属性：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">vm._events = Object.create(null);</div><div class="line">vm._hasHookEvent = false;</div></pre></td></tr></table></figure>
+<h4 id="initRender-vm"><a href="#initRender-vm" class="headerlink" title="initRender(vm)"></a>initRender(vm)</h4><p>初始化render的时候需要的一些属性：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">vm._vnode = null; // the root of the child tree</div><div class="line">vm._staticTrees = null; // v-once cached trees</div><div class="line">var options = vm.$options;</div><div class="line">var parentVnode = vm.$vnode = options._parentVnode; // the placeholder node in parent tree</div><div class="line">var renderContext = parentVnode &amp;&amp; parentVnode.context;</div><div class="line">vm.$slots = resolveSlots(options._renderChildren, renderContext);</div><div class="line">vm.$scopedSlots = emptyObject;</div><div class="line">// bind the createElement fn to this instance</div><div class="line">// so that we get proper render context inside it.</div><div class="line">// args order: tag, data, children, normalizationType, alwaysNormalize</div><div class="line">// internal version is used by render functions compiled from templates</div><div class="line">vm._c = function (a, b, c, d) &#123; return createElement(vm, a, b, c, d, false); &#125;;</div><div class="line">// normalization is always applied for the public version, used in</div><div class="line">// user-written render functions.</div><div class="line">vm.$createElement = function (a, b, c, d) &#123; return createElement(vm, a, b, c, d, true); &#125;;</div></pre></td></tr></table></figure>
+<h4 id="callHook-vm-‘beforeCreate’"><a href="#callHook-vm-‘beforeCreate’" class="headerlink" title="callHook(vm, ‘beforeCreate’)"></a>callHook(vm, ‘beforeCreate’)</h4><p>调用‘beforeCreate’的hook函数<code>var handlers = vm.$options[hook];</code></p>
+<h4 id="initInjections-vm"><a href="#initInjections-vm" class="headerlink" title="initInjections(vm)"></a>initInjections(vm)</h4><p>对vm.$options中的injections处理</p>
+<h4 id="initState-vm"><a href="#initState-vm" class="headerlink" title="initState(vm)"></a>initState(vm)</h4><p>这个过程非常重要，里面吹了props／methods／data／computed等数据并初始化了依赖、watchers、deps等，是整个vm实例能够渲染并且监听数据变化的关键；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">vm._watchers = [];</div><div class="line">var opts = vm.$options;</div><div class="line">if (opts.props) &#123; initProps(vm, opts.props); &#125;</div><div class="line">if (opts.methods) &#123; initMethods(vm, opts.methods); &#125;</div><div class="line">if (opts.data) &#123;</div><div class="line">  initData(vm);</div><div class="line">&#125; else &#123;</div><div class="line">  observe(vm._data = &#123;&#125;, true /* asRootData */);</div><div class="line">&#125;</div><div class="line">if (opts.computed) &#123; initComputed(vm, opts.computed); &#125;</div><div class="line">if (opts.watch &amp;&amp; opts.watch !== nativeWatch) &#123;</div><div class="line">  initWatch(vm, opts.watch);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="initProvide-vm"><a href="#initProvide-vm" class="headerlink" title="initProvide(vm)"></a>initProvide(vm)</h4><p><code>var provide = vm.$options.provide;</code></p>
+<h4 id="callHook-vm-‘created’"><a href="#callHook-vm-‘created’" class="headerlink" title="callHook(vm, ‘created’)"></a>callHook(vm, ‘created’)</h4><p>调用‘created’的hook函数<code>var handlers = vm.$options[hook];</code></p>
+<h4 id="vm-mount-vm-options-el"><a href="#vm-mount-vm-options-el" class="headerlink" title="vm.$mount(vm.$options.el)"></a>vm.$mount(vm.$options.el)</h4><p>这个是初始化vue实例的最后一步，把虚拟dom挂载到option.el(即’#app’)中；</p>
+<p><strong>以上就是vue实例化的所有流程，本文并没有介绍各个流程的详细处理过程，在后续文章中会一一展开。</strong></p>
+<h2 id="vue实例生命周期"><a href="#vue实例生命周期" class="headerlink" title="vue实例生命周期"></a>vue实例生命周期</h2><p>从上面流程中，其实可以看出一些实例生命周期的过程：</p>
+<p><img src="/images/vuelifecycle.png" alt="声明周期"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/11/27/2017-11-27-ES6之Set与Map/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1777,346 +2172,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/11/15/2017-11-15-ES6之let与const 字符串和正则/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cauil">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/abu.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Cauil's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/11/15/2017-11-15-ES6之let与const 字符串和正则/" itemprop="url">ES6之let与const 字符串和正则</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-15T00:00:00+08:00">
-                2017-11-15
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JS/" itemprop="url" rel="index">
-                    <span itemprop="name">JS</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="let-const"><a href="#let-const" class="headerlink" title="let const"></a>let const</h2><p>let与const其实没什么特别的，主要就是提供的块级作用域，存在于函数内部和块中（字符{和}之间的区域），没有var的变量提升；<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">var num = 1 + num1; // throw error</div><div class="line">let num1 = 5;</div></pre></td></tr></table></figure></p>
-<p>需要注意的点：</p>
-<h4 id="禁止重声明"><a href="#禁止重声明" class="headerlink" title="禁止重声明"></a>禁止重声明</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">var msg = &apos;hi&apos;;</div><div class="line">let msg = &apos;test&apos;; // Uncaught SyntaxError: Identifier &apos;msg&apos; has already been declared</div></pre></td></tr></table></figure>
-<h4 id="临时死区TDZ（Temporal-Dead-Zone）"><a href="#临时死区TDZ（Temporal-Dead-Zone）" class="headerlink" title="临时死区TDZ（Temporal Dead Zone）"></a>临时死区TDZ（Temporal Dead Zone）</h4><p>使用let和const定义的变量在定义处到块级作用域开始之间是不能使用定义的变量的，使用会报错；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">var msg = &apos;hi&apos;;</div><div class="line">if(true) &#123;</div><div class="line">  typeof msg; // Uncaught ReferenceError: msg is not defined</div><div class="line">  let msg = &apos;hello&apos;;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h4 id="循环"><a href="#循环" class="headerlink" title="循环"></a>循环</h4><p>由于词法作用域的缘故，执行<code>console.log(i)</code>指向的都市同一个i，最后值是10<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">var funcs = [];</div><div class="line">for (var i = 0; i &lt; 10; i++) &#123;</div><div class="line">    funcs.push(function() &#123;</div><div class="line">        console.log(i);</div><div class="line">    &#125;);</div><div class="line">&#125;</div><div class="line">funcs.forEach(function(func) &#123;</div><div class="line">    func();     // outputs the number &quot;10&quot; ten times</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
-<p>let声明每次迭代循环会创建一个新变量：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">var funcs = [];</div><div class="line">for (var i = 0; i &lt; 10; i++) &#123;</div><div class="line">    funcs.push((function(value) &#123;</div><div class="line">        return function() &#123;</div><div class="line">            console.log(value);</div><div class="line">&#125; &#125;(i)));</div><div class="line">&#125;</div><div class="line">funcs.forEach(function(func) &#123;</div><div class="line">    func();     // outputs 0, then 1, then 2, up to 9</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<h4 id="全局作用域行为"><a href="#全局作用域行为" class="headerlink" title="全局作用域行为"></a>全局作用域行为</h4><p>var在全局作用域定义的是window的一个属性<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">var msg = &quot;Hello!&quot;;</div><div class="line">console.log(window.msg); // &apos;Hello!&apos;</div><div class="line">console.log(window.msg === msg); // true</div></pre></td></tr></table></figure></p>
-<p>而let和const创建了一个绑定并遮蔽了全局的msg变量；let和const比较安全；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">let msg1 = &quot;Hello!&quot;;</div><div class="line">console.log(window.msg1); // undefined</div><div class="line">console.log(window.msg1 === msg1); // false</div></pre></td></tr></table></figure>
-<h4 id="const绑定的是引用"><a href="#const绑定的是引用" class="headerlink" title="const绑定的是引用"></a>const绑定的是引用</h4><p>const绑定是引用，只要引用不变，不报错；<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">const obj = &#123;msg: 1&#125;;</div><div class="line">obj.msg = 2;</div><div class="line">console.log(obj); // &#123;msg: 2&#125;</div><div class="line">obj = &#123;msg: 2&#125; // Uncaught TypeError: Assignment to constant variable.</div></pre></td></tr></table></figure></p>
-<p>块级绑定最佳实践是尽量用const，只有确实需要改变变量的值时用let。</p>
-<h2 id="字符串变动"><a href="#字符串变动" class="headerlink" title="字符串变动"></a>字符串变动</h2><h4 id="Unicode支持"><a href="#Unicode支持" class="headerlink" title="Unicode支持"></a>Unicode支持</h4><p>ES6出现之前，JS字符一直基于16位字符编码(UTF-16)进行构建。每16位的序列是一个编码单元，代表一个字符。length\chatAt等属性与方法都是基于这种编码单元构成的。</p>
-<p>UTF-16编码中：</p>
-<ul>
-<li>前2**16个码位均以16位的编码单元表示，这个范围被称作BMP</li>
-<li>但是如果超出16位编码范围之外的码位，就无法仅用16位来表示，UTF-16引入了<strong>代理对</strong>，用两个16位编码单元来表示；</li>
-</ul>
-<p>“𠮷”这个字符就是超出16位表示范围的，使用了代理对来表示的，在ES5中:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">let text = &quot;𠮷&quot;; </div><div class="line">console.log(text.length); // 2</div><div class="line">console.log(/^.$/.test(text)); // false</div><div class="line">console.log(text.charAt(0)); // &quot;&quot;</div><div class="line">console.log(text.charAt(1)); // &quot;&quot;</div><div class="line">console.log(text.charCodeAt(0)); // 55362</div><div class="line">console.log(text.charCodeAt(1)); // 57271</div></pre></td></tr></table></figure>
-<h4 id="codePointAt-fromCodePoint"><a href="#codePointAt-fromCodePoint" class="headerlink" title="codePointAt / fromCodePoint"></a>codePointAt / fromCodePoint</h4><p>ES6引入了codePointAt与fromcodePoint来支持超出16位码元，这两个方法接受编码单元的位置而非字符位置作为参数；如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">let text = &quot;𠮷a&quot;;</div><div class="line">console.log(text.charCodeAt(0)); // 55362</div><div class="line">console.log(text.charCodeAt(1));  // 57271</div><div class="line">console.log(text.charCodeAt(2)); // 97</div><div class="line">console.log(text.codePointAt(0)); // 134071 超出0xffff</div><div class="line">console.log(text.codePointAt(1)); // 57271</div><div class="line">console.log(text.codePointAt(2)); // 97</div><div class="line">console.log(String.fromCodePoint(134071)); // &apos;𠮷&apos;</div></pre></td></tr></table></figure>
-<p>注意charCodeAt与codePointAt的区别，如上面的text.codePointAt(0)计算了’𠮷’的完整码位-两个编码单元，超出0xffff；</p>
-<h4 id="新增字符串方法includes-startWith-endWith-repeat"><a href="#新增字符串方法includes-startWith-endWith-repeat" class="headerlink" title="新增字符串方法includes / startWith / endWith / repeat"></a>新增字符串方法includes / startWith / endWith / repeat</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">let msg = &quot;Hello world!&quot;;</div><div class="line">console.log(msg.startsWith(&quot;Hello&quot;)); // true</div><div class="line">console.log(msg.endsWith(&quot;!&quot;)); // true</div><div class="line">console.log(msg.includes(&quot;o&quot;)); // true</div><div class="line">console.log(msg.startsWith(&quot;o&quot;)); // false</div><div class="line">console.log(msg.endsWith(&quot;world!&quot;)); // true</div><div class="line">console.log(msg.includes(&quot;x&quot;)); // false</div><div class="line">console.log(msg.startsWith(&quot;o&quot;, 4)); // true</div><div class="line">console.log(msg.endsWith(&quot;o&quot;, 8)); // true</div><div class="line">console.log(msg.includes(&quot;o&quot;, 8));  // false</div></pre></td></tr></table></figure>
-<p>这里需要注意的是endsWith是从用第二个参数减去搜索字符的长度得到的数字位置开始搜索的；如<code>msg.endsWith(&quot;o&quot;, 8)</code>是从<code>8-len(&#39;o&#39;)=7</code>开始搜索的；以此类推如果是<code>msg.endsWith(&quot;orl&quot;, 8)</code>则是从<code>8-len(&#39;orl&#39;)=5</code>开始搜索返回false；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">console.log(&apos;hello&apos;.repeat(2)); // hellohello</div><div class="line">console.log(&apos;a&apos;.repeat(2)); // aa</div><div class="line">console.log(&apos;bc&apos;.repeat(3)); // bcbcbc</div></pre></td></tr></table></figure>
-<h4 id="模版字面量"><a href="#模版字面量" class="headerlink" title="模版字面量"></a>模版字面量</h4><p>ES6引入了模版字面量语法支持更丰富的字符串功能：</p>
-<ul>
-<li>多行字符串</li>
-<li>基本的字符串格式化，支持嵌套</li>
-<li>HTLM转义</li>
-</ul>
-<p>看下面的例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">let message = `hello world!`</div><div class="line">console.log(message) // &apos;hello world&apos;</div><div class="line">console.log(typeof message) // 12</div><div class="line"></div><div class="line">// 多行字符串</div><div class="line">var msg = `Multiline</div><div class="line">string`;</div><div class="line">console.log(msg); // &apos;Multiline</div><div class="line">                  // string&apos;</div><div class="line">console.log(message.length); // 16</div><div class="line"></div><div class="line">// 字符串占位</div><div class="line">let name = &apos;world&apos;,</div><div class="line">    msg1 = `Hello, $&#123;name&#125;`;</div><div class="line">console.log(message); // &quot;Hello, world!&quot;</div></pre></td></tr></table></figure>
-<p>除了上面的功能之外，还有一个标签模版的功能；标签可以是一个函数，第一个参数是一个数组，包含JS解释过后的字面量字符串，之后的所有参数都是每一个占位符的解释值；如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">function tag(literals, ...substitutions) &#123;</div><div class="line">	console.log(literals);</div><div class="line">	console.log(literals.raw)</div><div class="line">	console.log(substitutions);</div><div class="line">	return &apos;hello world!&apos;;</div><div class="line">&#125;</div><div class="line">var name1 = &apos;lili&apos;;</div><div class="line">var name2 = &apos;lucy&apos;;</div><div class="line">var msg = tag`abc$&#123;name1&#125;def$&#123;name2&#125;\n`;</div><div class="line">//  [&quot;abc&quot;, &quot;def&quot;, &quot;↵&quot;, raw: Array(3)]</div><div class="line">//  [&quot;abc&quot;, &quot;def&quot;, &quot;\n&quot;]</div><div class="line">//  [&quot;lili&quot;, &quot;lucy&quot;]</div><div class="line">console.log(msg); // &apos;hello world!&apos;</div></pre></td></tr></table></figure>
-<p>特别要说明的是literals.raw是对应literals的原生字符串信息；如<code>\n</code>为<code>\\n</code>;</p>
-<h2 id="正则变动"><a href="#正则变动" class="headerlink" title="正则变动"></a>正则变动</h2><h4 id="u修饰符"><a href="#u修饰符" class="headerlink" title="u修饰符"></a>u修饰符</h4><p>上面我们看到”𠮷”匹配不到/^.$/正则表达式；这是因为正则是通过编码单元来匹配字符串的，而”𠮷”是由两个编码单元组成的，所以/^.$/是匹配不成功的；</p>
-<p>为了解决这种问题，ES6引入了一个支持Unicode的u修饰符；当使用了修饰符u，正则表达式就从编码单元模式切换为字符模式，如此一来正则表达式就不会视代理对为两个字符，从而安全按照我们预期正常运行；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">let text = &quot;𠮷&quot;;</div><div class="line">console.log(text.length); // 2</div><div class="line">console.log(/^.$/.test(text)); // false</div><div class="line">console.log(/^.$/u.test(text)); // true</div></pre></td></tr></table></figure>
-<p>检测是否支持修饰符u：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">function hasRegExpU() &#123;</div><div class="line">    try &#123;</div><div class="line">        var pattern = new RegExp(&quot;.&quot;, &quot;u&quot;);</div><div class="line">        return true;</div><div class="line">    &#125; catch (ex) &#123;</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h4 id="修饰符y"><a href="#修饰符y" class="headerlink" title="修饰符y"></a>修饰符y</h4><p>ES6新增了一个正则表达式扩展：修饰符y，主要是影响正则表达式搜索过程中的sticky属性；当在字符串开始匹配时，会通知搜索从正则表达式的lastIndex属性开始进行，如果在指定位置没能匹配成功，则停止继续匹配；看一个例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">let text = &quot;hello1 hello2 hello3&quot;,</div><div class="line">    pattern = /hello\d\s?/,</div><div class="line">    result = pattern.exec(text),</div><div class="line">    globalPattern = /hello\d\s?/g,</div><div class="line">    globalResult = globalPattern.exec(text),</div><div class="line">    stickyPattern = /hello\d\s?/y,</div><div class="line">    stickyResult = stickyPattern.exec(text);</div><div class="line">console.log(result[0]);// &quot;hello1 &quot;</div><div class="line">console.log(globalResult[0]);// &quot;hello1 &quot;</div><div class="line">console.log(stickyResult[0]);// &quot;hello1 &quot;</div><div class="line">pattern.lastIndex = 1;</div><div class="line">globalPattern.lastIndex = 1;</div><div class="line">stickyPattern.lastIndex = 1;</div><div class="line"></div><div class="line">result = pattern.exec(text);</div><div class="line">globalResult = globalPattern.exec(text);</div><div class="line">stickyResult = stickyPattern.exec(text);</div><div class="line">console.log(result[0]); // &quot;hello1 &quot;</div><div class="line">console.log(globalResult[0]);// &quot;hello2 &quot;</div><div class="line">console.log(stickyResult[0]);// throws an error!</div></pre></td></tr></table></figure>
-<p>当指定lastIndex设置为1的时候，stickyPattern没有匹配成功，stickyResult返回null，<code>console.log(stickyResult[0])</code>就报错；</p>
-<p>需要注意以下几点：</p>
-<ol>
-<li>y和g修饰符如果匹配失败，lastIndex会被重置为0；</li>
-<li>y是<strong>严格</strong>从lastIndex开始匹配，而g从lastIndex匹配失败可以继续往后匹配；</li>
-<li>只有调用exec和test这些正则表达式对象的方法时才会涉及lastIndex属性；调用字符串的方法是不会有效果的；</li>
-</ol>
-<p>检测是否支持y修饰符：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">function hasRegExpY() &#123;</div><div class="line">    try &#123;</div><div class="line">        var pattern = new RegExp(&quot;.&quot;, &quot;y&quot;);</div><div class="line">        return true;</div><div class="line">    &#125; catch (ex) &#123;</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h4 id="正则表达式复制"><a href="#正则表达式复制" class="headerlink" title="正则表达式复制"></a>正则表达式复制</h4><p>ES5可以通过给RegExp构造函数传递正则表达式作为参数来复制这个表达式, 但是如果第二个参数传递修饰符参数则会报错；<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">var re1 = /ab/i</div><div class="line">var re2 = new RegExp(re1) //</div><div class="line">var re3 = new RegExp(re1, &apos;g&apos;) //报错</div></pre></td></tr></table></figure></p>
-<p>ES6修改了这个行为，可以传递修饰符<code>var re4 = new RegExp(re1, &#39;g&#39;)</code>;但是会把之前的修饰符替换掉，re4变成了<code>/ab/g</code>.</p>
-<h4 id="正则表达式flags属性"><a href="#正则表达式flags属性" class="headerlink" title="正则表达式flags属性"></a>正则表达式flags属性</h4><p>ES6在正则表达式中新增了flags属性，会输出正则的修饰符；如<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">let reg = /ab/igu;</div><div class="line">console.log(reg.flags); // &apos;igu&apos;</div><div class="line">console.log(reg.source); // &apos;ab&apos;</div></pre></td></tr></table></figure></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/11/11/2017-11-11-递归/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cauil">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/abu.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Cauil's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/11/11/2017-11-11-递归/" itemprop="url">递归</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-11T00:00:00+08:00">
-                2017-11-11
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/算法/" itemprop="url" rel="index">
-                    <span itemprop="name">算法</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>// 留个坑 </p>
-<p>减而治之 通过不断蚕食不断削减问题有效规模的策略</p>
-<p>为求解一个大规模的问题，可以将其划分为若干（通常两个）子问题，规模大体相当，分别求解子问题，由子问题的解，得到原问题的解。 </p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2171,7 +2226,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2182,7 +2237,7 @@
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">分类</span>
                 
               </div>
@@ -2193,7 +2248,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-count">20</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

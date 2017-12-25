@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Vue,Javascript," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="vue是一个灵活渐进的mvvm框架，其实际内容可以用 UI=f(State)这个公式来表示。 今天第一篇关于vue的剖析，从其实例化的过程来展开。 vue实例化vue核心是声明式渲染，其初始化的实例为后面的过程准备了各种条件，看下面一段简单的vue例子： 12345678910&amp;lt;div id=&amp;quot;app&amp;quot;&amp;gt;  &amp;#123;&amp;#123; message &amp;#125;&amp;#">
+<meta name="keywords" content="Vue,Javascript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue实例化过程">
+<meta property="og:url" content="http://cauil.github.io/2017/11/30/2017-11-30-Vue之实例化流程/index.html">
+<meta property="og:site_name" content="Cauil&#39;s Blog">
+<meta property="og:description" content="vue是一个灵活渐进的mvvm框架，其实际内容可以用 UI=f(State)这个公式来表示。 今天第一篇关于vue的剖析，从其实例化的过程来展开。 vue实例化vue核心是声明式渲染，其初始化的实例为后面的过程准备了各种条件，看下面一段简单的vue例子： 12345678910&amp;lt;div id=&amp;quot;app&amp;quot;&amp;gt;  &amp;#123;&amp;#123; message &amp;#125;&amp;#">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://cauil.github.io/images/vuelifecycle.png">
+<meta property="og:updated_time" content="2017-12-25T15:23:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Vue实例化过程">
+<meta name="twitter:description" content="vue是一个灵活渐进的mvvm框架，其实际内容可以用 UI=f(State)这个公式来表示。 今天第一篇关于vue的剖析，从其实例化的过程来展开。 vue实例化vue核心是声明式渲染，其初始化的实例为后面的过程准备了各种条件，看下面一段简单的vue例子： 12345678910&amp;lt;div id=&amp;quot;app&amp;quot;&amp;gt;  &amp;#123;&amp;#123; message &amp;#125;&amp;#">
+<meta name="twitter:image" content="http://cauil.github.io/images/vuelifecycle.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://cauil.github.io/2017/11/30/2017-11-30-Vue之实例化流程/"/>
+
+
+
+
+
+  <title>Vue实例化过程 | Cauil's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Cauil's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">陌上花开，可缓缓归矣</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/11/30/2017-11-30-Vue之实例化流程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cauil">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/abu.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cauil's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Vue实例化过程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-30T00:00:00+08:00">
+                2017-11-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Vue/" itemprop="url" rel="index">
+                    <span itemprop="name">Vue</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>vue是一个灵活渐进的mvvm框架，其实际内容可以用 <code>UI=f(State)</code>这个公式来表示。</p>
+<p>今天第一篇关于vue的剖析，从其实例化的过程来展开。</p>
+<h2 id="vue实例化"><a href="#vue实例化" class="headerlink" title="vue实例化"></a>vue实例化</h2><p>vue核心是声明式渲染，其初始化的实例为后面的过程准备了各种条件，看下面一段简单的vue例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">&lt;div id=&quot;app&quot;&gt;</div><div class="line">  &#123;&#123; message &#125;&#125;</div><div class="line">&lt;/div&gt;</div><div class="line"></div><div class="line">var app = new Vue(&#123;</div><div class="line">  el: &apos;#app&apos;,</div><div class="line">  data: &#123;</div><div class="line">    message: &apos;Hello Vue!&apos;</div><div class="line">  &#125;</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>第一段代码是要初始化的template，第二段是实例的真正初始化内容，最终template会被渲染成<code>Hello Vue!</code>；</p>
+<p>那当执行<code>new Vue(options)</code>时里面到底执行了什么？</p>
+<h2 id="实例化流程"><a href="#实例化流程" class="headerlink" title="实例化流程"></a>实例化流程</h2><p>实际<code>new Vue(options)</code>是调用了<code>Vue.prototype._init</code>方法:</p>
+<p>主要流程有：</p>
+<h4 id="merge-options"><a href="#merge-options" class="headerlink" title="merge options"></a>merge options</h4><p>第一个流程先简单剖析下，流程过程主要是初始化实例vm的$options, 把构造函数<code>Vue.options({components:..., directives:..., filters:..., _base:...})</code>和options合并赋值给vm.$options;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">if (options &amp;&amp; options._isComponent) &#123;</div><div class="line">  // optimize internal component instantiation</div><div class="line">  // since dynamic options merging is pretty slow, and none of the</div><div class="line">  // internal component options needs special treatment.</div><div class="line">  initInternalComponent(vm, options);</div><div class="line">&#125; else &#123;</div><div class="line">  vm.$options = mergeOptions(</div><div class="line">    resolveConstructorOptions(vm.constructor),</div><div class="line">    options || &#123;&#125;,</div><div class="line">    vm</div><div class="line">  );</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="设置代理initProxy-vm"><a href="#设置代理initProxy-vm" class="headerlink" title="设置代理initProxy(vm)"></a>设置代理initProxy(vm)</h4><h4 id="初始化声明周期initLifecycle-vm"><a href="#初始化声明周期initLifecycle-vm" class="headerlink" title="初始化声明周期initLifecycle(vm)"></a>初始化声明周期initLifecycle(vm)</h4><p>主要是初始化与vm声明周期有关的值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">vm.$parent = parent;</div><div class="line">vm.$root = parent ? parent.$root : vm;</div><div class="line"></div><div class="line">vm.$children = [];</div><div class="line">vm.$refs = &#123;&#125;;</div><div class="line"></div><div class="line">vm._watcher = null;</div><div class="line">vm._inactive = null;</div><div class="line">vm._directInactive = false;</div><div class="line">vm._isMounted = false;</div><div class="line">vm._isDestroyed = false;</div><div class="line">vm._isBeingDestroyed = false;</div></pre></td></tr></table></figure>
+<h4 id="initEvents-vm"><a href="#initEvents-vm" class="headerlink" title="initEvents(vm)"></a>initEvents(vm)</h4><p>初始化事件属性：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">vm._events = Object.create(null);</div><div class="line">vm._hasHookEvent = false;</div></pre></td></tr></table></figure>
+<h4 id="initRender-vm"><a href="#initRender-vm" class="headerlink" title="initRender(vm)"></a>initRender(vm)</h4><p>初始化render的时候需要的一些属性：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">vm._vnode = null; // the root of the child tree</div><div class="line">vm._staticTrees = null; // v-once cached trees</div><div class="line">var options = vm.$options;</div><div class="line">var parentVnode = vm.$vnode = options._parentVnode; // the placeholder node in parent tree</div><div class="line">var renderContext = parentVnode &amp;&amp; parentVnode.context;</div><div class="line">vm.$slots = resolveSlots(options._renderChildren, renderContext);</div><div class="line">vm.$scopedSlots = emptyObject;</div><div class="line">// bind the createElement fn to this instance</div><div class="line">// so that we get proper render context inside it.</div><div class="line">// args order: tag, data, children, normalizationType, alwaysNormalize</div><div class="line">// internal version is used by render functions compiled from templates</div><div class="line">vm._c = function (a, b, c, d) &#123; return createElement(vm, a, b, c, d, false); &#125;;</div><div class="line">// normalization is always applied for the public version, used in</div><div class="line">// user-written render functions.</div><div class="line">vm.$createElement = function (a, b, c, d) &#123; return createElement(vm, a, b, c, d, true); &#125;;</div></pre></td></tr></table></figure>
+<h4 id="callHook-vm-‘beforeCreate’"><a href="#callHook-vm-‘beforeCreate’" class="headerlink" title="callHook(vm, ‘beforeCreate’)"></a>callHook(vm, ‘beforeCreate’)</h4><p>调用‘beforeCreate’的hook函数<code>var handlers = vm.$options[hook];</code></p>
+<h4 id="initInjections-vm"><a href="#initInjections-vm" class="headerlink" title="initInjections(vm)"></a>initInjections(vm)</h4><p>对vm.$options中的injections处理</p>
+<h4 id="initState-vm"><a href="#initState-vm" class="headerlink" title="initState(vm)"></a>initState(vm)</h4><p>这个过程非常重要，里面吹了props／methods／data／computed等数据并初始化了依赖、watchers、deps等，是整个vm实例能够渲染并且监听数据变化的关键；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">vm._watchers = [];</div><div class="line">var opts = vm.$options;</div><div class="line">if (opts.props) &#123; initProps(vm, opts.props); &#125;</div><div class="line">if (opts.methods) &#123; initMethods(vm, opts.methods); &#125;</div><div class="line">if (opts.data) &#123;</div><div class="line">  initData(vm);</div><div class="line">&#125; else &#123;</div><div class="line">  observe(vm._data = &#123;&#125;, true /* asRootData */);</div><div class="line">&#125;</div><div class="line">if (opts.computed) &#123; initComputed(vm, opts.computed); &#125;</div><div class="line">if (opts.watch &amp;&amp; opts.watch !== nativeWatch) &#123;</div><div class="line">  initWatch(vm, opts.watch);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="initProvide-vm"><a href="#initProvide-vm" class="headerlink" title="initProvide(vm)"></a>initProvide(vm)</h4><p><code>var provide = vm.$options.provide;</code></p>
+<h4 id="callHook-vm-‘created’"><a href="#callHook-vm-‘created’" class="headerlink" title="callHook(vm, ‘created’)"></a>callHook(vm, ‘created’)</h4><p>调用‘created’的hook函数<code>var handlers = vm.$options[hook];</code></p>
+<h4 id="vm-mount-vm-options-el"><a href="#vm-mount-vm-options-el" class="headerlink" title="vm.$mount(vm.$options.el)"></a>vm.$mount(vm.$options.el)</h4><p>这个是初始化vue实例的最后一步，把虚拟dom挂载到option.el(即’#app’)中；</p>
+<p><strong>以上就是vue实例化的所有流程，本文并没有介绍各个流程的详细处理过程，在后续文章中会一一展开。</strong></p>
+<h2 id="vue实例生命周期"><a href="#vue实例生命周期" class="headerlink" title="vue实例生命周期"></a>vue实例生命周期</h2><p>从上面流程中，其实可以看出一些实例生命周期的过程：</p>
+<p><img src="/images/vuelifecycle.png" alt="声明周期"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Vue/" rel="tag"># Vue</a>
+          
+            <a href="/tags/Javascript/" rel="tag"># Javascript</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/27/2017-11-27-ES6之Set与Map/" rel="next" title="ES6之Set与Map">
+                <i class="fa fa-chevron-left"></i> ES6之Set与Map
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/25/2017-12-25-koa1探秘/" rel="prev" title="koa1探秘">
+                koa1探秘 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/abu.jpg"
+                alt="cauil" />
+            
+              <p class="site-author-name" itemprop="name">cauil</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/cauil" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://weibo.com/cauil" target="_blank" title="Weibo">
+                    
+                      <i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://douban.com/people/cauil" target="_blank" title="DouBan">
+                    
+                      <i class="fa fa-fw fa-douban"></i>DouBan</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#vue实例化"><span class="nav-number">1.</span> <span class="nav-text">vue实例化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实例化流程"><span class="nav-number">2.</span> <span class="nav-text">实例化流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#merge-options"><span class="nav-number">2.0.1.</span> <span class="nav-text">merge options</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设置代理initProxy-vm"><span class="nav-number">2.0.2.</span> <span class="nav-text">设置代理initProxy(vm)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#初始化声明周期initLifecycle-vm"><span class="nav-number">2.0.3.</span> <span class="nav-text">初始化声明周期initLifecycle(vm)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#initEvents-vm"><span class="nav-number">2.0.4.</span> <span class="nav-text">initEvents(vm)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#initRender-vm"><span class="nav-number">2.0.5.</span> <span class="nav-text">initRender(vm)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#callHook-vm-‘beforeCreate’"><span class="nav-number">2.0.6.</span> <span class="nav-text">callHook(vm, ‘beforeCreate’)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#initInjections-vm"><span class="nav-number">2.0.7.</span> <span class="nav-text">initInjections(vm)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#initState-vm"><span class="nav-number">2.0.8.</span> <span class="nav-text">initState(vm)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#initProvide-vm"><span class="nav-number">2.0.9.</span> <span class="nav-text">initProvide(vm)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#callHook-vm-‘created’"><span class="nav-number">2.0.10.</span> <span class="nav-text">callHook(vm, ‘created’)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#vm-mount-vm-options-el"><span class="nav-number">2.0.11.</span> <span class="nav-text">vm.$mount(vm.$options.el)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#vue实例生命周期"><span class="nav-number">3.</span> <span class="nav-text">vue实例生命周期</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cauil</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

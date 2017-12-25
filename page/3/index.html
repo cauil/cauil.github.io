@@ -239,7 +239,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2015/10/19/DiveIntoJs_compare/">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2015/12/15/DiveIntoJs_module_pattern/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="cauil">
@@ -258,7 +258,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2015/10/19/DiveIntoJs_compare/" itemprop="url">深入理解Javascript： 比较</a></h1>
+                <a class="post-title-link" href="/2015/12/15/DiveIntoJs_module_pattern/" itemprop="url">深入理解Javascript：模块模式</a></h1>
         
 
         <div class="post-meta">
@@ -270,8 +270,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-10-19T00:00:00+08:00">
-                2015-10-19
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-12-15T00:00:00+08:00">
+                2015-12-15
               </time>
             
 
@@ -332,111 +332,299 @@
       
         
           
-            <p>开始这个之前我们先看几个例子</p>
-<pre><code>var a = [1, 2]
-var b = [1, 2]
-a == [1, 2] // false
-a == b // false
+            <p>本文转载自前端乱炖：<a href="http://www.html-js.com/article/Study-JavaScript-Javascript-module-every-day" target="_blank" rel="external">Javascript 模块模式</a></p>
+<h2 id="1-Javascript-模块模式"><a href="#1-Javascript-模块模式" class="headerlink" title="1.Javascript 模块模式"></a>1.Javascript 模块模式</h2><p>假设现在我们有一个小型的Js库，目的是用来增加一个数字：</p>
+<pre><code>var jspy = {
+  count: 0,
 
-var c = {a: 1, b: 2}
-var d = {a: 1, b: 2}
-c == d // false
+  incrementCount: function() {
+    this.count++;
+  },
 
-var str = &apos;test&apos;
-str == &apos;test&apos; // true
+  decrementCount: function() {
+    this.count--;
+  },
 
-str.toUpperCase() // &apos;TEST&apos;
-str // &apos;test&apos;
-</code></pre><p>为什么有这种现象发生呢？</p>
-<h2 id="1-JS的原始值与对象"><a href="#1-JS的原始值与对象" class="headerlink" title="1.JS的原始值与对象"></a>1.JS的原始值与对象</h2><p>原来JS分为两种对象，一个是原始类型，有undefined、null、布尔值、数字和字符串；一个是对象类型（数组、函数等）；</p>
-<p>原始类型值是不可更改的，任何方法都无法更改一个原始值，如上面例子中str经过转换大写之后还是‘test’；原始类型值的比较是值的比较；</p>
-<p>对象类型值的比较并非值的比较，即使两个对象包含同样的属性及相同的值，如上例子的a与b、c与d的比较都为false；</p>
-<p>对象的比较为引用的比较，当且仅当它们引用同一个基对象时，它们才相等，如下：</p>
-<pre><code>var a = [1, 2]
-var b = a
-a == b // true
-</code></pre><h2 id="2-与"><a href="#2-与" class="headerlink" title="2.== 与 ==="></a>2.<code>==</code> 与 <code>===</code></h2><p>再来看一个例子：</p>
-<pre><code>1 == &apos;1&apos; // true
-1 === &apos;1&apos; // false
-var undefined;
-undefined == null; // true
-1 == true;   // true
-2 == true;   // false
-0 == false;  // true
-0 == &apos;&apos;;     // true
-NaN == NaN;  // false
-[] == false; // true
-[] == ![];   // true
-</code></pre><p>为啥会有前面两行的结果呢？</p>
-<p>原来‘==’运算符用来检测两个操作数是否相等，这里相等的定义非常宽松，可以允许进行类型转换；</p>
-<p>而‘===’运算符用来检测两个操作数是否<strong>严格</strong>相等，会比较两个操作数的类型是否相同；</p>
-<h3 id="运算规则"><a href="#运算规则" class="headerlink" title="===运算规则"></a><code>===</code>运算规则</h3><p>‘===’运算符首先计算其操作数的值，然后比较这两个值，比较过程没有任何类型转换；</p>
+  getCount: function() {
+    return this.count;
+  }
+
+};
+</code></pre><p>但是，使用这个js库的人可以用jspy.count = 5 的方法来改变这个值。并不是我们的最初目的。在其他的编程语言中你可以定义一个私有变量，但是Javascript并不能“真正”定义私有变量。然而，我们可以通过操作Javascript来实现，这就引出了一个最流行的Javascript设计模式，模块模式。</p>
+<p>针对上面问题的解决方案如下：</p>
+<pre><code>var jspy = (function() {
+  var _count = 0;
+
+  var incrementCount = function() {
+    _count++;
+  }
+
+  var getCount = function() {
+    return _count;
+  }
+  return {
+    incrementCount: incrementCount,
+    getCount: getCount
+  };
+
+})();
+</code></pre><p>首先我们创造一个_count变量，下划线表明它是一个私有变量。再Javascript中下划线并没有什么实际的意义，但是它是一个用来标明私有变量的普遍用法。现在函数就可以操纵、返回变量了：</p>
+<p>然而，你注意到了我吧整个库包含在了一个自调用匿名函数中。这是一个在执行过程中马上被执行的函数。这个函数运行，定义了函数和变量然后到了return {}的部分，它告诉函数将其返回给变量jspy，或者换句话说，暴露给用户。我们暴露两个函数而不是_count变量，这意味着我们可以做如下操作：</p>
+<pre><code>jspy.incrementCount();
+jspy.getCount();
+</code></pre><p>但是当我们试图进行如下操作时：</p>
+<pre><code>jspy._count; //undefined
+</code></pre><p>它返回undefined。</p>
+<p>对于上面的这种设计模式有许多不同的实现方法。有人喜欢在return 中定义函数：</p>
+<pre><code>var jspy = (function() {
+    var _count = 0;
+
+    return {
+      incrementCount: function() {
+        _count++;
+      },
+      getCount: function() {
+        return _count;
+      }
+    };
+})();   
+</code></pre><p>受到上面例子的启发，CHristian Heilmann提出了Revealing Module Pattern。他的方法是将所有方法定义为私有变量，也就是说，不在return中定义，但是在那里暴露给用户，如下所示：</p>
+<pre><code>var jspy = (function() {
+  var _count = 0;
+  var incrementCount = function() {
+    _count++;
+  };
+  var resetCount = function() {
+    _count = 0;
+  };
+  var getCount = function() {
+    return _count;
+  };
+  return {
+    add: incrementCount,
+    reset: resetCount,
+    get: getCount
+  };
+})();
+</code></pre><p>这种设计模式有两个好处：</p>
 <ul>
-<li><p>如果两个值类型不同，返回false；</p>
+<li><p>首先，它使我们更容易的了解暴露的函数。当你不在return中定义函数时，我们能轻松的了解到每一行就是一个暴露的函数，这时我们阅读代码更加轻松。</p>
 </li>
-<li><p>如果两个值都为null或者undefined，返回true；</p>
-</li>
-<li><p>如果两个值都为布尔值true或者false，返回true；</p>
-</li>
-<li><p>如果其中一个为NaN,则返回false，即使另一个也为NaN；</p>
-</li>
-<li><p>如果两个值为数字且数值相等，则返回true，0与-0也返回true；</p>
-</li>
-<li><p>如果两个字符串的长度或者内容不同，则返回false；</p>
-</li>
-<li><p>如果两个引用值指向同一个对象，则返回true，其他对象比较都返回false；</p>
+<li><p>其次，你可以用简短的名字（例如 add）来暴露函数，但在定义的时候仍然可以使用冗余的定义方法（例如 incrementCount）。   </p>
 </li>
 </ul>
-<h3 id="运算规则-1"><a href="#运算规则-1" class="headerlink" title="==运算规则"></a><code>==</code>运算规则</h3><p>‘==’运算符跟‘===’类似，不过比较并不严格。如果两个操作数类型相同，则和上文所述的严格相等的比较规则一样；</p>
-<p>如果两个操作数不是同一类型，那么相等运算符会尝试进行一些类型转换，然后进行比较：</p>
-<ul>
-<li><p>如果一个值为null，另一个为undefined，则它们相等；</p>
-</li>
-<li><p>如果一个值是数字，另一个是字符串，先将字符串转换为数字，然后使用转换后的值进行比较；</p>
-</li>
-<li><p>如果其中一个是true，则将其转换为1再进行比较；如果是false，则转换为0再进行比较；</p>
-</li>
-<li><p>如果一个值为对象，另一个值是数字或字符串，则使用下一小节要讲的类型转换规则转换为原始值，然后再进行比较；对象通过toString()方法或valueOf方法转换为原始值；JS语言核心的内置类首先尝试使用valueOf()，再尝试toString()，除了日期类，日期类只使用toString()转换。那些不是内置对象则通过各自实现中定义的方法转换为原始值；</p>
-</li>
-<li><p>其他不同类型之间的比较均不相等；</p>
-</li>
-</ul>
-<p>如<code>&#39;1&#39; == true</code>返回true，其中true转换为1，‘1’转换为1，因为两个数字的值相等，所以返回true。</p>
-<h2 id="3-类型转换"><a href="#3-类型转换" class="headerlink" title="3.类型转换"></a>3.类型转换</h2><p>类型转换有隐式和显式转换，下图为转换的规则：</p>
-<p><img src="http://7xj29n.com1.z0.glb.clouddn.com/类型转换.jpg" alt="http://7xj29n.com1.z0.glb.clouddn.com/类型转换.jpg"></p>
-<h3 id="显示转换"><a href="#显示转换" class="headerlink" title="显示转换"></a>显示转换</h3><p>做显示转换最简单的方法就是使用Boolean()、Number()、String()或Object()函数；</p>
-<p>注意这些函数与它们作为函数构造器是有区别的，作为函数构造器是使用new Number()，这种得出来的是属于包装对象；</p>
-<p>如下：</p>
-<pre><code>Number(&quot;3&quot;)
-new Number(&quot;3&quot;)
-typeof Number(&quot;3&quot;) // number
-typeof new Number(&quot;3&quot;) // object
-</code></pre><h3 id="隐式转换"><a href="#隐式转换" class="headerlink" title="隐式转换"></a>隐式转换</h3><p>隐式转换是通过上下语境或者运算符来转换的；</p>
-<p>例如‘+’运算符有一个操作数为字符串时，另一个操作数不为字符串时会隐式转换为字符串；’-‘运算符会隐式把两个操作数转换为数字;</p>
-<p>再如一元运算符‘！’会把操作数转换为布尔值并取反；如：</p>
-<pre><code>12 + &apos;1&apos; // &apos;121&apos;
-new Number(&quot;3&quot;) - [1] // 2
-!![] // true
-</code></pre><p>对应的转换规则如上面图中所示，下面只来说说对象转换为原始值的方式（<em>这里只谈原生对象，而非宿主对象的转换，宿主对象根据各自的算法进行转换</em>）；</p>
-<p>1.对象转换为字符串</p>
-<ul>
-<li>如果对象具有toString()方法，且调用这个方法返回一个原始值，则对象先转换为原始值，然后再通过上图的转换规则转换为字符串；</li>
-<li>否则JS会调用valueOf()方法，且调用这个方法返回一个原始值，则对象先转换为原始值，然后再通过上图的转换规则转换为字符串；</li>
-<li>如果对象无法从上面两个方法获得一个原始值，这时它将抛出一个类型错误异常；</li>
-</ul>
-<p>例如计算<code>[1, 2, 3] + &#39;abc&#39;</code>返回<code>&#39;1,2,3abc&#39;</code></p>
-<p>首先<code>[1, 2, 3]</code>调用<code>toString()</code>方法返回<code>‘1,2,3’</code>然后再执行字符串的+运算，返回<code>&#39;1,2,3abc&#39;</code></p>
-<p>2.对象转换为数字</p>
-<p>这个与上面转换为字符串相反，先调用valueOf()，失败再尝试toString()；</p>
-<ul>
-<li>否则JS会调用valueOf()方法，且调用这个方法返回一个原始值，则对象先转换为原始值，然后再通过上图的转换规则转换为字符串；</li>
-<li>如果对象具有toString()方法，且调用这个方法返回一个原始值，则对象先转换为原始值，然后再通过上图的转换规则转换为字符串；</li>
-<li>如果对象无法从上面两个方法获得一个原始值，这时它将抛出一个类型错误异常；</li>
-</ul>
-<p>例如计算<code>[1, 2, 3] - 1</code>返回<code>NaN</code></p>
-<p>首先<code>[1, 2, 3]</code>调用<code>valueOf()</code>方法，而此方法返回一个对象而不是原始值，则调用<code>toString()</code>方法，返回<code>‘1,2,3’</code>然后再转换为数字，根据字符串转换为数字的规则，为<code>NaN</code>,<code>NaN - 1</code>返回<code>NaN</code>。</p>
-<p>注意：日期对象有点特别，通过valueOf和toString方法返回的原始值将被直接使用；</p>
-<h2 id="4-后记"><a href="#4-后记" class="headerlink" title="4.后记"></a>4.后记</h2><p>通过上面的一些例子我们知道JS原始类型与对象类型的一些转换规则以及JS的内部实现，有机会再聊聊JS的常见运算符。</p>
+<p>相关阅读：<a href="http://www.ruanyifeng.com/blog/2012/10/javascript_module.html" target="_blank" rel="external">阮一峰：Javascript模块化编程（一）：模块的写法</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2015/11/19/DiveIntoJs_hoisted/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cauil">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/abu.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cauil's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2015/11/19/DiveIntoJs_hoisted/" itemprop="url">深入理解Javascript： 声明提升</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-11-19T00:00:00+08:00">
+                2015-11-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/js/" itemprop="url" rel="index">
+                    <span itemprop="name">js</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>在JS程序中，我们都会需要声明变量和函数，变量声明和函数声明有些什么要注意的呢？</p>
+<p>今天就让我们一探究竟。</p>
+<p>先看一个例子：</p>
+<pre><code>var scope = &apos;global&apos;;
+function checkscope(){
+    return scope;
+    var scope = &apos;local&apos;;
+}
+var result = checkscope();
+console.log(result);
+</code></pre><p>上面例子最后打印出来的result是什么呢，可能有人会说是global，有人会说是local，实际结果却是undifined；</p>
+<p>最开始我真是被打击到了，打击过后还是要搞明白啊。</p>
+<h2 id="1-作用域"><a href="#1-作用域" class="headerlink" title="1.作用域"></a>1.作用域</h2><p>还是先看一个上面例子的变种：</p>
+<pre><code>var scope = &apos;global&apos;;
+function checkscope(){
+    var scope = &apos;local&apos;;
+    return scope;
+}
+var result = checkscope();
+console.log(result);
+</code></pre><p>这个可能大家都能说出来是local，是的没错，跟大多数编程语言一样，JS也分全局作用域和函数作用域。</p>
+<p>我们先来了解作用域这个概念，在JS中一个变量的作用域是程序源代码中定义这个变量的区域。</p>
+<p>全局变量用于全局作用域，在JS代码中的任何地方都是有定义的。然而在函数内的变量只在函数体内有定义。他们是局部变量，作用域是局部的。函数参数也是局部变量，它们只在函数体内有定义。</p>
+<p>并且，在函数体内，局部变量的优先级高于同名的全局变量。如果在函数体内声明的一个局部变量或者函数参数中带有的变量和全局变量重名，那么全局变量就被局部变量覆盖。</p>
+<p>上面例子的结果就呼之欲出了。</p>
+<p>还有一个坑，当我们声明变量时，如果没有加var语句，那么这个变量将会提升为全局变量，如：</p>
+<pre><code>var scope = &apos;global&apos;;
+function checkscope(){
+    scope = &apos;local&apos;;
+    return scope;
+}
+var result = checkscope();
+console.log(result); // local
+</code></pre><p>结果变成了local，所以平时声明变量都要加var，不然会造成很多bug，或者原本意义的偏离。</p>
+<h2 id="2-变量声明提升"><a href="#2-变量声明提升" class="headerlink" title="2.变量声明提升"></a>2.变量声明提升</h2><p>再来看文章开始的例子，为什么会有undefined的结果呢；</p>
+<p>原来JS没有块级作用域，JS有函数作用域，变量在声明它们的函数体以及这个函数体嵌套的任意函数体内都是有定义的，即函数体内的声明的所有变量在函数体内始终是可见的。</p>
+<p>有意思的是，这意味着在声明之前甚至可用；JS这个特性被称为变量声明提前，即JS函数内声明的所有变量（不涉及赋值）都被提前至函数体的顶部；这步操作是JS引擎在预编译进行的，是在代码运行之前。</p>
+<p>这个例子等价于下面的代码：</p>
+<pre><code>var scope = &apos;global&apos;;
+function checkscope(){
+    var scope;
+    return scope;
+    scope = &apos;local&apos;;
+}
+var result = checkscope();
+console.log(result);
+</code></pre><p>再来看这个例子，我们就知道由于函数作用域的特性，局部变量在整个函数体始终是有定义的，也就是说，在函数体内局部变量遮盖了同名全局变量。尽管如此，只有在程序执行到var scope = ‘local’时，局部变量才被真正赋值。</p>
+<p>所以由于JS没有块级作用域，我们编写程序可以将变量声明放在函数体顶部，这样做法是一个很好的反应真实的变量作用域，减少bug。</p>
+<h2 id="3-函数声明提升"><a href="#3-函数声明提升" class="headerlink" title="3.函数声明提升"></a>3.函数声明提升</h2><p>老规矩，再来看一个例子：</p>
+<pre><code>var foo = 1;
+function bar() {
+    return foo;
+    foo = 2;
+    function foo() {return 3;}
+    var foo = 4;
+}
+console.log(bar());
+</code></pre><p>大家会不会说是undefined呢？不是的，这个结果是<code>[function: foo]</code>,为什么会出现这种情况呢？</p>
+<p>原来函数声明与通过var声明变量一样，<strong>函数声明语句</strong>中的函数被显式地提前到脚本或函数的顶部，因此它们在整个脚本和函数内部都是可见的。</p>
+<p>与变量声明提前不同的是：使用var的话，只有变量声明提前，变量的初始化代码仍然在原来的位置。然而用函数声明语句的话，函数名称和函数体均提前,脚本中的所有函数和函数中所嵌套的函数都会在当前上下文中其它代码之前声明。</p>
+<p>为什么要指定是函数声明之前呢，因为使用函数定义表达式创建的函数是不会提前的，见下面的例子：</p>
+<pre><code>var foo = 1;
+function bar() {
+    return foo;
+    foo = 2;
+    var foo = function foo() {return 3;}
+    var foo = 4;
+}
+console.log(bar()); // undefined
+</code></pre><p>关于函数定义表达式和函数生命表达式的详细内容，以后在深入理解函数中再讲。</p>
 
           
         
@@ -690,6 +878,252 @@ new Number(&quot;3&quot;) - [1] // 2
 
 &lt;/html&gt;
 </code></pre>
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2015/10/19/DiveIntoJs_compare/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cauil">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/abu.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cauil's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2015/10/19/DiveIntoJs_compare/" itemprop="url">深入理解Javascript： 比较</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-10-19T00:00:00+08:00">
+                2015-10-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/js/" itemprop="url" rel="index">
+                    <span itemprop="name">js</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>开始这个之前我们先看几个例子</p>
+<pre><code>var a = [1, 2]
+var b = [1, 2]
+a == [1, 2] // false
+a == b // false
+
+var c = {a: 1, b: 2}
+var d = {a: 1, b: 2}
+c == d // false
+
+var str = &apos;test&apos;
+str == &apos;test&apos; // true
+
+str.toUpperCase() // &apos;TEST&apos;
+str // &apos;test&apos;
+</code></pre><p>为什么有这种现象发生呢？</p>
+<h2 id="1-JS的原始值与对象"><a href="#1-JS的原始值与对象" class="headerlink" title="1.JS的原始值与对象"></a>1.JS的原始值与对象</h2><p>原来JS分为两种对象，一个是原始类型，有undefined、null、布尔值、数字和字符串；一个是对象类型（数组、函数等）；</p>
+<p>原始类型值是不可更改的，任何方法都无法更改一个原始值，如上面例子中str经过转换大写之后还是‘test’；原始类型值的比较是值的比较；</p>
+<p>对象类型值的比较并非值的比较，即使两个对象包含同样的属性及相同的值，如上例子的a与b、c与d的比较都为false；</p>
+<p>对象的比较为引用的比较，当且仅当它们引用同一个基对象时，它们才相等，如下：</p>
+<pre><code>var a = [1, 2]
+var b = a
+a == b // true
+</code></pre><h2 id="2-与"><a href="#2-与" class="headerlink" title="2.== 与 ==="></a>2.<code>==</code> 与 <code>===</code></h2><p>再来看一个例子：</p>
+<pre><code>1 == &apos;1&apos; // true
+1 === &apos;1&apos; // false
+var undefined;
+undefined == null; // true
+1 == true;   // true
+2 == true;   // false
+0 == false;  // true
+0 == &apos;&apos;;     // true
+NaN == NaN;  // false
+[] == false; // true
+[] == ![];   // true
+</code></pre><p>为啥会有前面两行的结果呢？</p>
+<p>原来‘==’运算符用来检测两个操作数是否相等，这里相等的定义非常宽松，可以允许进行类型转换；</p>
+<p>而‘===’运算符用来检测两个操作数是否<strong>严格</strong>相等，会比较两个操作数的类型是否相同；</p>
+<h3 id="运算规则"><a href="#运算规则" class="headerlink" title="===运算规则"></a><code>===</code>运算规则</h3><p>‘===’运算符首先计算其操作数的值，然后比较这两个值，比较过程没有任何类型转换；</p>
+<ul>
+<li><p>如果两个值类型不同，返回false；</p>
+</li>
+<li><p>如果两个值都为null或者undefined，返回true；</p>
+</li>
+<li><p>如果两个值都为布尔值true或者false，返回true；</p>
+</li>
+<li><p>如果其中一个为NaN,则返回false，即使另一个也为NaN；</p>
+</li>
+<li><p>如果两个值为数字且数值相等，则返回true，0与-0也返回true；</p>
+</li>
+<li><p>如果两个字符串的长度或者内容不同，则返回false；</p>
+</li>
+<li><p>如果两个引用值指向同一个对象，则返回true，其他对象比较都返回false；</p>
+</li>
+</ul>
+<h3 id="运算规则-1"><a href="#运算规则-1" class="headerlink" title="==运算规则"></a><code>==</code>运算规则</h3><p>‘==’运算符跟‘===’类似，不过比较并不严格。如果两个操作数类型相同，则和上文所述的严格相等的比较规则一样；</p>
+<p>如果两个操作数不是同一类型，那么相等运算符会尝试进行一些类型转换，然后进行比较：</p>
+<ul>
+<li><p>如果一个值为null，另一个为undefined，则它们相等；</p>
+</li>
+<li><p>如果一个值是数字，另一个是字符串，先将字符串转换为数字，然后使用转换后的值进行比较；</p>
+</li>
+<li><p>如果其中一个是true，则将其转换为1再进行比较；如果是false，则转换为0再进行比较；</p>
+</li>
+<li><p>如果一个值为对象，另一个值是数字或字符串，则使用下一小节要讲的类型转换规则转换为原始值，然后再进行比较；对象通过toString()方法或valueOf方法转换为原始值；JS语言核心的内置类首先尝试使用valueOf()，再尝试toString()，除了日期类，日期类只使用toString()转换。那些不是内置对象则通过各自实现中定义的方法转换为原始值；</p>
+</li>
+<li><p>其他不同类型之间的比较均不相等；</p>
+</li>
+</ul>
+<p>如<code>&#39;1&#39; == true</code>返回true，其中true转换为1，‘1’转换为1，因为两个数字的值相等，所以返回true。</p>
+<h2 id="3-类型转换"><a href="#3-类型转换" class="headerlink" title="3.类型转换"></a>3.类型转换</h2><p>类型转换有隐式和显式转换，下图为转换的规则：</p>
+<p><img src="http://7xj29n.com1.z0.glb.clouddn.com/类型转换.jpg" alt="http://7xj29n.com1.z0.glb.clouddn.com/类型转换.jpg"></p>
+<h3 id="显示转换"><a href="#显示转换" class="headerlink" title="显示转换"></a>显示转换</h3><p>做显示转换最简单的方法就是使用Boolean()、Number()、String()或Object()函数；</p>
+<p>注意这些函数与它们作为函数构造器是有区别的，作为函数构造器是使用new Number()，这种得出来的是属于包装对象；</p>
+<p>如下：</p>
+<pre><code>Number(&quot;3&quot;)
+new Number(&quot;3&quot;)
+typeof Number(&quot;3&quot;) // number
+typeof new Number(&quot;3&quot;) // object
+</code></pre><h3 id="隐式转换"><a href="#隐式转换" class="headerlink" title="隐式转换"></a>隐式转换</h3><p>隐式转换是通过上下语境或者运算符来转换的；</p>
+<p>例如‘+’运算符有一个操作数为字符串时，另一个操作数不为字符串时会隐式转换为字符串；’-‘运算符会隐式把两个操作数转换为数字;</p>
+<p>再如一元运算符‘！’会把操作数转换为布尔值并取反；如：</p>
+<pre><code>12 + &apos;1&apos; // &apos;121&apos;
+new Number(&quot;3&quot;) - [1] // 2
+!![] // true
+</code></pre><p>对应的转换规则如上面图中所示，下面只来说说对象转换为原始值的方式（<em>这里只谈原生对象，而非宿主对象的转换，宿主对象根据各自的算法进行转换</em>）；</p>
+<p>1.对象转换为字符串</p>
+<ul>
+<li>如果对象具有toString()方法，且调用这个方法返回一个原始值，则对象先转换为原始值，然后再通过上图的转换规则转换为字符串；</li>
+<li>否则JS会调用valueOf()方法，且调用这个方法返回一个原始值，则对象先转换为原始值，然后再通过上图的转换规则转换为字符串；</li>
+<li>如果对象无法从上面两个方法获得一个原始值，这时它将抛出一个类型错误异常；</li>
+</ul>
+<p>例如计算<code>[1, 2, 3] + &#39;abc&#39;</code>返回<code>&#39;1,2,3abc&#39;</code></p>
+<p>首先<code>[1, 2, 3]</code>调用<code>toString()</code>方法返回<code>‘1,2,3’</code>然后再执行字符串的+运算，返回<code>&#39;1,2,3abc&#39;</code></p>
+<p>2.对象转换为数字</p>
+<p>这个与上面转换为字符串相反，先调用valueOf()，失败再尝试toString()；</p>
+<ul>
+<li>否则JS会调用valueOf()方法，且调用这个方法返回一个原始值，则对象先转换为原始值，然后再通过上图的转换规则转换为字符串；</li>
+<li>如果对象具有toString()方法，且调用这个方法返回一个原始值，则对象先转换为原始值，然后再通过上图的转换规则转换为字符串；</li>
+<li>如果对象无法从上面两个方法获得一个原始值，这时它将抛出一个类型错误异常；</li>
+</ul>
+<p>例如计算<code>[1, 2, 3] - 1</code>返回<code>NaN</code></p>
+<p>首先<code>[1, 2, 3]</code>调用<code>valueOf()</code>方法，而此方法返回一个对象而不是原始值，则调用<code>toString()</code>方法，返回<code>‘1,2,3’</code>然后再转换为数字，根据字符串转换为数字的规则，为<code>NaN</code>,<code>NaN - 1</code>返回<code>NaN</code>。</p>
+<p>注意：日期对象有点特别，通过valueOf和toString方法返回的原始值将被直接使用；</p>
+<h2 id="4-后记"><a href="#4-后记" class="headerlink" title="4.后记"></a>4.后记</h2><p>通过上面的一些例子我们知道JS原始类型与对象类型的一些转换规则以及JS的内部实现，有机会再聊聊JS的常见运算符。</p>
+
           
         
       
@@ -2351,7 +2785,7 @@ obj.valueOf = function() {return this.x + this.y + 100;};
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2362,7 +2796,7 @@ obj.valueOf = function() {return this.x + this.y + 100;};
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">分类</span>
                 
               </div>
@@ -2373,7 +2807,7 @@ obj.valueOf = function() {return this.x + this.y + 100;};
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-count">20</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
