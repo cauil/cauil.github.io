@@ -467,6 +467,189 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/12/01/2017-12-01-vue之mergeOptions/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cauil">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/abu.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cauil's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/01/2017-12-01-vue之mergeOptions/" itemprop="url">Vue之mergeOptions</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-01T00:00:00+08:00">
+                2017-12-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Vue/" itemprop="url" rel="index">
+                    <span itemprop="name">Vue</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><code>new Vue(options)</code>中首先处理的是下面一段代码, 这次就剖析这一段代码;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">if (options &amp;&amp; options._isComponent) &#123;</div><div class="line">  // optimize internal component instantiation</div><div class="line">  // since dynamic options merging is pretty slow, and none of the</div><div class="line">  // internal component options needs special treatment.</div><div class="line">  initInternalComponent(vm, options)</div><div class="line">&#125; else &#123;</div><div class="line">  vm.$options = mergeOptions(</div><div class="line">    resolveConstructorOptions(vm.constructor),</div><div class="line">    options || &#123;&#125;,</div><div class="line">    vm</div><div class="line">  )</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="初始化vm-option"><a href="#初始化vm-option" class="headerlink" title="初始化vm.$option"></a>初始化vm.$option</h2><p>上面代码主要目的就是初始化vm.$option. 其中逻辑很简单，如果传入的option是一个组件，执行initInternalComponent, 否则执行mergeOptions;</p>
+<h3 id="initInternalComponent"><a href="#initInternalComponent" class="headerlink" title="initInternalComponent"></a>initInternalComponent</h3><p>initInternalComponent非常简单，就是以Vue.options为原型创建vm.$options, 并把options中的属性复制到vm.$options;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">const opts = vm.$options = Object.create(vm.constructor.options)</div><div class="line">// doing this because it&apos;s faster than dynamic enumeration.</div><div class="line">opts.parent = options.parent</div><div class="line">opts.propsData = options.propsData</div><div class="line">opts._parentVnode = options._parentVnode</div><div class="line">opts._parentListeners = options._parentListeners</div><div class="line">opts._renderChildren = options._renderChildren</div><div class="line">opts._componentTag = options._componentTag</div><div class="line">opts._parentElm = options._parentElm</div><div class="line">opts._refElm = options._refElm</div><div class="line">if (options.render) &#123;</div><div class="line">  opts.render = options.render</div><div class="line">  opts.staticRenderFns = options.staticRenderFns</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="mergeOptions"><a href="#mergeOptions" class="headerlink" title="mergeOptions"></a>mergeOptions</h3><p>mergeOptions接受三个参数，这个方法比较复杂; 首先接受三个参数</p>
+<p><code>[parent, child, vm] = [resolveConstructorOptions(vm.constructor), options || {}, vm]</code></p>
+<p>其中parent为resolveConstructorOptions(vm.constructor), 得到结果为Vue.options;child跟vm没什么说的；我们来看看mergeOptions做了什么；</p>
+<p>具体代码在<a href="https://github.com/vuejs/vue/blob/94512f3e8cee4030a1096121700ed49afab48073/src/core/util/options.js#L300" target="_blank" rel="external">github这里</a>; 主要逻辑是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">normalizeProps(child)</div><div class="line">normalizeInject(child)</div><div class="line">normalizeDirectives(child)</div><div class="line">const extendsFrom = child.extends</div><div class="line">if (extendsFrom) &#123;</div><div class="line">  parent = mergeOptions(parent, extendsFrom, vm)</div><div class="line">&#125;</div><div class="line">if (child.mixins) &#123;</div><div class="line">  for (let i = 0, l = child.mixins.length; i &lt; l; i++) &#123;</div><div class="line">    parent = mergeOptions(parent, child.mixins[i], vm)</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">const options = &#123;&#125;</div><div class="line">let key</div><div class="line">for (key in parent) &#123;</div><div class="line">  mergeField(key)</div><div class="line">&#125;</div><div class="line">for (key in child) &#123;</div><div class="line">  if (!hasOwn(parent, key)) &#123;</div><div class="line">    mergeField(key)</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="其中normalizeProps-normalizeInject-normalizeDirectives主要是格式化对象；"><a href="#其中normalizeProps-normalizeInject-normalizeDirectives主要是格式化对象；" class="headerlink" title="其中normalizeProps/normalizeInject/normalizeDirectives主要是格式化对象；"></a>其中normalizeProps/normalizeInject/normalizeDirectives主要是格式化对象；</h4><p>normalizeProps主要是把options中的props格式化为如下对象 :</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">[&apos;bad-name&apos;, &apos;goodName&apos;]                                         // Array</div><div class="line">// =&gt;</div><div class="line">&#123;badName: &#123;type: null&#125;, goodName: &#123;type: null&#125;&#125;</div><div class="line"></div><div class="line">&#123;badName: &#123;type: &apos;String&apos;, default: &apos;hi&apos;&#125;, &apos;good-name&apos;: &apos;String&apos;&#125;  // Object</div><div class="line">// =&gt;</div><div class="line">&#123;badName: &#123;type: &quot;String&quot;, default: &quot;hi&quot;&#125;, goodName: &#123;type: &quot;String&quot;&#125;&#125;</div></pre></td></tr></table></figure>
+<p>normalizeProps主要是把options中的inject格式化为如下对象:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">[&apos;test&apos;, &apos;test1&apos;]</div><div class="line">// =&gt; </div><div class="line">&#123;test: &#123;from: &apos;test&apos;&#125;, test1: &#123;from: &apos;test1&apos;&#125;&#125;</div><div class="line"></div><div class="line">&#123;test: &apos;hello&apos;, test1: &#123;name: &apos;hi&apos;&#125;&#125;</div><div class="line">// =&gt;</div><div class="line">&#123;test: &#123;from: &quot;hello&quot;&#125;, test1: &#123;from: &quot;test1&quot;, name: &quot;hi&quot;&#125;&#125;</div></pre></td></tr></table></figure></p>
+<p>normalizeDirectives主要是把options中的directives格式化为如下对象：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">directives: &#123;</div><div class="line">    hello: function() &#123;console.log(&apos;hi&apos;)&#125;, // function</div><div class="line">    hi: &apos;test&apos;</div><div class="line">&#125;</div><div class="line">// =&gt;</div><div class="line">directives: &#123;</div><div class="line">    hello: &#123;bind: function() &#123;console.log(&apos;hi&apos;)&#125;, update: function() &#123;console.log(&apos;hi&apos;)&#125; &#125;,</div><div class="line">    hi: &apos;test&apos;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="extend与mixins"><a href="#extend与mixins" class="headerlink" title="extend与mixins"></a>extend与mixins</h4><p>接下来的代码其实是vue的混合用法，这里有<a href="https://cn.vuejs.org/v2/guide/mixins.html#全局混合" target="_blank" rel="external">官方文档-混合</a>描述;<br>由于mixins与extend用法一致，只对mixins讲述：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">if (child.mixins) &#123;</div><div class="line">  for (let i = 0, l = child.mixins.length; i &lt; l; i++) &#123;</div><div class="line">    parent = mergeOptions(parent, child.mixins[i], vm)</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面代码其实是递归调用mergeOptions, 并把mixins的内容递归处理到parent对象中；</p>
+<p>接着初始化一个空对象{}这里我们记做obj, 并遍历parent里的key，mergeField到options中;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">function mergeField (key) &#123;</div><div class="line">  var strat = strats[key] || defaultStrat;</div><div class="line">  options[key] = strat(parent[key], child[key], vm, key);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>mergeField是一个多态函数，根据传递的key值不同，parent与child合并的方式不同：</p>
+<ul>
+<li>如果key是<code>el</code>或者<code>propsData</code>时:  <code>obj[key] = child[key] === undefined ? parent[key] : child[key]</code></li>
+<li>如果key是<code>data</code>, 则递归的一层一层把所有的parent不存在的数据复制到child</li>
+<li><p>如果key是vue实例的生命周期, 则<code>obj[key] = parent[key].concat(child[key])</code></p>
+<p><code>beforeCreate, created, beforeMount, mounted, beforeUpdate, updated, beforeDestroy, destroyed, activated, deactivated</code></p>
+</li>
+<li><p>如果key是<code>components, directives, filters</code>这些key值，则</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">const res = Object.create(parent[ke] || null)</div><div class="line">return child[key] ? extend(res, child[ke]) : res</div></pre></td></tr></table></figure>
+</li>
+<li><p>如果key是watch,与生命周期类似</p>
+</li>
+<li>如果key是<code>prosp/methods/inject/computed</code>时，与componets类似；</li>
+</ul>
+<p>也即：</p>
+<ol>
+<li>key值为生命周期或者watch时，同名钩子函数将混合为一个数组，因此都将被调用。另外，混合对象的钩子将在组件自身钩子之前调用. </li>
+<li>当为<code>prosp/methods/inject/computed/components/directives/filters</code>时，将被混合为同一个对象。两个对象键名冲突时，取组件对象的键值对。</li>
+</ol>
+<p>如下面一个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">var mixin = &#123;</div><div class="line">  created: function () &#123;</div><div class="line">    console.log(&apos;混合对象的钩子被调用&apos;)</div><div class="line">  &#125;,</div><div class="line">  methods: &#123;</div><div class="line">    foo: function () &#123;</div><div class="line">      console.log(&apos;foo&apos;)</div><div class="line">    &#125;,</div><div class="line">    conflicting: function () &#123;</div><div class="line">      console.log(&apos;from mixin&apos;)</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">var vm = new Vue(&#123;</div><div class="line">  mixins: [mixin],</div><div class="line">  created: function () &#123;</div><div class="line">    console.log(&apos;组件钩子被调用&apos;)</div><div class="line">  &#125;,</div><div class="line">  methods: &#123;</div><div class="line">    bar: function () &#123;</div><div class="line">      console.log(&apos;bar&apos;)</div><div class="line">    &#125;,</div><div class="line">    conflicting: function () &#123;</div><div class="line">      console.log(&apos;from self&apos;)</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;)</div><div class="line"></div><div class="line">// =&gt; &quot;混合对象的钩子被调用&quot;</div><div class="line">// =&gt; &quot;组件钩子被调用&quot;</div><div class="line"></div><div class="line">vm.foo() // =&gt; &quot;foo&quot;</div><div class="line">vm.bar() // =&gt; &quot;bar&quot;</div><div class="line">vm.conflicting() // =&gt; &quot;from self&quot;</div></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>上面的所有步骤就是初始化传入的options中的一些对象, 并把混合的mixins和extend合并起来，最后赋值给vue实例的$options.</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/11/30/2017-11-30-Vue之实例化流程/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -586,6 +769,177 @@
 <p><strong>以上就是vue实例化的所有流程，本文并没有介绍各个流程的详细处理过程，在后续文章中会一一展开。</strong></p>
 <h2 id="vue实例生命周期"><a href="#vue实例生命周期" class="headerlink" title="vue实例生命周期"></a>vue实例生命周期</h2><p>从上面流程中，其实可以看出一些实例生命周期的过程：</p>
 <p><img src="/images/vuelifecycle.png" alt="声明周期"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/11/27/2017-11-26-ES之Promise/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cauil">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/abu.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cauil's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/11/27/2017-11-26-ES之Promise/" itemprop="url">ES6之Promise</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-27T00:00:00+08:00">
+                2017-11-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JS/" itemprop="url" rel="index">
+                    <span itemprop="name">JS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Promise基础知识"><a href="#Promise基础知识" class="headerlink" title="Promise基础知识"></a>Promise基础知识</h2><p>Promise相当于异步操作结果的占位符，它不会去订阅一个事件，也不会传递一个回调函数给目标函数，而是让函数返回一个Promise：</p>
+<p><code>let promise = readFile(&#39;example.txt&#39;)</code></p>
+<p> 上例子中，readFile不会立即开始读取文件，函数会返回一个表示异步读取操作的Promise对象，未来对这个对象的操作完全取决于Promise的声明周期。</p>
+<h4 id="Promise生命周期"><a href="#Promise生命周期" class="headerlink" title="Promise生命周期"></a>Promise生命周期</h4><p> 生命周期有三个：pending、fullfilled、rejected</p>
+<p> 所有promise都有then方法，它接受两个参数：第一个当Promise的状态变为fullfilled时要调用的函数，与异步操作相关的附加数据都会传递给这个完成函数；第二个是当Promise的状态变为rejected时要调用的函数，其与完成时调用的函数类似，所有与失败相关的附加数据都会传递这个拒绝函数；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">let promise = readFile(&quot;example.txt&quot;);</div><div class="line">promise.then(function(contents) &#123;</div><div class="line">    // fulfillment</div><div class="line">    console.log(contents);</div><div class="line">&#125;, function(err) &#123;</div><div class="line">// rejection</div><div class="line">    console.error(err.message);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p><strong>如果一个对象实现了上面的then方法，那这个对象我们称之为thenable对象。所有的Promise对象都是thenable对象，但并非所有thenable对象都是Promise。</strong></p>
+<p>Promise被解决（resolved）时执行，这些任务最终会被加入到一个为Promise量身定制的独立队列中，而不会立即执行，当前面的任务完成后其才被调用；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">var p = new Promise(function(resolve, reject)&#123;resolve()&#125;);</div><div class="line">p.then(function()&#123;console.log(&apos;do&apos;)&#125;);</div><div class="line">console.log(&apos;do1&apos;);</div><div class="line">// do1</div><div class="line">// do</div></pre></td></tr></table></figure>
+<h4 id="创建未完成的Promise"><a href="#创建未完成的Promise" class="headerlink" title="创建未完成的Promise"></a>创建未完成的Promise</h4><p>Promise的执行器会立即执行，然后执行后续流程中的代码;当Promise resolved之后会把任务加入到任务队列尾部，即调用resolve()后出触发一个异步操作，传入then和catch方法的函数会被添加到任务队列中并异步执行；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">let promise = new Promise(function(resolve, reject) &#123;</div><div class="line">  console.log(&apos;Promise&apos;);</div><div class="line">  resolve();</div><div class="line">&#125;);</div><div class="line">promise.then(function() &#123;</div><div class="line">    console.log(&quot;Resolved.&quot;);</div><div class="line">&#125;);</div><div class="line">console.log(&quot;HI!&quot;);</div><div class="line">// &apos;Promise&apos;</div><div class="line">// HI!</div><div class="line">// Resolved</div></pre></td></tr></table></figure>
+<h4 id="创建已处理的Promise"><a href="#创建已处理的Promise" class="headerlink" title="创建已处理的Promise"></a>创建已处理的Promise</h4><p>Promise.resolve() / Promise.reject()</p>
+<p>除了上面的方法直接创建已处理的Promise；Promise的resolve和reject方法还可以接受非Promise的Thenable对象作为参数。如果传入非Promise的Thenable对象，则这些方法会创建一个新的Promise，并在then函数中被调用；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">let thenable = &#123;</div><div class="line">    then: function(resolve, reject) &#123;</div><div class="line">        resolve(42);</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line">let p1 = Promise.resolve(thenable);</div><div class="line">p1.then(function(value) &#123;</div><div class="line">    console.log(value);     // 42</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h2 id="全局的Promise拒绝处理"><a href="#全局的Promise拒绝处理" class="headerlink" title="全局的Promise拒绝处理"></a>全局的Promise拒绝处理</h2><p>为了防止有些没有拒绝处理的promise的错误被忽略掉，可以用全局的Promise拒绝处理。</p>
+<h4 id="浏览器环境的拒绝处理"><a href="#浏览器环境的拒绝处理" class="headerlink" title="浏览器环境的拒绝处理"></a>浏览器环境的拒绝处理</h4><p>浏览器有两个事件来识别未处理的拒绝的；</p>
+<ul>
+<li>unhandledrejection 在一个事件循环中，当Promise被拒绝，并且没有提供拒绝处理程序时，触发该事件</li>
+<li>rejecttionhandled 在一个事件循环后，当Promise被拒绝时，若拒绝处理程序被调用，触发该事件；</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">let rejected;</div><div class="line">window.onunhandledrejection = function(event) &#123;</div><div class="line">    console.log(event.type); // &quot;unhandledrejection&quot;</div><div class="line">    console.log(event.reason.message); // &quot;Explosion!&quot;</div><div class="line">    console.log(rejected === event.promise); // true</div><div class="line">&#125;;</div><div class="line">window.onrejectionhandled = function(event) &#123;</div><div class="line">    console.log(event.type); // &quot;rejectionhandled&quot;</div><div class="line">    console.log(event.reason.message); // &quot;Explosion!&quot;</div><div class="line">    console.log(rejected === event.promise); // true</div><div class="line">&#125;;</div><div class="line">rejected = Promise.reject(new Error(&quot;Explosion!&quot;));</div></pre></td></tr></table></figure>
+<h2 id="串联Promise"><a href="#串联Promise" class="headerlink" title="串联Promise"></a>串联Promise</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">let p1 = new Promise(function(resolve, reject) &#123;</div><div class="line">                 resolve(42);</div><div class="line">&#125;);</div><div class="line">p1.then(function(value) &#123;</div><div class="line">    console.log(value);</div><div class="line">&#125;).then(function() &#123;</div><div class="line">    console.log(&quot;Finished&quot;);</div><div class="line">&#125;);</div><div class="line">// 42</div><div class="line">// Finished</div></pre></td></tr></table></figure>
+<p><strong>务必在Promise链的末尾留一个有拒绝处理程序保证能够正确处理所有可能发生的错误。</strong></p>
+<h4 id="Promise链的返回值"><a href="#Promise链的返回值" class="headerlink" title="Promise链的返回值"></a>Promise链的返回值</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">let p1 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(42);</div><div class="line"> &#125;);</div><div class="line">p1.then(function(value) &#123;</div><div class="line">    console.log(value); // 42</div><div class="line">    return value + 1;</div><div class="line">&#125;).then(function(value) &#123;</div><div class="line">    console.log(value); // 43</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h4 id="在Promise链中返回Promise"><a href="#在Promise链中返回Promise" class="headerlink" title="在Promise链中返回Promise"></a>在Promise链中返回Promise</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">let p1 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(42);</div><div class="line">&#125;);</div><div class="line">let p2 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(43);</div><div class="line">&#125;);</div><div class="line">p1.then(function(value) &#123;</div><div class="line">    // first fulfillment handler</div><div class="line">    console.log(value);     // 42</div><div class="line">    return p2;</div><div class="line">&#125;).then(function(value) &#123;</div><div class="line">    // second fulfillment handler</div><div class="line">    console.log(value);     // 43</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h2 id="响应多个Promise"><a href="#响应多个Promise" class="headerlink" title="响应多个Promise"></a>响应多个Promise</h2><h4 id="Promise-all"><a href="#Promise-all" class="headerlink" title="Promise.all"></a>Promise.all</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">let p1 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(42);</div><div class="line">&#125;);</div><div class="line">let p2 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(43);</div><div class="line">&#125;);</div><div class="line">let p3 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(44);</div><div class="line">&#125;);</div><div class="line">let p4 = Promise.all([p1, p2, p3]);</div><div class="line">p4.then(function(value) &#123;</div><div class="line">    console.log(Array.isArray(value));  // true</div><div class="line">    console.log(value[0]); // 42</div><div class="line">    console.log(value[1]); // 43</div><div class="line">    console.log(value[2]); // 44</div><div class="line"> &#125;);</div></pre></td></tr></table></figure>
+<p>拒绝处理程序总是接受一个值而非数组，改值来自被拒绝Promise的拒绝值；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">let p1 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(42);</div><div class="line">&#125;);</div><div class="line">let p2 = new Promise(function(resolve, reject) &#123;</div><div class="line">    reject(43);</div><div class="line">&#125;);</div><div class="line">let p3 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(44);</div><div class="line">&#125;);</div><div class="line">let p4 = Promise.all([p1, p2, p3]);</div><div class="line">p4.catch(function(value) &#123;</div><div class="line">    console.log(Array.isArray(value))   // false</div><div class="line">    console.log(value);                 // 43</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h4 id="Promise-race"><a href="#Promise-race" class="headerlink" title="Promise.race"></a>Promise.race</h4><p>race方法监听多个Promise，只要有一个Promise被解决，整个race就被解决；如果选解决的是已完成Promise，则返回已完成Promise，如果被解决的是已拒绝Promise，返回的是已拒绝Promise：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">let p1 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(42);</div><div class="line">&#125;);</div><div class="line">let p2 = Promise.reject(43);</div><div class="line">let p3 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(44);</div><div class="line">&#125;);</div><div class="line">let p4 = Promise.race([p1, p2, p3]);</div><div class="line">p4.catch(function(value) &#123;</div><div class="line">    console.log(value);     // 43</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
 
           
         
@@ -769,177 +1123,6 @@
 <li>Weak Map不支持size属性,不支持clear</li>
 <li><strong>最大区别是Weak Map保存的是对象的弱引用</strong></li>
 </ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/11/27/2017-11-26-ES之Promise/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cauil">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/abu.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Cauil's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/11/27/2017-11-26-ES之Promise/" itemprop="url">ES6之Promise</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-27T00:00:00+08:00">
-                2017-11-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JS/" itemprop="url" rel="index">
-                    <span itemprop="name">JS</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="Promise基础知识"><a href="#Promise基础知识" class="headerlink" title="Promise基础知识"></a>Promise基础知识</h2><p>Promise相当于异步操作结果的占位符，它不会去订阅一个事件，也不会传递一个回调函数给目标函数，而是让函数返回一个Promise：</p>
-<p><code>let promise = readFile(&#39;example.txt&#39;)</code></p>
-<p> 上例子中，readFile不会立即开始读取文件，函数会返回一个表示异步读取操作的Promise对象，未来对这个对象的操作完全取决于Promise的声明周期。</p>
-<h4 id="Promise生命周期"><a href="#Promise生命周期" class="headerlink" title="Promise生命周期"></a>Promise生命周期</h4><p> 生命周期有三个：pending、fullfilled、rejected</p>
-<p> 所有promise都有then方法，它接受两个参数：第一个当Promise的状态变为fullfilled时要调用的函数，与异步操作相关的附加数据都会传递给这个完成函数；第二个是当Promise的状态变为rejected时要调用的函数，其与完成时调用的函数类似，所有与失败相关的附加数据都会传递这个拒绝函数；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">let promise = readFile(&quot;example.txt&quot;);</div><div class="line">promise.then(function(contents) &#123;</div><div class="line">    // fulfillment</div><div class="line">    console.log(contents);</div><div class="line">&#125;, function(err) &#123;</div><div class="line">// rejection</div><div class="line">    console.error(err.message);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<p><strong>如果一个对象实现了上面的then方法，那这个对象我们称之为thenable对象。所有的Promise对象都是thenable对象，但并非所有thenable对象都是Promise。</strong></p>
-<p>Promise被解决（resolved）时执行，这些任务最终会被加入到一个为Promise量身定制的独立队列中，而不会立即执行，当前面的任务完成后其才被调用；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">var p = new Promise(function(resolve, reject)&#123;resolve()&#125;);</div><div class="line">p.then(function()&#123;console.log(&apos;do&apos;)&#125;);</div><div class="line">console.log(&apos;do1&apos;);</div><div class="line">// do1</div><div class="line">// do</div></pre></td></tr></table></figure>
-<h4 id="创建未完成的Promise"><a href="#创建未完成的Promise" class="headerlink" title="创建未完成的Promise"></a>创建未完成的Promise</h4><p>Promise的执行器会立即执行，然后执行后续流程中的代码;当Promise resolved之后会把任务加入到任务队列尾部，即调用resolve()后出触发一个异步操作，传入then和catch方法的函数会被添加到任务队列中并异步执行；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">let promise = new Promise(function(resolve, reject) &#123;</div><div class="line">  console.log(&apos;Promise&apos;);</div><div class="line">  resolve();</div><div class="line">&#125;);</div><div class="line">promise.then(function() &#123;</div><div class="line">    console.log(&quot;Resolved.&quot;);</div><div class="line">&#125;);</div><div class="line">console.log(&quot;HI!&quot;);</div><div class="line">// &apos;Promise&apos;</div><div class="line">// HI!</div><div class="line">// Resolved</div></pre></td></tr></table></figure>
-<h4 id="创建已处理的Promise"><a href="#创建已处理的Promise" class="headerlink" title="创建已处理的Promise"></a>创建已处理的Promise</h4><p>Promise.resolve() / Promise.reject()</p>
-<p>除了上面的方法直接创建已处理的Promise；Promise的resolve和reject方法还可以接受非Promise的Thenable对象作为参数。如果传入非Promise的Thenable对象，则这些方法会创建一个新的Promise，并在then函数中被调用；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">let thenable = &#123;</div><div class="line">    then: function(resolve, reject) &#123;</div><div class="line">        resolve(42);</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line">let p1 = Promise.resolve(thenable);</div><div class="line">p1.then(function(value) &#123;</div><div class="line">    console.log(value);     // 42</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<h2 id="全局的Promise拒绝处理"><a href="#全局的Promise拒绝处理" class="headerlink" title="全局的Promise拒绝处理"></a>全局的Promise拒绝处理</h2><p>为了防止有些没有拒绝处理的promise的错误被忽略掉，可以用全局的Promise拒绝处理。</p>
-<h4 id="浏览器环境的拒绝处理"><a href="#浏览器环境的拒绝处理" class="headerlink" title="浏览器环境的拒绝处理"></a>浏览器环境的拒绝处理</h4><p>浏览器有两个事件来识别未处理的拒绝的；</p>
-<ul>
-<li>unhandledrejection 在一个事件循环中，当Promise被拒绝，并且没有提供拒绝处理程序时，触发该事件</li>
-<li>rejecttionhandled 在一个事件循环后，当Promise被拒绝时，若拒绝处理程序被调用，触发该事件；</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">let rejected;</div><div class="line">window.onunhandledrejection = function(event) &#123;</div><div class="line">    console.log(event.type); // &quot;unhandledrejection&quot;</div><div class="line">    console.log(event.reason.message); // &quot;Explosion!&quot;</div><div class="line">    console.log(rejected === event.promise); // true</div><div class="line">&#125;;</div><div class="line">window.onrejectionhandled = function(event) &#123;</div><div class="line">    console.log(event.type); // &quot;rejectionhandled&quot;</div><div class="line">    console.log(event.reason.message); // &quot;Explosion!&quot;</div><div class="line">    console.log(rejected === event.promise); // true</div><div class="line">&#125;;</div><div class="line">rejected = Promise.reject(new Error(&quot;Explosion!&quot;));</div></pre></td></tr></table></figure>
-<h2 id="串联Promise"><a href="#串联Promise" class="headerlink" title="串联Promise"></a>串联Promise</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">let p1 = new Promise(function(resolve, reject) &#123;</div><div class="line">                 resolve(42);</div><div class="line">&#125;);</div><div class="line">p1.then(function(value) &#123;</div><div class="line">    console.log(value);</div><div class="line">&#125;).then(function() &#123;</div><div class="line">    console.log(&quot;Finished&quot;);</div><div class="line">&#125;);</div><div class="line">// 42</div><div class="line">// Finished</div></pre></td></tr></table></figure>
-<p><strong>务必在Promise链的末尾留一个有拒绝处理程序保证能够正确处理所有可能发生的错误。</strong></p>
-<h4 id="Promise链的返回值"><a href="#Promise链的返回值" class="headerlink" title="Promise链的返回值"></a>Promise链的返回值</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">let p1 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(42);</div><div class="line"> &#125;);</div><div class="line">p1.then(function(value) &#123;</div><div class="line">    console.log(value); // 42</div><div class="line">    return value + 1;</div><div class="line">&#125;).then(function(value) &#123;</div><div class="line">    console.log(value); // 43</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<h4 id="在Promise链中返回Promise"><a href="#在Promise链中返回Promise" class="headerlink" title="在Promise链中返回Promise"></a>在Promise链中返回Promise</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">let p1 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(42);</div><div class="line">&#125;);</div><div class="line">let p2 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(43);</div><div class="line">&#125;);</div><div class="line">p1.then(function(value) &#123;</div><div class="line">    // first fulfillment handler</div><div class="line">    console.log(value);     // 42</div><div class="line">    return p2;</div><div class="line">&#125;).then(function(value) &#123;</div><div class="line">    // second fulfillment handler</div><div class="line">    console.log(value);     // 43</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<h2 id="响应多个Promise"><a href="#响应多个Promise" class="headerlink" title="响应多个Promise"></a>响应多个Promise</h2><h4 id="Promise-all"><a href="#Promise-all" class="headerlink" title="Promise.all"></a>Promise.all</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">let p1 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(42);</div><div class="line">&#125;);</div><div class="line">let p2 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(43);</div><div class="line">&#125;);</div><div class="line">let p3 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(44);</div><div class="line">&#125;);</div><div class="line">let p4 = Promise.all([p1, p2, p3]);</div><div class="line">p4.then(function(value) &#123;</div><div class="line">    console.log(Array.isArray(value));  // true</div><div class="line">    console.log(value[0]); // 42</div><div class="line">    console.log(value[1]); // 43</div><div class="line">    console.log(value[2]); // 44</div><div class="line"> &#125;);</div></pre></td></tr></table></figure>
-<p>拒绝处理程序总是接受一个值而非数组，改值来自被拒绝Promise的拒绝值；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">let p1 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(42);</div><div class="line">&#125;);</div><div class="line">let p2 = new Promise(function(resolve, reject) &#123;</div><div class="line">    reject(43);</div><div class="line">&#125;);</div><div class="line">let p3 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(44);</div><div class="line">&#125;);</div><div class="line">let p4 = Promise.all([p1, p2, p3]);</div><div class="line">p4.catch(function(value) &#123;</div><div class="line">    console.log(Array.isArray(value))   // false</div><div class="line">    console.log(value);                 // 43</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<h4 id="Promise-race"><a href="#Promise-race" class="headerlink" title="Promise.race"></a>Promise.race</h4><p>race方法监听多个Promise，只要有一个Promise被解决，整个race就被解决；如果选解决的是已完成Promise，则返回已完成Promise，如果被解决的是已拒绝Promise，返回的是已拒绝Promise：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">let p1 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(42);</div><div class="line">&#125;);</div><div class="line">let p2 = Promise.reject(43);</div><div class="line">let p3 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(44);</div><div class="line">&#125;);</div><div class="line">let p4 = Promise.race([p1, p2, p3]);</div><div class="line">p4.catch(function(value) &#123;</div><div class="line">    console.log(value);     // 43</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
 
           
         
@@ -1957,226 +2140,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/11/19/2017-11-19-ES6之函数/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cauil">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/abu.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Cauil's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/11/19/2017-11-19-ES6之函数/" itemprop="url">ES6之函数</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-19T00:00:00+08:00">
-                2017-11-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JS/" itemprop="url" rel="index">
-                    <span itemprop="name">JS</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="函数形参默认值"><a href="#函数形参默认值" class="headerlink" title="函数形参默认值"></a>函数形参默认值</h2><h4 id="ES5默认形参"><a href="#ES5默认形参" class="headerlink" title="ES5默认形参"></a>ES5默认形参</h4><p>ES5中模拟默认形参<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">function makeRequest(url, timeout, callback) &#123;</div><div class="line">  timeout = timeout || 2000;</div><div class="line">  callback = callback || function() &#123;&#125;;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>但是这种方法也有缺陷，如果第二个值我们传0，会被视为一个假值，函数timeout最后取值却为2000。</p>
-<p>更好的做法是：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">function makeRequest(url, timeout, callback) &#123;</div><div class="line">  timeout = typeof timeout !== undefined ? timeout : 2000;</div><div class="line">  callback = typeof callback !== undefined ? callback : function() &#123;&#125;;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h4 id="ES6默认形参"><a href="#ES6默认形参" class="headerlink" title="ES6默认形参"></a>ES6默认形参</h4><p>ES6做法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">function makeRequest(url, timeout=2000, callback=function()&#123;&#125;) &#123;</div><div class="line">// do something</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p><strong>注意</strong>: 当timeout传值为undefined时，最终取值为默认值2000；<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">function makeRequest(url, timeout = 2000, callback) &#123;</div><div class="line">    console.log(timeout)</div><div class="line">&#125;</div><div class="line">makeRequest(&apos;/foo&apos;, undefined); // 2000</div></pre></td></tr></table></figure></p>
-<h4 id="对arguments影响"><a href="#对arguments影响" class="headerlink" title="对arguments影响"></a>对arguments影响</h4><p>ES5非严格模式下，形参值被改变，arguments对应的也跟着改变：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">function mixArgs(first, second) &#123;</div><div class="line">    console.log(first === arguments[0]);</div><div class="line">    console.log(second === arguments[1]);</div><div class="line">    first = &quot;c&quot;;</div><div class="line">    second = &quot;d&quot;;</div><div class="line">    console.log(first === arguments[0]);</div><div class="line">    console.log(second === arguments[1]);</div><div class="line">&#125;</div><div class="line">mixArgs(&quot;a&quot;, &quot;b&quot;);</div><div class="line">// true</div><div class="line">// true</div><div class="line">// true</div><div class="line">// true</div></pre></td></tr></table></figure></p>
-<p>严格模式下，无论形参如何被赋值，arguments不再跟着改变；<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">function mixArgs(first, second) &#123;</div><div class="line">    &apos;use strict&apos;;</div><div class="line">    console.log(first === arguments[0]);</div><div class="line">    console.log(second === arguments[1]);</div><div class="line">    first = &quot;c&quot;;</div><div class="line">    second = &quot;d&quot;;</div><div class="line">    console.log(first === arguments[0]);</div><div class="line">    console.log(second === arguments[1]);</div><div class="line">&#125;</div><div class="line">mixArgs(&quot;a&quot;, &quot;b&quot;);</div><div class="line">// true</div><div class="line">// true</div><div class="line">// false</div><div class="line">// false</div></pre></td></tr></table></figure></p>
-<p>ES6中，如果使用了默认参数，则无论是否显式定义了严格模式，arguments行为与ES5严格模式下保持一致；<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">function mixArgs(first, second = &quot;b&quot;) &#123;</div><div class="line">    console.log(arguments.length);</div><div class="line">    console.log(first === arguments[0]);</div><div class="line">    console.log(second === arguments[1]);</div><div class="line">    first = &quot;c&quot;;</div><div class="line">    second = &quot;d&quot;</div><div class="line">    console.log(first === arguments[0]);</div><div class="line">    console.log(second === arguments[1]);</div><div class="line">&#125;</div><div class="line">mixArgs(&quot;a&quot;);</div><div class="line">// 1</div><div class="line">// true</div><div class="line">// false</div><div class="line">// false</div><div class="line">// false</div></pre></td></tr></table></figure></p>
-<h4 id="默认参数表达式"><a href="#默认参数表达式" class="headerlink" title="默认参数表达式"></a>默认参数表达式</h4><p>默认参数也可以使用表达式；</p>
-<p>默认参数表达式求值条件：当调用函数不传入默认参数对应位置的值时才会调用；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">let value = 5;</div><div class="line">function getValue() &#123;</div><div class="line">    return value++;</div><div class="line">&#125;</div><div class="line">function add(first, second = getValue()) &#123;</div><div class="line">    return first + second;</div><div class="line">   &#125;</div><div class="line">console.log(add(1, 1)); // 2</div><div class="line">console.log(add(1)); // 6</div><div class="line">console.log(add(1)); // 7</div></pre></td></tr></table></figure>
-<h4 id="默认参数临时死区（TDZ）"><a href="#默认参数临时死区（TDZ）" class="headerlink" title="默认参数临时死区（TDZ）"></a>默认参数临时死区（TDZ）</h4><p>默认参数也类似let有默认死区，后面的参数不能用在之前参数的默认值上：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">function add(first = second, second) &#123;</div><div class="line">    return first + second;</div><div class="line">&#125;</div><div class="line">console.log(add(1, 1));         // 2</div><div class="line">console.log(add(undefined, 1)); // Uncaught ReferenceError: second is not defined</div></pre></td></tr></table></figure></p>
-<h2 id="无命名参数"><a href="#无命名参数" class="headerlink" title="无命名参数"></a>无命名参数</h2><p>由于之前当有多个无命名参数时，我们需要利用arguments参数来处理，有一个问题是需要记录从哪个索引开始，比较麻烦；<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">function pick(object) &#123;</div><div class="line">                 let result = Object.create(null);</div><div class="line">                 // start at the second parameter</div><div class="line">                 for (let i = 2, len = arguments.length; i &lt; len; i++) &#123;</div><div class="line">                     result[arguments[i]] = object[arguments[i]];</div><div class="line">                 &#125;</div><div class="line">                 return result;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>ES6做法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">function pick(object, ...keys) &#123;</div><div class="line">                 let result = Object.create(null);</div><div class="line">                 // start at the second parameter</div><div class="line">                 for (let i = 0, len = keys.length; i &lt; len; i++) &#123;</div><div class="line">                     result[keys[i]] = object[keys[i]];</div><div class="line">                 &#125;</div><div class="line">                 return result;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>不定参数使用限制：<strong>最多只能一个不定参数，而且一定要放在所有参数的最后；</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">function pick(object, ...keys, last) &#123;</div><div class="line">    let result = Object.create(null);</div><div class="line">    for (let i = 0, len = keys.length; i &lt; len; i++) &#123;</div><div class="line">        result[keys[i]] = object[keys[i]];</div><div class="line">&#125;</div><div class="line">    return result;</div><div class="line">&#125;</div><div class="line">pick() // error</div></pre></td></tr></table></figure>
-<h2 id="增强的Function构造函数"><a href="#增强的Function构造函数" class="headerlink" title="增强的Function构造函数"></a>增强的Function构造函数</h2><p>Function构造函数也可以使用默认参数和无命名参数:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">var add = new Function(&quot;first&quot;, &quot;second = first&quot;, &quot;...rest&quot;, &quot;return first + second&quot;);</div></pre></td></tr></table></figure>
-<h2 id="展开运算符"><a href="#展开运算符" class="headerlink" title="展开运算符"></a>展开运算符</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">let values = [-25, -50, -75, -100];</div><div class="line">console.log(Math.max(...values, 0));</div></pre></td></tr></table></figure>
-<h2 id="name属性"><a href="#name属性" class="headerlink" title="name属性"></a>name属性</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">var doSomething = function doSomethingElse() &#123;</div><div class="line">    // empty</div><div class="line">&#125;;</div><div class="line">var person = &#123;</div><div class="line">    get firstName() &#123;</div><div class="line">        return &quot;Nicholas&quot;</div><div class="line">    &#125;,</div><div class="line">    sayName: function() &#123;</div><div class="line">        console.log(this.name);</div><div class="line">&#125; &#125;</div><div class="line">console.log(doSomething.name); // doSomethingElse</div><div class="line">console.log(person.sayName.name); // sayName</div><div class="line">console.log(person.firstName.name); // get firstName</div><div class="line">console.log(doSomething.bind().name); // bound doSomethingElse</div><div class="line">console.log((new Function()).name); // anonymous</div></pre></td></tr></table></figure>
-<p>注意:</p>
-<ol>
-<li>命名函数(doSomethingElse)并且赋值了一个变量(doSomething)，取命名的名字doSomethingElse;</li>
-<li>get属性的函数前面会有一个get； // chrome是返回undefined，需要确认是不是实现不一致;</li>
-<li>利用bind生成的新函数前面有一个bound</li>
-<li>Function构造函数生成的函数为anonymous</li>
-</ol>
-<h2 id="明确函数的多重用途"><a href="#明确函数的多重用途" class="headerlink" title="明确函数的多重用途"></a>明确函数的多重用途</h2><p>JS函数有两个不同的内部方法： [[Call]]和[[Construct]]。当通过new关键字调用函数时，执行的是[[Construct]]，它负责创建一个通常被称为实例的新对象，然后再执行函数体，将this绑定到新实例上；如果不通过new关键字调用函数，则执行[[Call]]函数，从而直接执行代码中的函数体。具有[[Construct]]方法的函数被统称为构造函数。</p>
-<p>注意：<strong>不是所有的函数都有[[Construct]]方法，例如箭头函数就没有[[Construct]]方法，所以箭头函数不能使用new关键字调用；</strong></p>
-<p>之前ES5判断一个函数是不是通过’new’调用会判断this的原型, 但是这也有问题，函数执行没有用new但使用call来改变this同样可以不报错：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">function Person(name) &#123;</div><div class="line">    if (this instanceof Person) &#123;</div><div class="line">        this.name = name;   // using new</div><div class="line">    &#125; else &#123;</div><div class="line">        throw new Error(&quot;You must use new with Person.&quot;)</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">var person = new Person(&quot;Nicholas&quot;);</div><div class="line">var notAPerson = Person(&quot;Nicholas&quot;);</div><div class="line">var notAPerson = Person.call(person, &quot;Michael&quot;); // works</div></pre></td></tr></table></figure></p>
-<h4 id="元属性new-target"><a href="#元属性new-target" class="headerlink" title="元属性new.target"></a>元属性new.target</h4><p>为了解决判断函数是否通过new关键字调用的问题，ES6引入了new.target这个元属性；</p>
-<p>元属性是指非对象的属性，其可以提供非对象目标的补充信息；当调用函数的[[Construct]]方法时，new.target被赋值为new操作符的目标，通常是新创建对象实例，也就是函数体内this的构造函数，如果调用[[Call]]方法，则new.target的值为undefined。则判断一个函数是否是通过new关键字调用的，可以这样：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">function Person(name) &#123;</div><div class="line">    if (new.target === Person) &#123;</div><div class="line">        this.name = name;</div><div class="line">    &#125; else &#123;</div><div class="line">        throw new Error(&quot;You must use new with Person.&quot;)</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">function AnotherPerson(name) &#123;</div><div class="line">    Person.call(this, name);</div><div class="line">&#125;</div><div class="line">var person = new Person(&quot;Nicholas&quot;);</div><div class="line">var person = Person(&quot;Zakas&quot;); //Uncaught Error: You must use new with Person.</div><div class="line">var anotherPerson = new AnotherPerson(&quot;Nicholas&quot;);// Uncaught Error: You must use new with Person.</div></pre></td></tr></table></figure>
-<p><strong>在函数体外使用new.target是一个语法错误</strong></p>
-<h2 id="块级函数"><a href="#块级函数" class="headerlink" title="块级函数"></a>块级函数</h2><p>ES5严格模式下声明块级函数会抛出错误；ES6中，会将块级函数视作一个块级声明，从而在代码块内可以访问和调用；<strong>但是块级函数会被提升至顶部；</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">if (true) &#123;</div><div class="line">    console.log(typeof doSomething);</div><div class="line">    function doSomething() &#123;</div><div class="line">        // empty</div><div class="line">    &#125;</div><div class="line">    doSomething();</div><div class="line">&#125;</div><div class="line">console.log(typeof doSomething); // function</div></pre></td></tr></table></figure>
-<p>如果要真正的定义块级函数，可以使用let表达式，这样函数表达式就不会提升了；并且有临时死区的情况，如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">if (true) &#123;</div><div class="line">    console.log(typeof doSomething); // error</div><div class="line">    let doSomething = function () &#123;</div><div class="line">        // empty</div><div class="line">    &#125;</div><div class="line">    doSomething();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h2 id="箭头函数"><a href="#箭头函数" class="headerlink" title="箭头函数"></a>箭头函数</h2><ol>
-<li>无this super arguments和new.target绑定</li>
-</ol>
-<p>这些值由外围最近一层非箭头函数决定；<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">let PageHandler = &#123;</div><div class="line">    id: &quot;123456&quot;,</div><div class="line">    init: function() &#123;</div><div class="line">        document.addEventListener(&quot;click&quot;,</div><div class="line">                event =&gt; this.doSomething(event.type), false);</div><div class="line">    &#125;,</div><div class="line">    doSomething: function(type) &#123;</div><div class="line">        console.log(&quot;Handling &quot; + type  + &quot; for &quot; + this.id);</div><div class="line">    &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<ol>
-<li>不能通过new关键字调用</li>
-</ol>
-<p>正如之前提到过的箭头函数没有[[Constructor]]方法，不能通过new关键字调用，；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">var MyType = () =&gt; &#123;&#125;,</div><div class="line">object = new MyType(); // MyType is not a constructor</div></pre></td></tr></table></figure>
-<ol>
-<li>没有原型</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">var MyType = () =&gt; &#123;&#125;;</div><div class="line">var test = function() &#123;&#125;;</div><div class="line">console.log(MyType.prototype); // undefined</div><div class="line">console.log(test.prototype.toString()); // [object Object]</div></pre></td></tr></table></figure>
-<ol>
-<li>不可以改变this的绑定</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">var MyType = () =&gt; &#123;console.log(this)&#125;;</div><div class="line">MyType.bind(&#123;name: &apos;hi&apos;&#125;)(); // Window</div><div class="line">var test = function() &#123;console.log(this)&#125;;</div><div class="line">test.bind(&#123;name: &apos;hi&apos;&#125;)(); // &#123;name: &apos;hi&apos;&#125;</div></pre></td></tr></table></figure>
-<ol>
-<li>不支持arguments对象<br>绑定的arguments是外围非箭头函数的arguments</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">function createArrowFunctionReturningFirstArg() &#123;</div><div class="line">    return () =&gt; arguments[0];</div><div class="line">&#125;</div><div class="line">var arrowFunction = createArrowFunctionReturningFirstArg(5);</div><div class="line">console.log(arrowFunction());</div></pre></td></tr></table></figure>
-<ol>
-<li>不支持重复的命名参数</li>
-</ol>
-<p>传统函数，只有严格模式不能使用重名的参数；<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">function test(name, name)&#123;&#125;;</div><div class="line">&apos;use strict&apos;;</div><div class="line">function test(name, name)&#123;&#125;; //Duplicate parameter name not allowed in this context</div></pre></td></tr></table></figure></p>
-<p>箭头函数中，不支持重复的命名参数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">var test = (name, name) =&gt; &#123;console.log(this)&#125; // Duplicate parameter name not allowed in this context</div></pre></td></tr></table></figure></p>
-<h2 id="尾调用优化"><a href="#尾调用优化" class="headerlink" title="尾调用优化"></a>尾调用优化</h2><p>ES6缩减了严格模式下尾调用栈的大小（非严格模式下不影响），如果满足以下条件，尾调用不再创建新的栈帧，而是清楚并重用当前栈帧：</p>
-<ul>
-<li>尾调用不访问当前栈帧的变量；（函数不是一个闭包）</li>
-<li>在函数内部，尾调用是最后一条语句；</li>
-<li>尾调用的结果作为函数值返回；</li>
-</ul>
-<p>满足条件的尾调用：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&quot;use strict&quot;;</div><div class="line">function doSomething() &#123;</div><div class="line">    // optimized</div><div class="line">    return doSomethingElse();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>不满足第一个条件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&quot;use strict&quot;;</div><div class="line">function doSomething() &#123;</div><div class="line">    var num = 1,</div><div class="line">        func = () =&gt; num;</div><div class="line">    // not optimized - function is a closure</div><div class="line">    return func();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>不满足第二个条件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&quot;use strict&quot;;</div><div class="line">function doSomething() &#123;</div><div class="line">    // not optimized - call isn&apos;t in tail position</div><div class="line">    var result = doSomethingElse();</div><div class="line">    return result;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>不满足第三个条件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&quot;use strict&quot;;</div><div class="line">function doSomething() &#123;</div><div class="line">    // not optimized - must add after returning</div><div class="line">    return 1 + doSomethingElse();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2226,7 +2194,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-count">31</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
