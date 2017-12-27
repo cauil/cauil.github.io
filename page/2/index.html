@@ -239,6 +239,188 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/11/21/2017-11-21-ES6之解构/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cauil">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/abu.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cauil's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/11/21/2017-11-21-ES6之解构/" itemprop="url">ES6之解构</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-21T00:00:00+08:00">
+                2017-11-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JS/" itemprop="url" rel="index">
+                    <span itemprop="name">JS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="为何使用解构功能"><a href="#为何使用解构功能" class="headerlink" title="为何使用解构功能"></a>为何使用解构功能</h2><p>在编码过程中，我们经常定义许多对象和数组，然后有组织地从中提取相关的信息片段；如果对象跟数组结构复杂，我们就需要深入挖掘整个数据结构才能找到所需数据。</p>
+<p>所以ES6位对象与数组都添加了结构功能，将数据结构打散的过程变得更加简单；许多语言都通过极少量的语法实现了结构功能，以简化获取信息的过程；而ES6实际上利用了你早已熟悉的语法：对象和数组字面量的语法。</p>
+<h2 id="对象解构"><a href="#对象解构" class="headerlink" title="对象解构"></a>对象解构</h2><p>对象解构的语法形式是在一个赋值操作符左边放置一个对象字面量。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">let node = &#123;</div><div class="line">    type: &quot;Identifier&quot;,</div><div class="line">    name: &quot;foo&quot;</div><div class="line">&#125;;</div><div class="line">let &#123; type, name &#125; = node;</div><div class="line">console.log(type);      // &quot;Identifier&quot;</div><div class="line">console.log(name);      // &quot;foo&quot;</div></pre></td></tr></table></figure>
+<p>使用var let或const解构声明变量，必须要提供初始化程序。下面几行代码全部都会导致抛出语法错误，它们都缺少了初始化程序：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">// syntax error!</div><div class="line">var &#123; type, name &#125;;</div><div class="line">// syntax error!</div><div class="line">let &#123; type, name &#125;;</div><div class="line">// syntax error!</div><div class="line">const &#123; type, name &#125;;</div></pre></td></tr></table></figure>
+<h4 id="解构赋值"><a href="#解构赋值" class="headerlink" title="解构赋值"></a>解构赋值</h4><p>如果在定义变量之后想要修改它们的值，需要用小括号包裹解构赋值语句，因为JS引擎将一对开放的花括号视为一个代码块，而语法规定，代码块语句不允许出现在赋值语句左侧，添加小括号后可以将块语句转化为一个表达式，从而实现解构赋值的过程。如下面的<code>({ type, name } = node)</code>语句：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">let node = &#123;</div><div class="line">    type: &quot;Identifier&quot;,</div><div class="line">    name: &quot;foo&quot;</div><div class="line">&#125;,</div><div class="line">type = &quot;Literal&quot;,</div><div class="line">name = 5;</div><div class="line">// assign different values using destructuring</div><div class="line">(&#123; type, name &#125; = node);</div><div class="line">console.log(type);      // &quot;Identifier&quot;</div><div class="line">console.log(name);</div></pre></td></tr></table></figure>
+<p>解构赋值表达式（=号右侧）如果为null或者undefined会导致程序抛出错误；<code>let {hello} = null</code>会抛出错误<code>Cannot destructure property</code>hello<code>of &#39;undefined&#39; or &#39;null&#39;.</code></p>
+<h4 id="默认值"><a href="#默认值" class="headerlink" title="默认值"></a>默认值</h4><p>当指定的局部变量名称在对象中不存在的时候，会被赋值为undefined，我们可以设置一个默认值，来处理这种情况：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">let node = &#123;</div><div class="line">    type: &quot;Identifier&quot;,</div><div class="line">    name: &quot;foo&quot;</div><div class="line">&#125;;</div><div class="line">let &#123; type, name, value = true &#125; = node;</div><div class="line">console.log(type); // &quot;Identifier&quot;</div><div class="line">console.log(name); // &quot;foo&quot;</div><div class="line">console.log(value);// true</div></pre></td></tr></table></figure>
+<h4 id="为非同名局部变量赋值"><a href="#为非同名局部变量赋值" class="headerlink" title="为非同名局部变量赋值"></a>为非同名局部变量赋值</h4><p>也可以使用非同名的局部变量来解构对象，并且可以指定默认值：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">let node = &#123;</div><div class="line">    type: &quot;Identifier&quot;,</div><div class="line">    name: &quot;foo&quot;</div><div class="line">&#125;;</div><div class="line">let &#123; type: localType, name: localName, first_name: firstName=&apos;hi&apos; &#125; = node;</div><div class="line">console.log(localType);     // &quot;Identifier&quot;</div><div class="line">console.log(localName);     // &quot;foo&quot;</div><div class="line">console.log(firstName);     // &quot;hi&quot;</div></pre></td></tr></table></figure>
+<h4 id="嵌套解构"><a href="#嵌套解构" class="headerlink" title="嵌套解构"></a>嵌套解构</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">let node = &#123;</div><div class="line">    type: &quot;Identifier&quot;,</div><div class="line">    name: &quot;foo&quot;,</div><div class="line">    loc: &#123;</div><div class="line">        start: &#123;</div><div class="line">            line: 1,</div><div class="line">column: 1 &#125;,</div><div class="line">        end: &#123;</div><div class="line">            line: 1,</div><div class="line">column: 4 &#125;</div><div class="line">&#125; &#125;;</div><div class="line">let &#123; loc: &#123; start &#125;&#125; = node;</div><div class="line">console.log(start.line);   // 1</div><div class="line">console.log(start.column); // 1</div></pre></td></tr></table></figure>
+<h2 id="数组解构"><a href="#数组解构" class="headerlink" title="数组解构"></a>数组解构</h2><p>数组解构语法比对象解构更简单，使用的是数组字面量，且解构操作全部在数组内完成，而不是像对象字面量语法一样使用对象的命名属性：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">let colors = [ &quot;red&quot;, &quot;green&quot;, &quot;blue&quot; ];</div><div class="line">let [ firstColor, ,thirdColor ] = colors;</div><div class="line">console.log(firstColor);        // &quot;red&quot;</div><div class="line">console.log(thirdColor);        // &quot;blue&quot;</div></pre></td></tr></table></figure>
+<p>当通过var let或者const声明数组解构的绑定时，必须要提供一个初始化程序；</p>
+<h4 id="解构赋值-1"><a href="#解构赋值-1" class="headerlink" title="解构赋值"></a>解构赋值</h4><p>数组解构也可用于赋值上下文，不需要用小括号包裹， 因为[]跟{}不一样，后者有块级的功能；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">let colors = [ &quot;red&quot;, &quot;green&quot;, &quot;blue&quot; ],</div><div class="line">    firstColor = &quot;black&quot;,</div><div class="line">    secondColor = &quot;purple&quot;;</div><div class="line">[ firstColor, secondColor ] = colors;</div><div class="line">console.log(firstColor);        // &quot;red&quot;</div><div class="line">console.log(secondColor);       // &quot;green&quot;</div></pre></td></tr></table></figure>
+<p>数组也可用来交换两个变量的值：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">let a = 1,</div><div class="line">b = 2;</div><div class="line">[ a, b ] = [ b, a ];</div><div class="line">console.log(a);     // 2</div><div class="line">console.log(b);     // 1</div></pre></td></tr></table></figure>
+<p>与对象解构一样，如果右侧为null或者undefined，抛出错误；</p>
+<h4 id="默认值-1"><a href="#默认值-1" class="headerlink" title="默认值"></a>默认值</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">let colors = [ &quot;red&quot; ];</div><div class="line">let [ firstColor, secondColor = &quot;green&quot; ] = colors;</div><div class="line">console.log(firstColor);        // &quot;red&quot;</div><div class="line">console.log(secondColor);       // &quot;green&quot;</div></pre></td></tr></table></figure>
+<h4 id="嵌套解构-1"><a href="#嵌套解构-1" class="headerlink" title="嵌套解构"></a>嵌套解构</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">let colors = [ &quot;red&quot;, [ &quot;green&quot;, &quot;lightgreen&quot; ], &quot;blue&quot; ];</div><div class="line">// later</div><div class="line">let [ firstColor, [ secondColor ] ] = colors;</div><div class="line">console.log(firstColor);        // &quot;red&quot;</div><div class="line">console.log(secondColor);       // &quot;green&quot;</div></pre></td></tr></table></figure>
+<h4 id="不定元素"><a href="#不定元素" class="headerlink" title="不定元素"></a>不定元素</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">let colors = [ &quot;red&quot;, &quot;green&quot;, &quot;blue&quot; ];</div><div class="line">let [ firstColor, ...restColors ] = colors;</div><div class="line">console.log(firstColor);        // &quot;red&quot;</div><div class="line">console.log(restColors.length); // 2</div><div class="line">console.log(restColors[0]);     // &quot;green&quot;</div><div class="line">console.log(restColors[1]);     // &quot;blue&quot;</div></pre></td></tr></table></figure>
+<p>通过上面这个语法，可以用来实现生成数组的副本；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">// cloning an array in ECMAScript 6</div><div class="line">let colors = [ &quot;red&quot;, &quot;green&quot;, &quot;blue&quot; ];</div><div class="line">let [ ...clonedColors ] = colors;</div><div class="line">console.log(clonedColors);      // &quot;[red,green,blue]&quot;</div></pre></td></tr></table></figure>
+<p><strong>被解构的数组中，不定元素必须为最后一个条目，在后面继续添加逗号会导致程序抛出语法错误</strong></p>
+<h2 id="混合解构"><a href="#混合解构" class="headerlink" title="混合解构"></a>混合解构</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">let node = &#123;</div><div class="line">    type: &quot;Identifier&quot;,</div><div class="line">    name: &quot;foo&quot;,</div><div class="line">    loc: &#123;</div><div class="line">        start: &#123;</div><div class="line">            line: 1,</div><div class="line">column: 1 &#125;,</div><div class="line">        end: &#123;</div><div class="line">            line: 1,</div><div class="line">column: 4 &#125;</div><div class="line">&#125;,</div><div class="line">    range: [0, 3]</div><div class="line">&#125;;</div><div class="line">let &#123;</div><div class="line">    loc: &#123; start &#125;,</div><div class="line">    range: [ startIndex ]</div><div class="line">&#125; = node;</div><div class="line">console.log(start.line);   // 1</div><div class="line">console.log(start.column); // 1</div><div class="line">console.log(startIndex);   // 0</div></pre></td></tr></table></figure>
+<h2 id="解构参数"><a href="#解构参数" class="headerlink" title="解构参数"></a>解构参数</h2><p>ES5解析参数可能会这样做：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">// properties on options represent additional parameters</div><div class="line">function setCookie(name, value, options) &#123;</div><div class="line">    options = options || &#123;&#125;;</div><div class="line">    let secure = options.secure,</div><div class="line">    path = options.path,</div><div class="line">    domain = options.domain,</div><div class="line">    expires = options.expires;</div><div class="line">    // code to set the cookie</div><div class="line">&#125;</div><div class="line">// third argument maps to options</div><div class="line">setCookie(&quot;type&quot;, &quot;js&quot;, &#123;</div><div class="line">    secure: true,</div><div class="line">    expires: 60000</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>利用解构我们可以：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">function setCookie(name, value, &#123; secure, path, domain, expires &#125;) &#123;</div><div class="line">    // code to set the cookie</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="必须传值的解构参数"><a href="#必须传值的解构参数" class="headerlink" title="必须传值的解构参数"></a>必须传值的解构参数</h4><p>解构参数在默认情况下，如果调用函数时不提供被解构的参数会导致程序抛出错误；如果这样调用上面的setCookie函数<code>setCookie(&#39;type&#39;, &#39;js&#39;)</code>会抛出错误；</p>
+<p>实际上JS是这样解析的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">function setCookie(name, value, options) &#123;</div><div class="line">    let &#123; secure, path, domain, expires &#125; = options;</div><div class="line">    // code to set the cookie</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>当第三个参数不传值时，实际options被赋值为undefined，根据前面讨论过的解构赋值表达式=号右边的值不能为undefined或者null，所以第三个参数是必须传值的；</p>
+<p>可以设置默认值来避免必须传值：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">function setCookie(name, value, &#123; secure, path, domain, expires &#125; = &#123;&#125;) &#123;</div><div class="line">// empty</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h4 id="解构参数默认值"><a href="#解构参数默认值" class="headerlink" title="解构参数默认值"></a>解构参数默认值</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">function setCookie(name, value,</div><div class="line">    &#123;</div><div class="line">        secure = false,</div><div class="line">        path = &quot;/&quot;,</div><div class="line">        domain = &quot;example.com&quot;,</div><div class="line">        expires = new Date(Date.now() + 360000000)</div><div class="line">&#125; = &#123;&#125; )&#123;</div><div class="line">// empty </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>也可以为第三个参数设置一个默认对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">const cookieDefault = &#123;</div><div class="line">  secure: false,</div><div class="line">  path: &apos;/&apos;,</div><div class="line">  domain: &apos;example.com&apos;,</div><div class="line">  expires: new Date(Date.now() + 360000000)</div><div class="line">&#125;;</div><div class="line">function setCookie(name, value,</div><div class="line">    &#123;</div><div class="line">        secure = cookieDefault.secure,</div><div class="line">        path = cookieDefault.path,</div><div class="line">        domain = cookieDefault.domain,</div><div class="line">        expires = cookieDefault.expires</div><div class="line">&#125; = cookieDefault )&#123;</div><div class="line">// empty </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/11/19/2017-11-19-ES6之函数/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1813,244 +1995,6 @@ Equal to the computed value of font-size on the root element. When specified on 
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2016/02/21/linkedList/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cauil">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/abu.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Cauil's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2016/02/21/linkedList/" itemprop="url">leetcode之linked list</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-02-21T00:00:00+08:00">
-                2016-02-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/algorithm/" itemprop="url" rel="index">
-                    <span itemprop="name">algorithm</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="链表javascript实现"><a href="#链表javascript实现" class="headerlink" title="链表javascript实现"></a>链表javascript实现</h2><p>链表（Linked list）是一种常见的基础数据结构，是一种线性表，但是并不会按线性的顺序存储数据，而是在每一个节点里存到下一个节点的指针(Pointer)。由于不必须按顺<br>序存储，链表在插入的时候可以达到O(1)的复杂度，比另一种线性表顺序表快得多，但是查找一个节点或者访问特定编号的节点则需要O(n)的时间，而顺序表相应的时间复杂度<br>分别是O(logn)和O(1)。</p>
-<p>javascript实现可以通过下面的方法：</p>
-<pre><code>function ListNode(val) {
-    this.val = val;
-    this.next = null;
-}
-</code></pre><p>下面我们看看链表题目的基本类型:</p>
-<h2 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h2><p>删除的题目有19, 83, 203, 237, 82</p>
-<p>删除其实就是找到要删除元素的前一个元素pre;</p>
-<pre><code>pre.next = pre.next.next;
-</code></pre><p>不过还有一种是假删除，找前一个元素比较麻烦，我们可以直接把要删除元素的下一个元素的值赋给当前删除，然后删除下一个元素；</p>
-<pre><code>cur.val = cur.next.val;
-cur.next = cur.next.next;
-</code></pre><p>看一个典型例题<a href="https://leetcode.com/problems/remove-nth-node-from-end-of-list/" target="_blank" rel="external">19. Remove Nth Node From End of List</a>:</p>
-<p>Given a linked list, remove the nth node from the end of list and return its head.<br>For example,</p>
-<pre><code>Given linked list: 1-&gt;2-&gt;3-&gt;4-&gt;5, and n = 2.
-After removing the second node from the end, the linked list becomes 1-&gt;2-&gt;3-&gt;5.
-</code></pre><p>这个题目我们可以通过设置两个变量，fast变量先走n步，然后fast和slow变量同时走，直到fast为null; 此时slow就是到达了倒数第n个元素，执行删除即可；代码如下：</p>
-<pre><code>var removeNthFromEnd = function(head, n) {
-    var left, before, right = head;
-    left = before = {next: head}; 
-    while (n--) right = right.next;
-    while (right) {
-        right = right.next;
-        left = left.next;
-    }
-    left.next = left.next.next;
-    return before.next;
-};
-</code></pre><h2 id="查找"><a href="#查找" class="headerlink" title="查找"></a>查找</h2><p>查找题目有：160, 141, 142</p>
-<p>我们来看看<a href="https://leetcode.com/problems/linked-list-cycle/" target="_blank" rel="external">141. Linked List Cycle</a>，判断是否🈶️环，我们可以通过设置两个指针fast和slow，slow一次走一步，fast一次走两部，如果🈶️环，fast必定在环内追上slow；于是：</p>
-<pre><code>var hasCycle = function(head) {
-    var slow = head;
-    var fast = head;
-
-    while(fast &amp;&amp; fast.next) {
-        fast = fast.next.next;
-        slow = slow.next;
-        if(fast === slow) {
-            return true;
-        }
-    }
-    return false;
-};
-</code></pre><h2 id="翻转"><a href="#翻转" class="headerlink" title="翻转"></a>翻转</h2><p>翻转题目有234，206，24，92，61</p>
-<p><a href="https://leetcode.com/problems/palindrome-linked-list/" target="_blank" rel="external">234. Palindrome Linked List</a>其实是一个判断是否是回文的题目，但是我们可以利用翻转来判断；</p>
-<p>首先利用两个变量来找到中间点，然后分为两个链表，把后面的链表翻转过来，并同时遍历两个链表比较：</p>
-<pre><code>var isPalindrome = function(head) {
-    function reverse(curr) {
-        var prev = null;
-        var next;
-        while(curr) {
-            next = curr.next;
-            curr.next = prev;
-            prev = curr;
-            curr = next;
-        }
-        return prev;
-    }
-    var fast = head;
-    var slow = head;
-    while(fast &amp;&amp; fast.next) {
-        fast = fast.next.next;
-        slow = slow.next;
-    }
-    if(fast) slow = slow.next;
-
-    slow = reverse(slow);
-    while(slow &amp;&amp; head.val === slow.val) {
-        head = head.next;
-        slow = slow.next;
-    }
-    return slow === null;
-};
-</code></pre><h2 id="合并"><a href="#合并" class="headerlink" title="合并"></a>合并</h2><p>合并的题目有：21，328，86，148，2，92，143</p>
-<p><a href="https://leetcode.com/problems/partition-list/" target="_blank" rel="external">86. Partition List</a>这个题目是让我们把指定元素后面的都小于它的元素放到指定元素前面去；</p>
-<p>我们可以设置两个表头，遍历链表，把小于指定元素的链接到第一个表，反之，链接到第二个表，最后把第二个链表链接到第一个链表后面；</p>
-<pre><code>var partition = function(head, x) {
-    var hd1 = new ListNode(0);
-    var hd2 = new ListNode(0);
-    var p1 = hd1;
-    var p2 = hd2;
-    while(head) {
-        if(head.val &lt; x) {
-            p1.next = head;
-            p1 = p1.next;
-        } else {
-            p2.next = head;
-            p2 = p2.next;
-        }
-        head = head.next;
-    }
-    p2.next = null;
-    p1.next = hd2.next;
-    return hd1.next;
-};
-</code></pre><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>其实链表的操作就是那几种：删除／查找／翻转／合并, 只要掌握链表的基本操作并配合标记或者特定题目的一些特性，基本都可以解决；</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2105,7 +2049,7 @@ After removing the second node from the end, the linked list becomes 1-&gt;2-&gt
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-count">32</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2127,7 +2071,7 @@ After removing the second node from the end, the linked list becomes 1-&gt;2-&gt
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
