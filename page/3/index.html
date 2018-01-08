@@ -239,6 +239,195 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/09/07/2017-09-07-谈谈遍历与迭代协议/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cauil">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/abu.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cauil's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/09/07/2017-09-07-谈谈遍历与迭代协议/" itemprop="url">谈谈遍历与迭代协议</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-07T00:00:00+08:00">
+                2017-09-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/js/" itemprop="url" rel="index">
+                    <span itemprop="name">js</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="谈谈遍历与迭代"><a href="#谈谈遍历与迭代" class="headerlink" title="谈谈遍历与迭代"></a>谈谈遍历与迭代</h1><p>其实遍历与迭代是意义很近的一组词，但为啥要要把它们都列出来呢？先要从遍历说起：</p>
+<h2 id="遍历在js中的形式"><a href="#遍历在js中的形式" class="headerlink" title="遍历在js中的形式"></a>遍历在js中的形式</h2><h4 id="The-for-loop"><a href="#The-for-loop" class="headerlink" title="The for loop"></a>The for loop</h4><p><code>for</code>循环是最普遍的遍历方式, 下面是一个简单的栗子；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">const digits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];</div><div class="line"></div><div class="line">for (let i = 0; i &lt; digits.length; i++) &#123;</div><div class="line">  console.log(digits[i]);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>for循环的不足之处就是必须维护计数器i与退出条件<code>digits.length</code>, 对刚学习编程的人来说，<br>这可能有点困惑，不能一眼看出这是在做啥；</p>
+<p>还有一点是<code>for</code>循环很适合数组类型，但是<code>js</code>不只是只有数组类型，因此<code>for</code>循环不是一个所有类型的解决方案.</p>
+<h4 id="The-for…in-loop"><a href="#The-for…in-loop" class="headerlink" title="The for…in loop"></a>The for…in loop</h4><p><code>for...in</code>循环优化了for循环的不足之处-需要维护计数器的变化与退出条件；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">const digits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];</div><div class="line"></div><div class="line">for (const index in digits) &#123;</div><div class="line">  console.log(digits[index]);</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p>并且这对对象也是适用的，但是这个遍历方式也有一些问题:</p>
+<p>正如上面<code>code</code>中，遍历的是计数器，当需要每个<code>value</code>值的时候，需要重新取值<code>digits[index]</code>;</p>
+<p>并且for…in会把所有的可枚举属性遍历出来，如增加到原型链上的方法，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">Array.prototype.decimalfy = function() &#123;</div><div class="line">  for (let i = 0; i &lt; this.length; i++) &#123;</div><div class="line">    this[i] = this[i].toFixed(2);</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">const digits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];</div><div class="line"></div><div class="line">for (const index in digits) &#123;</div><div class="line">  console.log(digits[index]);</div><div class="line">&#125;;</div><div class="line"></div><div class="line">// 输出</div><div class="line">// 0 1 2 3 4 5 6 7 8 9 </div><div class="line">/*</div><div class="line">function() &#123;</div><div class="line"> for (let i = 0; i &lt; this.length; i++) &#123;</div><div class="line">  this[i] = this[i].toFixed(2);</div><div class="line"> &#125;</div><div class="line">&#125;</div><div class="line">*/</div></pre></td></tr></table></figure>
+<p>这也是for…in没有在js程序员中普遍流行的原因;</p>
+<blockquote>
+<p>注意：forEach方法也是js遍历数组的一种方法，forEach实际上是一个数组方法，因而一般<br>适用在数组上，并且没有方法跳出循环；</p>
+</blockquote>
+<h4 id="for…of"><a href="#for…of" class="headerlink" title="for…of"></a>for…of</h4><p>直接看一个栗子：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">for(let v of &apos;hello&apos;)&#123;</div><div class="line">    console.log(v);</div><div class="line">&#125;</div><div class="line">// h e l l o</div></pre></td></tr></table></figure></p>
+<p>for…of是针对<em>集合</em>(注意:非set而是collections)，而不是所有的对象，适用范围是iterable对象；</p>
+<p>什么是iterable对象？</p>
+<h2 id="迭代"><a href="#迭代" class="headerlink" title="迭代"></a>迭代</h2><p>程序员是一群不停折腾的物种，为了更加方便的遍历，在ES6引入了迭代协议；迭代协议有两种：</p>
+<ul>
+<li>iterable协议</li>
+<li>iterator协议</li>
+</ul>
+<p>由于这次主题是讲遍历与迭代，所以只涉及第一种协议; </p>
+<h4 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h4><p>什么是iterable, ECMA官方文档是如下定义的：</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>[Symbol.iterator]</td>
+<td>A zero arguments function that returns an object, conforming to the iterator protocol.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>也就是说只要具有[Symbol.iterator]属性，并且其值是一个0参数函数，这个函数执行返回的是一个符合iterator协议的对象,<br>符合上述条件的对象就是一个可迭代对象；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">var a = []</div><div class="line">typeof a[Symbol.iterator] // function</div><div class="line">a[Symbol.iterator]() // Array Iterator &#123;&#125;</div></pre></td></tr></table></figure>
+<h4 id="范围"><a href="#范围" class="headerlink" title="范围"></a>范围</h4><p>目前JS内置的可迭代对象有String, Array, Map, Set, TypedArray, arguments等；需要注意的是普通的obj是不能迭代的；</p>
+<h4 id="几个用法"><a href="#几个用法" class="headerlink" title="几个用法"></a>几个用法</h4><p>遍历：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">var someString = &apos;hi&apos;;</div><div class="line">for(let v of something) &#123;</div><div class="line">    console.log(v);</div><div class="line">&#125;</div><div class="line">// h i</div></pre></td></tr></table></figure>
+<p>适用于元素展开:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">var set1 = new Set([0, 1, 2]);</div><div class="line">var set2 = new Set([2, 3, 4, 5]);</div><div class="line">var arr = [...set1, ...set2]; // [0, 1, 2, 2, 3, 4, 5]</div></pre></td></tr></table></figure></p>
+<p>转换数组<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Array.from(new Set([&apos;a&apos;, 1, &apos;b&apos;, 2]))</div></pre></td></tr></table></figure></p>
+<p>转换成生成器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var arr = [1,2,3];</div><div class="line">var iter = arr[Symbol.iterator]();</div><div class="line">iter.next(); // &#123;value: 1, done: false&#125;</div><div class="line">iter.next(); // &#123;value: 2, done: false&#125;</div><div class="line">iter.next(); // &#123;value: 3, done: false&#125;</div><div class="line">iter.next(); // &#123;value: undefined, done: true&#125;</div></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2016/02/21/linkedList/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1463,6 +1652,252 @@ console.log(bar()); // undefined
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2015/10/19/DiveIntoJs_compare/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cauil">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/abu.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cauil's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2015/10/19/DiveIntoJs_compare/" itemprop="url">深入理解Javascript： 比较</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-10-19T00:00:00+08:00">
+                2015-10-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/js/" itemprop="url" rel="index">
+                    <span itemprop="name">js</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>开始这个之前我们先看几个例子</p>
+<pre><code>var a = [1, 2]
+var b = [1, 2]
+a == [1, 2] // false
+a == b // false
+
+var c = {a: 1, b: 2}
+var d = {a: 1, b: 2}
+c == d // false
+
+var str = &apos;test&apos;
+str == &apos;test&apos; // true
+
+str.toUpperCase() // &apos;TEST&apos;
+str // &apos;test&apos;
+</code></pre><p>为什么有这种现象发生呢？</p>
+<h2 id="1-JS的原始值与对象"><a href="#1-JS的原始值与对象" class="headerlink" title="1.JS的原始值与对象"></a>1.JS的原始值与对象</h2><p>原来JS分为两种对象，一个是原始类型，有undefined、null、布尔值、数字和字符串；一个是对象类型（数组、函数等）；</p>
+<p>原始类型值是不可更改的，任何方法都无法更改一个原始值，如上面例子中str经过转换大写之后还是‘test’；原始类型值的比较是值的比较；</p>
+<p>对象类型值的比较并非值的比较，即使两个对象包含同样的属性及相同的值，如上例子的a与b、c与d的比较都为false；</p>
+<p>对象的比较为引用的比较，当且仅当它们引用同一个基对象时，它们才相等，如下：</p>
+<pre><code>var a = [1, 2]
+var b = a
+a == b // true
+</code></pre><h2 id="2-与"><a href="#2-与" class="headerlink" title="2.== 与 ==="></a>2.<code>==</code> 与 <code>===</code></h2><p>再来看一个例子：</p>
+<pre><code>1 == &apos;1&apos; // true
+1 === &apos;1&apos; // false
+var undefined;
+undefined == null; // true
+1 == true;   // true
+2 == true;   // false
+0 == false;  // true
+0 == &apos;&apos;;     // true
+NaN == NaN;  // false
+[] == false; // true
+[] == ![];   // true
+</code></pre><p>为啥会有前面两行的结果呢？</p>
+<p>原来‘==’运算符用来检测两个操作数是否相等，这里相等的定义非常宽松，可以允许进行类型转换；</p>
+<p>而‘===’运算符用来检测两个操作数是否<strong>严格</strong>相等，会比较两个操作数的类型是否相同；</p>
+<h3 id="运算规则"><a href="#运算规则" class="headerlink" title="===运算规则"></a><code>===</code>运算规则</h3><p>‘===’运算符首先计算其操作数的值，然后比较这两个值，比较过程没有任何类型转换；</p>
+<ul>
+<li><p>如果两个值类型不同，返回false；</p>
+</li>
+<li><p>如果两个值都为null或者undefined，返回true；</p>
+</li>
+<li><p>如果两个值都为布尔值true或者false，返回true；</p>
+</li>
+<li><p>如果其中一个为NaN,则返回false，即使另一个也为NaN；</p>
+</li>
+<li><p>如果两个值为数字且数值相等，则返回true，0与-0也返回true；</p>
+</li>
+<li><p>如果两个字符串的长度或者内容不同，则返回false；</p>
+</li>
+<li><p>如果两个引用值指向同一个对象，则返回true，其他对象比较都返回false；</p>
+</li>
+</ul>
+<h3 id="运算规则-1"><a href="#运算规则-1" class="headerlink" title="==运算规则"></a><code>==</code>运算规则</h3><p>‘==’运算符跟‘===’类似，不过比较并不严格。如果两个操作数类型相同，则和上文所述的严格相等的比较规则一样；</p>
+<p>如果两个操作数不是同一类型，那么相等运算符会尝试进行一些类型转换，然后进行比较：</p>
+<ul>
+<li><p>如果一个值为null，另一个为undefined，则它们相等；</p>
+</li>
+<li><p>如果一个值是数字，另一个是字符串，先将字符串转换为数字，然后使用转换后的值进行比较；</p>
+</li>
+<li><p>如果其中一个是true，则将其转换为1再进行比较；如果是false，则转换为0再进行比较；</p>
+</li>
+<li><p>如果一个值为对象，另一个值是数字或字符串，则使用下一小节要讲的类型转换规则转换为原始值，然后再进行比较；对象通过toString()方法或valueOf方法转换为原始值；JS语言核心的内置类首先尝试使用valueOf()，再尝试toString()，除了日期类，日期类只使用toString()转换。那些不是内置对象则通过各自实现中定义的方法转换为原始值；</p>
+</li>
+<li><p>其他不同类型之间的比较均不相等；</p>
+</li>
+</ul>
+<p>如<code>&#39;1&#39; == true</code>返回true，其中true转换为1，‘1’转换为1，因为两个数字的值相等，所以返回true。</p>
+<h2 id="3-类型转换"><a href="#3-类型转换" class="headerlink" title="3.类型转换"></a>3.类型转换</h2><p>类型转换有隐式和显式转换，下图为转换的规则：</p>
+<p><img src="http://7xj29n.com1.z0.glb.clouddn.com/类型转换.jpg" alt="http://7xj29n.com1.z0.glb.clouddn.com/类型转换.jpg"></p>
+<h3 id="显示转换"><a href="#显示转换" class="headerlink" title="显示转换"></a>显示转换</h3><p>做显示转换最简单的方法就是使用Boolean()、Number()、String()或Object()函数；</p>
+<p>注意这些函数与它们作为函数构造器是有区别的，作为函数构造器是使用new Number()，这种得出来的是属于包装对象；</p>
+<p>如下：</p>
+<pre><code>Number(&quot;3&quot;)
+new Number(&quot;3&quot;)
+typeof Number(&quot;3&quot;) // number
+typeof new Number(&quot;3&quot;) // object
+</code></pre><h3 id="隐式转换"><a href="#隐式转换" class="headerlink" title="隐式转换"></a>隐式转换</h3><p>隐式转换是通过上下语境或者运算符来转换的；</p>
+<p>例如‘+’运算符有一个操作数为字符串时，另一个操作数不为字符串时会隐式转换为字符串；’-‘运算符会隐式把两个操作数转换为数字;</p>
+<p>再如一元运算符‘！’会把操作数转换为布尔值并取反；如：</p>
+<pre><code>12 + &apos;1&apos; // &apos;121&apos;
+new Number(&quot;3&quot;) - [1] // 2
+!![] // true
+</code></pre><p>对应的转换规则如上面图中所示，下面只来说说对象转换为原始值的方式（<em>这里只谈原生对象，而非宿主对象的转换，宿主对象根据各自的算法进行转换</em>）；</p>
+<p>1.对象转换为字符串</p>
+<ul>
+<li>如果对象具有toString()方法，且调用这个方法返回一个原始值，则对象先转换为原始值，然后再通过上图的转换规则转换为字符串；</li>
+<li>否则JS会调用valueOf()方法，且调用这个方法返回一个原始值，则对象先转换为原始值，然后再通过上图的转换规则转换为字符串；</li>
+<li>如果对象无法从上面两个方法获得一个原始值，这时它将抛出一个类型错误异常；</li>
+</ul>
+<p>例如计算<code>[1, 2, 3] + &#39;abc&#39;</code>返回<code>&#39;1,2,3abc&#39;</code></p>
+<p>首先<code>[1, 2, 3]</code>调用<code>toString()</code>方法返回<code>‘1,2,3’</code>然后再执行字符串的+运算，返回<code>&#39;1,2,3abc&#39;</code></p>
+<p>2.对象转换为数字</p>
+<p>这个与上面转换为字符串相反，先调用valueOf()，失败再尝试toString()；</p>
+<ul>
+<li>否则JS会调用valueOf()方法，且调用这个方法返回一个原始值，则对象先转换为原始值，然后再通过上图的转换规则转换为字符串；</li>
+<li>如果对象具有toString()方法，且调用这个方法返回一个原始值，则对象先转换为原始值，然后再通过上图的转换规则转换为字符串；</li>
+<li>如果对象无法从上面两个方法获得一个原始值，这时它将抛出一个类型错误异常；</li>
+</ul>
+<p>例如计算<code>[1, 2, 3] - 1</code>返回<code>NaN</code></p>
+<p>首先<code>[1, 2, 3]</code>调用<code>valueOf()</code>方法，而此方法返回一个对象而不是原始值，则调用<code>toString()</code>方法，返回<code>‘1,2,3’</code>然后再转换为数字，根据字符串转换为数字的规则，为<code>NaN</code>,<code>NaN - 1</code>返回<code>NaN</code>。</p>
+<p>注意：日期对象有点特别，通过valueOf和toString方法返回的原始值将被直接使用；</p>
+<h2 id="4-后记"><a href="#4-后记" class="headerlink" title="4.后记"></a>4.后记</h2><p>通过上面的一些例子我们知道JS原始类型与对象类型的一些转换规则以及JS的内部实现，有机会再聊聊JS的常见运算符。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2015/10/19/DiveIntoJs_Events_propagation/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1668,252 +2103,6 @@ console.log(bar()); // undefined
 
 &lt;/html&gt;
 </code></pre>
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2015/10/19/DiveIntoJs_compare/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cauil">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/abu.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Cauil's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2015/10/19/DiveIntoJs_compare/" itemprop="url">深入理解Javascript： 比较</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-10-19T00:00:00+08:00">
-                2015-10-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/js/" itemprop="url" rel="index">
-                    <span itemprop="name">js</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>开始这个之前我们先看几个例子</p>
-<pre><code>var a = [1, 2]
-var b = [1, 2]
-a == [1, 2] // false
-a == b // false
-
-var c = {a: 1, b: 2}
-var d = {a: 1, b: 2}
-c == d // false
-
-var str = &apos;test&apos;
-str == &apos;test&apos; // true
-
-str.toUpperCase() // &apos;TEST&apos;
-str // &apos;test&apos;
-</code></pre><p>为什么有这种现象发生呢？</p>
-<h2 id="1-JS的原始值与对象"><a href="#1-JS的原始值与对象" class="headerlink" title="1.JS的原始值与对象"></a>1.JS的原始值与对象</h2><p>原来JS分为两种对象，一个是原始类型，有undefined、null、布尔值、数字和字符串；一个是对象类型（数组、函数等）；</p>
-<p>原始类型值是不可更改的，任何方法都无法更改一个原始值，如上面例子中str经过转换大写之后还是‘test’；原始类型值的比较是值的比较；</p>
-<p>对象类型值的比较并非值的比较，即使两个对象包含同样的属性及相同的值，如上例子的a与b、c与d的比较都为false；</p>
-<p>对象的比较为引用的比较，当且仅当它们引用同一个基对象时，它们才相等，如下：</p>
-<pre><code>var a = [1, 2]
-var b = a
-a == b // true
-</code></pre><h2 id="2-与"><a href="#2-与" class="headerlink" title="2.== 与 ==="></a>2.<code>==</code> 与 <code>===</code></h2><p>再来看一个例子：</p>
-<pre><code>1 == &apos;1&apos; // true
-1 === &apos;1&apos; // false
-var undefined;
-undefined == null; // true
-1 == true;   // true
-2 == true;   // false
-0 == false;  // true
-0 == &apos;&apos;;     // true
-NaN == NaN;  // false
-[] == false; // true
-[] == ![];   // true
-</code></pre><p>为啥会有前面两行的结果呢？</p>
-<p>原来‘==’运算符用来检测两个操作数是否相等，这里相等的定义非常宽松，可以允许进行类型转换；</p>
-<p>而‘===’运算符用来检测两个操作数是否<strong>严格</strong>相等，会比较两个操作数的类型是否相同；</p>
-<h3 id="运算规则"><a href="#运算规则" class="headerlink" title="===运算规则"></a><code>===</code>运算规则</h3><p>‘===’运算符首先计算其操作数的值，然后比较这两个值，比较过程没有任何类型转换；</p>
-<ul>
-<li><p>如果两个值类型不同，返回false；</p>
-</li>
-<li><p>如果两个值都为null或者undefined，返回true；</p>
-</li>
-<li><p>如果两个值都为布尔值true或者false，返回true；</p>
-</li>
-<li><p>如果其中一个为NaN,则返回false，即使另一个也为NaN；</p>
-</li>
-<li><p>如果两个值为数字且数值相等，则返回true，0与-0也返回true；</p>
-</li>
-<li><p>如果两个字符串的长度或者内容不同，则返回false；</p>
-</li>
-<li><p>如果两个引用值指向同一个对象，则返回true，其他对象比较都返回false；</p>
-</li>
-</ul>
-<h3 id="运算规则-1"><a href="#运算规则-1" class="headerlink" title="==运算规则"></a><code>==</code>运算规则</h3><p>‘==’运算符跟‘===’类似，不过比较并不严格。如果两个操作数类型相同，则和上文所述的严格相等的比较规则一样；</p>
-<p>如果两个操作数不是同一类型，那么相等运算符会尝试进行一些类型转换，然后进行比较：</p>
-<ul>
-<li><p>如果一个值为null，另一个为undefined，则它们相等；</p>
-</li>
-<li><p>如果一个值是数字，另一个是字符串，先将字符串转换为数字，然后使用转换后的值进行比较；</p>
-</li>
-<li><p>如果其中一个是true，则将其转换为1再进行比较；如果是false，则转换为0再进行比较；</p>
-</li>
-<li><p>如果一个值为对象，另一个值是数字或字符串，则使用下一小节要讲的类型转换规则转换为原始值，然后再进行比较；对象通过toString()方法或valueOf方法转换为原始值；JS语言核心的内置类首先尝试使用valueOf()，再尝试toString()，除了日期类，日期类只使用toString()转换。那些不是内置对象则通过各自实现中定义的方法转换为原始值；</p>
-</li>
-<li><p>其他不同类型之间的比较均不相等；</p>
-</li>
-</ul>
-<p>如<code>&#39;1&#39; == true</code>返回true，其中true转换为1，‘1’转换为1，因为两个数字的值相等，所以返回true。</p>
-<h2 id="3-类型转换"><a href="#3-类型转换" class="headerlink" title="3.类型转换"></a>3.类型转换</h2><p>类型转换有隐式和显式转换，下图为转换的规则：</p>
-<p><img src="http://7xj29n.com1.z0.glb.clouddn.com/类型转换.jpg" alt="http://7xj29n.com1.z0.glb.clouddn.com/类型转换.jpg"></p>
-<h3 id="显示转换"><a href="#显示转换" class="headerlink" title="显示转换"></a>显示转换</h3><p>做显示转换最简单的方法就是使用Boolean()、Number()、String()或Object()函数；</p>
-<p>注意这些函数与它们作为函数构造器是有区别的，作为函数构造器是使用new Number()，这种得出来的是属于包装对象；</p>
-<p>如下：</p>
-<pre><code>Number(&quot;3&quot;)
-new Number(&quot;3&quot;)
-typeof Number(&quot;3&quot;) // number
-typeof new Number(&quot;3&quot;) // object
-</code></pre><h3 id="隐式转换"><a href="#隐式转换" class="headerlink" title="隐式转换"></a>隐式转换</h3><p>隐式转换是通过上下语境或者运算符来转换的；</p>
-<p>例如‘+’运算符有一个操作数为字符串时，另一个操作数不为字符串时会隐式转换为字符串；’-‘运算符会隐式把两个操作数转换为数字;</p>
-<p>再如一元运算符‘！’会把操作数转换为布尔值并取反；如：</p>
-<pre><code>12 + &apos;1&apos; // &apos;121&apos;
-new Number(&quot;3&quot;) - [1] // 2
-!![] // true
-</code></pre><p>对应的转换规则如上面图中所示，下面只来说说对象转换为原始值的方式（<em>这里只谈原生对象，而非宿主对象的转换，宿主对象根据各自的算法进行转换</em>）；</p>
-<p>1.对象转换为字符串</p>
-<ul>
-<li>如果对象具有toString()方法，且调用这个方法返回一个原始值，则对象先转换为原始值，然后再通过上图的转换规则转换为字符串；</li>
-<li>否则JS会调用valueOf()方法，且调用这个方法返回一个原始值，则对象先转换为原始值，然后再通过上图的转换规则转换为字符串；</li>
-<li>如果对象无法从上面两个方法获得一个原始值，这时它将抛出一个类型错误异常；</li>
-</ul>
-<p>例如计算<code>[1, 2, 3] + &#39;abc&#39;</code>返回<code>&#39;1,2,3abc&#39;</code></p>
-<p>首先<code>[1, 2, 3]</code>调用<code>toString()</code>方法返回<code>‘1,2,3’</code>然后再执行字符串的+运算，返回<code>&#39;1,2,3abc&#39;</code></p>
-<p>2.对象转换为数字</p>
-<p>这个与上面转换为字符串相反，先调用valueOf()，失败再尝试toString()；</p>
-<ul>
-<li>否则JS会调用valueOf()方法，且调用这个方法返回一个原始值，则对象先转换为原始值，然后再通过上图的转换规则转换为字符串；</li>
-<li>如果对象具有toString()方法，且调用这个方法返回一个原始值，则对象先转换为原始值，然后再通过上图的转换规则转换为字符串；</li>
-<li>如果对象无法从上面两个方法获得一个原始值，这时它将抛出一个类型错误异常；</li>
-</ul>
-<p>例如计算<code>[1, 2, 3] - 1</code>返回<code>NaN</code></p>
-<p>首先<code>[1, 2, 3]</code>调用<code>valueOf()</code>方法，而此方法返回一个对象而不是原始值，则调用<code>toString()</code>方法，返回<code>‘1,2,3’</code>然后再转换为数字，根据字符串转换为数字的规则，为<code>NaN</code>,<code>NaN - 1</code>返回<code>NaN</code>。</p>
-<p>注意：日期对象有点特别，通过valueOf和toString方法返回的原始值将被直接使用；</p>
-<h2 id="4-后记"><a href="#4-后记" class="headerlink" title="4.后记"></a>4.后记</h2><p>通过上面的一些例子我们知道JS原始类型与对象类型的一些转换规则以及JS的内部实现，有机会再聊聊JS的常见运算符。</p>
-
           
         
       
@@ -2597,205 +2786,6 @@ display: table-cell; width: 2000px;          IE8+
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2015/06/12/life_shanqiu/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cauil">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/abu.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Cauil's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2015/06/12/life_shanqiu/" itemprop="url">山丘</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-06-12T00:00:00+08:00">
-                2015-06-12
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/life/" itemprop="url" rel="index">
-                    <span itemprop="name">life</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>《山丘》</p>
-<p><img src="http://7xj29n.com1.z0.glb.clouddn.com/shanqiu.jpg" alt="山丘"></p>
-<p>想说却还没说的 还很多</p>
-<p>攒着是因为想写成歌</p>
-<p>让人轻轻地唱着 淡淡地记着</p>
-<p>就算终于忘了 也值了</p>
-<p>说不定我一生涓滴意念</p>
-<p>侥幸汇成河</p>
-<p>然后我俩各自一端</p>
-<p>望着大河弯弯 终于敢放胆</p>
-<p>嘻皮笑脸 面对 人生的难</p>
-<p>也许我们从未成熟</p>
-<p>还没能晓得 就快要老了</p>
-<p>尽管心里活着的还是那个</p>
-<p>年轻人</p>
-<p>因为不安而频频回首</p>
-<p>无知地索求 羞耻于求救</p>
-<p>不知疲倦地翻越 每一个山丘</p>
-<p>越过山丘 虽然已白了头</p>
-<p>喋喋不休 时不我予的哀愁</p>
-<p>还未如愿见着不朽</p>
-<p>就把自己先搞丢</p>
-<p>越过山丘 才发现无人等候</p>
-<p>喋喋不休 再也唤不回温柔</p>
-<p>为何记不得上一次是谁给的拥抱</p>
-<p>在什么时候</p>
-<p>我没有刻意隐藏 也无意让你感伤</p>
-<p>多少次我们无醉不欢</p>
-<p>咒骂人生太短 唏嘘相见恨晚</p>
-<p>让女人把妆哭花了 也不管</p>
-<p>遗憾我们从未成熟</p>
-<p>还没能晓得 就已经老了</p>
-<p>尽力却仍不明白</p>
-<p>身边的年轻人</p>
-<p>给自己随便找个理由</p>
-<p>向情爱的挑逗 命运的左右</p>
-<p>不自量力地还手 直至死方休</p>
-<p>越过山丘 虽然已白了头</p>
-<p>喋喋不休 时不我予的哀愁</p>
-<p>还未如愿见着不朽</p>
-<p>就把自己先搞丢</p>
-<p>越过山丘 才发现无人等候</p>
-<p>喋喋不休 再也唤不回了温柔</p>
-<p>为何记不得上一次是谁给的拥抱</p>
-<p>在什么时候</p>
-<p>越过山丘 虽然已白了头</p>
-<p>喋喋不休 时不我予的哀愁</p>
-<p>还未如愿见着不朽</p>
-<p>就把自己先搞丢</p>
-<p>越过山丘 才发现无人等候</p>
-<p>喋喋不休 再也唤不回了温柔</p>
-<p>为何记不得上一次是谁给的拥抱</p>
-<p>在什么时候</p>
-<p>喋喋不休 时不我予的哀愁</p>
-<p>向情爱的挑逗 命运的左右</p>
-<p>不自量力地还手 直至死方休</p>
-<p>为何记不得上一次是谁给的拥抱</p>
-<p>在什么时候</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2850,7 +2840,7 @@ display: table-cell; width: 2000px;          IE8+
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-count">33</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2861,7 +2851,7 @@ display: table-cell; width: 2000px;          IE8+
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">分类</span>
                 
               </div>
@@ -2872,7 +2862,7 @@ display: table-cell; width: 2000px;          IE8+
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-count">23</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -2931,7 +2921,7 @@ display: table-cell; width: 2000px;          IE8+
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

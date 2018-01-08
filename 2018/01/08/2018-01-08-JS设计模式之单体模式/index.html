@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="设计模式,design model," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="单体模式的思想在于保证一个特定类仅有一个实例。这意味着当您第二次使用同一个类床创建新对象的时候，应该得到与第一次创建对象完全相同对象。 ES5之前在ES5之前是没有类这种概念，只有对象。当创建一个新对象时，实际上没有其他对象与其类似，因此新对象已经是单体了。使用对象字面量创建一个简单的对象也是一个单体的例子： 123var obj = &amp;#123;  myprop: &amp;apos;my value&amp;">
+<meta name="keywords" content="设计模式,design model">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JS设计模式之单体模式">
+<meta property="og:url" content="http://cauil.github.io/2018/01/08/2018-01-08-JS设计模式之单体模式/index.html">
+<meta property="og:site_name" content="Cauil&#39;s Blog">
+<meta property="og:description" content="单体模式的思想在于保证一个特定类仅有一个实例。这意味着当您第二次使用同一个类床创建新对象的时候，应该得到与第一次创建对象完全相同对象。 ES5之前在ES5之前是没有类这种概念，只有对象。当创建一个新对象时，实际上没有其他对象与其类似，因此新对象已经是单体了。使用对象字面量创建一个简单的对象也是一个单体的例子： 123var obj = &amp;#123;  myprop: &amp;apos;my value&amp;">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-01-08T00:33:14.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JS设计模式之单体模式">
+<meta name="twitter:description" content="单体模式的思想在于保证一个特定类仅有一个实例。这意味着当您第二次使用同一个类床创建新对象的时候，应该得到与第一次创建对象完全相同对象。 ES5之前在ES5之前是没有类这种概念，只有对象。当创建一个新对象时，实际上没有其他对象与其类似，因此新对象已经是单体了。使用对象字面量创建一个简单的对象也是一个单体的例子： 123var obj = &amp;#123;  myprop: &amp;apos;my value&amp;">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://cauil.github.io/2018/01/08/2018-01-08-JS设计模式之单体模式/"/>
+
+
+
+
+
+  <title>JS设计模式之单体模式 | Cauil's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Cauil's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">陌上花开，可缓缓归矣</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2018/01/08/2018-01-08-JS设计模式之单体模式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cauil">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/abu.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cauil's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">JS设计模式之单体模式</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-08T00:00:00+08:00">
+                2018-01-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/设计模式/" itemprop="url" rel="index">
+                    <span itemprop="name">设计模式</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>单体模式的思想在于保证一个特定类仅有一个实例。这意味着当您第二次使用同一个类床创建新对象的时候，应该得到与第一次创建对象完全相同对象。</p>
+<h2 id="ES5之前"><a href="#ES5之前" class="headerlink" title="ES5之前"></a>ES5之前</h2><p>在ES5之前是没有类这种概念，只有对象。当创建一个新对象时，实际上没有其他对象与其类似，因此新对象已经是单体了。使用对象字面量创建一个简单的对象也是一个单体的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">var obj = &#123;</div><div class="line">  myprop: &apos;my value&apos;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在JS中，对象之间永远不会完全相等，除非它们是同一个对象，因此即使创建一个具有完全相同成员的同类对象，它也不会与第一个对象完全相等。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">var obj2 = &#123;</div><div class="line">  myprop: &apos;my value&apos;</div><div class="line">&#125;</div><div class="line">obj1 === obj2; // false</div><div class="line">obj1 == obj2; // false</div></pre></td></tr></table></figure>
+<p>因此可以认为每次在使用对象字面量创建对象的时候，实际上就正在创建一个单体，并且并不涉及任何特殊语法。</p>
+<h2 id="new操作符"><a href="#new操作符" class="headerlink" title="new操作符"></a>new操作符</h2><p>使用new可以创建对象，有时可能需要使用此方法的单体实现。这种思想在于当使用同一个构造函数以new操作符来创建多个对象时，应该仅获得指向完全相同的对象的新指针。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">var uni = new Universe()</div><div class="line">var uni2 = new Universe()</div><div class="line">uni1 === uni2 // true</div></pre></td></tr></table></figure>
+<p>怎么实现上面的单体模式呢？</p>
+<p>可能会想到使用缓存该对象实例this，以便当第二次调用该构造函数时能够创建并返回同一个对象。实现方式有多种：</p>
+<ul>
+<li>使用全局变量来缓存；但是不推荐，一般原则下，全局变量是有缺点的。</li>
+<li>可以在构造函数的静态属性中缓存该变量。唯一缺点是函数属性是公开访问的属性，在外部代码中可能会修改该属性，以至于让您丢失了该实例。</li>
+<li>将实例包装在闭包中。这样可以保证该实例的私有性并且保证该实例不会被构造函数之外的代码所修改。代价是带来了额外的闭包开销。</li>
+</ul>
+<h4 id="第二种实现"><a href="#第二种实现" class="headerlink" title="第二种实现"></a>第二种实现</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">function Universe() &#123;</div><div class="line">  if(typeof Universe.instance === &apos;object&apos;) &#123;</div><div class="line">    return Universe.instance</div><div class="line">  &#125;</div><div class="line">  </div><div class="line">  this.start_time = 0;</div><div class="line">  this.bang = &quot;big&quot;;</div><div class="line">  </div><div class="line">  Universe.instance = this;</div><div class="line">  </div><div class="line">  //return this;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="第三种实现"><a href="#第三种实现" class="headerlink" title="第三种实现"></a>第三种实现</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">function Universe() &#123;</div><div class="line">  var instance = this;</div><div class="line">  </div><div class="line">  this.start_time = 0;</div><div class="line">  this.bang = &quot;big&quot;;</div><div class="line">  </div><div class="line">  Universe = function() &#123;</div><div class="line">    return instance;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这种实现有一些缺点，在于重写函数时会丢失所有在初始定义和重定义时刻之间添加到它里面的属性；在这里的特定情况下，任何添加到Universe()的原型中的对象都不会存在指向由原始实现所创建实例的活动链接。如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">Universe.prototype.nothing = true;</div><div class="line">var uni = new Universe()</div><div class="line">Universe.prototype.everything = true;</div><div class="line">var uni2 = new Universe();</div><div class="line"></div><div class="line">uni.nothing  // true</div><div class="line">uni2.nothing // true</div><div class="line"></div><div class="line">uni.everything // undefined</div><div class="line">uni2.everything // undefined</div><div class="line"></div><div class="line">uni.constructor.name // Universe</div><div class="line">uni.constructor === Universe; // false</div></pre></td></tr></table></figure>
+<h4 id="改进1"><a href="#改进1" class="headerlink" title="改进1"></a>改进1</h4><p>可以把第一次就返回改写Universe函数调用得到的实例，并链接原型链</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">function Universe() &#123;</div><div class="line">  var instance;</div><div class="line">  </div><div class="line">  Universe = function() &#123;</div><div class="line">    return instance;</div><div class="line">  &#125;</div><div class="line">  Universe.prototype = this;</div><div class="line">  instance = new Universe();</div><div class="line">  instance.constuctor = Universe;</div><div class="line">  </div><div class="line">  instance.start_time = 0;</div><div class="line">  instance.bang = &quot;big&quot;;</div><div class="line">  </div><div class="line">  return instance;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>测试得到预期结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">Universe.prototype.nothing = true;</div><div class="line">var uni = new Universe()</div><div class="line">Universe.prototype.everything = true;</div><div class="line">var uni2 = new Universe();</div><div class="line"></div><div class="line">uni.nothing  // true</div><div class="line">uni2.nothing // true</div><div class="line"></div><div class="line">uni.everything //true</div><div class="line">uni2.everything // true</div><div class="line"></div><div class="line">uni.constructor.name // Universe </div><div class="line">uni.constructor === Universe; // true</div></pre></td></tr></table></figure>
+<h4 id="改进2-立即执行函数"><a href="#改进2-立即执行函数" class="headerlink" title="改进2-立即执行函数"></a>改进2-立即执行函数</h4><p>利用立即执行函数进行改写Universe，并在闭包里面封装一个实例，每次调用构造函数都返回这个实例；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">var Universe;</div><div class="line">(function() &#123;</div><div class="line">  var instance;</div><div class="line">  Universe = function() &#123;</div><div class="line">    if(instance) &#123;</div><div class="line">      return instance</div><div class="line">    &#125;</div><div class="line">    instance = this;</div><div class="line">    </div><div class="line">    this.start_time = 0;</div><div class="line">    this.bang = &apos;Big&apos;;</div><div class="line">  &#125;</div><div class="line">&#125;())</div></pre></td></tr></table></figure>
+<h2 id="ES6实现方法"><a href="#ES6实现方法" class="headerlink" title="ES6实现方法"></a>ES6实现方法</h2><p>ES6实现原理其实跟ES5一样，只不过语法不一样而与；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">class Universe &#123;</div><div class="line">  constructor() &#123;</div><div class="line">    if(!Universe.instance) &#123;</div><div class="line">      this.start_time = 0;</div><div class="line">      this.bang = &quot;Big&quot;;</div><div class="line">      Universe.instance = this;</div><div class="line">    &#125;</div><div class="line">    return Universe.instance;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/设计模式/" rel="tag"># 设计模式</a>
+          
+            <a href="/tags/design-model/" rel="tag"># design model</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/27/2017-12-27-koa2探秘/" rel="next" title="koa2探秘">
+                <i class="fa fa-chevron-left"></i> koa2探秘
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/abu.jpg"
+                alt="cauil" />
+            
+              <p class="site-author-name" itemprop="name">cauil</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">33</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/cauil" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://weibo.com/cauil" target="_blank" title="Weibo">
+                    
+                      <i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://douban.com/people/cauil" target="_blank" title="DouBan">
+                    
+                      <i class="fa fa-fw fa-douban"></i>DouBan</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ES5之前"><span class="nav-number">1.</span> <span class="nav-text">ES5之前</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#new操作符"><span class="nav-number">2.</span> <span class="nav-text">new操作符</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#第二种实现"><span class="nav-number">2.0.1.</span> <span class="nav-text">第二种实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#第三种实现"><span class="nav-number">2.0.2.</span> <span class="nav-text">第三种实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#改进1"><span class="nav-number">2.0.3.</span> <span class="nav-text">改进1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#改进2-立即执行函数"><span class="nav-number">2.0.4.</span> <span class="nav-text">改进2-立即执行函数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ES6实现方法"><span class="nav-number">3.</span> <span class="nav-text">ES6实现方法</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cauil</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

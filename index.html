@@ -239,6 +239,174 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2018/01/08/2018-01-08-JS设计模式之单体模式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cauil">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/abu.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cauil's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/08/2018-01-08-JS设计模式之单体模式/" itemprop="url">JS设计模式之单体模式</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-08T00:00:00+08:00">
+                2018-01-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/设计模式/" itemprop="url" rel="index">
+                    <span itemprop="name">设计模式</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>单体模式的思想在于保证一个特定类仅有一个实例。这意味着当您第二次使用同一个类床创建新对象的时候，应该得到与第一次创建对象完全相同对象。</p>
+<h2 id="ES5之前"><a href="#ES5之前" class="headerlink" title="ES5之前"></a>ES5之前</h2><p>在ES5之前是没有类这种概念，只有对象。当创建一个新对象时，实际上没有其他对象与其类似，因此新对象已经是单体了。使用对象字面量创建一个简单的对象也是一个单体的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">var obj = &#123;</div><div class="line">  myprop: &apos;my value&apos;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在JS中，对象之间永远不会完全相等，除非它们是同一个对象，因此即使创建一个具有完全相同成员的同类对象，它也不会与第一个对象完全相等。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">var obj2 = &#123;</div><div class="line">  myprop: &apos;my value&apos;</div><div class="line">&#125;</div><div class="line">obj1 === obj2; // false</div><div class="line">obj1 == obj2; // false</div></pre></td></tr></table></figure>
+<p>因此可以认为每次在使用对象字面量创建对象的时候，实际上就正在创建一个单体，并且并不涉及任何特殊语法。</p>
+<h2 id="new操作符"><a href="#new操作符" class="headerlink" title="new操作符"></a>new操作符</h2><p>使用new可以创建对象，有时可能需要使用此方法的单体实现。这种思想在于当使用同一个构造函数以new操作符来创建多个对象时，应该仅获得指向完全相同的对象的新指针。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">var uni = new Universe()</div><div class="line">var uni2 = new Universe()</div><div class="line">uni1 === uni2 // true</div></pre></td></tr></table></figure>
+<p>怎么实现上面的单体模式呢？</p>
+<p>可能会想到使用缓存该对象实例this，以便当第二次调用该构造函数时能够创建并返回同一个对象。实现方式有多种：</p>
+<ul>
+<li>使用全局变量来缓存；但是不推荐，一般原则下，全局变量是有缺点的。</li>
+<li>可以在构造函数的静态属性中缓存该变量。唯一缺点是函数属性是公开访问的属性，在外部代码中可能会修改该属性，以至于让您丢失了该实例。</li>
+<li>将实例包装在闭包中。这样可以保证该实例的私有性并且保证该实例不会被构造函数之外的代码所修改。代价是带来了额外的闭包开销。</li>
+</ul>
+<h4 id="第二种实现"><a href="#第二种实现" class="headerlink" title="第二种实现"></a>第二种实现</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">function Universe() &#123;</div><div class="line">  if(typeof Universe.instance === &apos;object&apos;) &#123;</div><div class="line">    return Universe.instance</div><div class="line">  &#125;</div><div class="line">  </div><div class="line">  this.start_time = 0;</div><div class="line">  this.bang = &quot;big&quot;;</div><div class="line">  </div><div class="line">  Universe.instance = this;</div><div class="line">  </div><div class="line">  //return this;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="第三种实现"><a href="#第三种实现" class="headerlink" title="第三种实现"></a>第三种实现</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">function Universe() &#123;</div><div class="line">  var instance = this;</div><div class="line">  </div><div class="line">  this.start_time = 0;</div><div class="line">  this.bang = &quot;big&quot;;</div><div class="line">  </div><div class="line">  Universe = function() &#123;</div><div class="line">    return instance;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这种实现有一些缺点，在于重写函数时会丢失所有在初始定义和重定义时刻之间添加到它里面的属性；在这里的特定情况下，任何添加到Universe()的原型中的对象都不会存在指向由原始实现所创建实例的活动链接。如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">Universe.prototype.nothing = true;</div><div class="line">var uni = new Universe()</div><div class="line">Universe.prototype.everything = true;</div><div class="line">var uni2 = new Universe();</div><div class="line"></div><div class="line">uni.nothing  // true</div><div class="line">uni2.nothing // true</div><div class="line"></div><div class="line">uni.everything // undefined</div><div class="line">uni2.everything // undefined</div><div class="line"></div><div class="line">uni.constructor.name // Universe</div><div class="line">uni.constructor === Universe; // false</div></pre></td></tr></table></figure>
+<h4 id="改进1"><a href="#改进1" class="headerlink" title="改进1"></a>改进1</h4><p>可以把第一次就返回改写Universe函数调用得到的实例，并链接原型链</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">function Universe() &#123;</div><div class="line">  var instance;</div><div class="line">  </div><div class="line">  Universe = function() &#123;</div><div class="line">    return instance;</div><div class="line">  &#125;</div><div class="line">  Universe.prototype = this;</div><div class="line">  instance = new Universe();</div><div class="line">  instance.constuctor = Universe;</div><div class="line">  </div><div class="line">  instance.start_time = 0;</div><div class="line">  instance.bang = &quot;big&quot;;</div><div class="line">  </div><div class="line">  return instance;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>测试得到预期结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">Universe.prototype.nothing = true;</div><div class="line">var uni = new Universe()</div><div class="line">Universe.prototype.everything = true;</div><div class="line">var uni2 = new Universe();</div><div class="line"></div><div class="line">uni.nothing  // true</div><div class="line">uni2.nothing // true</div><div class="line"></div><div class="line">uni.everything //true</div><div class="line">uni2.everything // true</div><div class="line"></div><div class="line">uni.constructor.name // Universe </div><div class="line">uni.constructor === Universe; // true</div></pre></td></tr></table></figure>
+<h4 id="改进2-立即执行函数"><a href="#改进2-立即执行函数" class="headerlink" title="改进2-立即执行函数"></a>改进2-立即执行函数</h4><p>利用立即执行函数进行改写Universe，并在闭包里面封装一个实例，每次调用构造函数都返回这个实例；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">var Universe;</div><div class="line">(function() &#123;</div><div class="line">  var instance;</div><div class="line">  Universe = function() &#123;</div><div class="line">    if(instance) &#123;</div><div class="line">      return instance</div><div class="line">    &#125;</div><div class="line">    instance = this;</div><div class="line">    </div><div class="line">    this.start_time = 0;</div><div class="line">    this.bang = &apos;Big&apos;;</div><div class="line">  &#125;</div><div class="line">&#125;())</div></pre></td></tr></table></figure>
+<h2 id="ES6实现方法"><a href="#ES6实现方法" class="headerlink" title="ES6实现方法"></a>ES6实现方法</h2><p>ES6实现原理其实跟ES5一样，只不过语法不一样而与；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">class Universe &#123;</div><div class="line">  constructor() &#123;</div><div class="line">    if(!Universe.instance) &#123;</div><div class="line">      this.start_time = 0;</div><div class="line">      this.bang = &quot;Big&quot;;</div><div class="line">      Universe.instance = this;</div><div class="line">    &#125;</div><div class="line">    return Universe.instance;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/12/27/2017-12-27-koa2探秘/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -999,177 +1167,6 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/11/27/2017-11-26-ES之Promise/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cauil">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/abu.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Cauil's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/11/27/2017-11-26-ES之Promise/" itemprop="url">ES6之Promise</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-27T00:00:00+08:00">
-                2017-11-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JS/" itemprop="url" rel="index">
-                    <span itemprop="name">JS</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="Promise基础知识"><a href="#Promise基础知识" class="headerlink" title="Promise基础知识"></a>Promise基础知识</h2><p>Promise相当于异步操作结果的占位符，它不会去订阅一个事件，也不会传递一个回调函数给目标函数，而是让函数返回一个Promise：</p>
-<p><code>let promise = readFile(&#39;example.txt&#39;)</code></p>
-<p> 上例子中，readFile不会立即开始读取文件，函数会返回一个表示异步读取操作的Promise对象，未来对这个对象的操作完全取决于Promise的声明周期。</p>
-<h4 id="Promise生命周期"><a href="#Promise生命周期" class="headerlink" title="Promise生命周期"></a>Promise生命周期</h4><p> 生命周期有三个：pending、fullfilled、rejected</p>
-<p> 所有promise都有then方法，它接受两个参数：第一个当Promise的状态变为fullfilled时要调用的函数，与异步操作相关的附加数据都会传递给这个完成函数；第二个是当Promise的状态变为rejected时要调用的函数，其与完成时调用的函数类似，所有与失败相关的附加数据都会传递这个拒绝函数；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">let promise = readFile(&quot;example.txt&quot;);</div><div class="line">promise.then(function(contents) &#123;</div><div class="line">    // fulfillment</div><div class="line">    console.log(contents);</div><div class="line">&#125;, function(err) &#123;</div><div class="line">// rejection</div><div class="line">    console.error(err.message);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<p><strong>如果一个对象实现了上面的then方法，那这个对象我们称之为thenable对象。所有的Promise对象都是thenable对象，但并非所有thenable对象都是Promise。</strong></p>
-<p>Promise被解决（resolved）时执行，这些任务最终会被加入到一个为Promise量身定制的独立队列中，而不会立即执行，当前面的任务完成后其才被调用；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">var p = new Promise(function(resolve, reject)&#123;resolve()&#125;);</div><div class="line">p.then(function()&#123;console.log(&apos;do&apos;)&#125;);</div><div class="line">console.log(&apos;do1&apos;);</div><div class="line">// do1</div><div class="line">// do</div></pre></td></tr></table></figure>
-<h4 id="创建未完成的Promise"><a href="#创建未完成的Promise" class="headerlink" title="创建未完成的Promise"></a>创建未完成的Promise</h4><p>Promise的执行器会立即执行，然后执行后续流程中的代码;当Promise resolved之后会把任务加入到任务队列尾部，即调用resolve()后出触发一个异步操作，传入then和catch方法的函数会被添加到任务队列中并异步执行；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">let promise = new Promise(function(resolve, reject) &#123;</div><div class="line">  console.log(&apos;Promise&apos;);</div><div class="line">  resolve();</div><div class="line">&#125;);</div><div class="line">promise.then(function() &#123;</div><div class="line">    console.log(&quot;Resolved.&quot;);</div><div class="line">&#125;);</div><div class="line">console.log(&quot;HI!&quot;);</div><div class="line">// &apos;Promise&apos;</div><div class="line">// HI!</div><div class="line">// Resolved</div></pre></td></tr></table></figure>
-<h4 id="创建已处理的Promise"><a href="#创建已处理的Promise" class="headerlink" title="创建已处理的Promise"></a>创建已处理的Promise</h4><p>Promise.resolve() / Promise.reject()</p>
-<p>除了上面的方法直接创建已处理的Promise；Promise的resolve和reject方法还可以接受非Promise的Thenable对象作为参数。如果传入非Promise的Thenable对象，则这些方法会创建一个新的Promise，并在then函数中被调用；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">let thenable = &#123;</div><div class="line">    then: function(resolve, reject) &#123;</div><div class="line">        resolve(42);</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line">let p1 = Promise.resolve(thenable);</div><div class="line">p1.then(function(value) &#123;</div><div class="line">    console.log(value);     // 42</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<h2 id="全局的Promise拒绝处理"><a href="#全局的Promise拒绝处理" class="headerlink" title="全局的Promise拒绝处理"></a>全局的Promise拒绝处理</h2><p>为了防止有些没有拒绝处理的promise的错误被忽略掉，可以用全局的Promise拒绝处理。</p>
-<h4 id="浏览器环境的拒绝处理"><a href="#浏览器环境的拒绝处理" class="headerlink" title="浏览器环境的拒绝处理"></a>浏览器环境的拒绝处理</h4><p>浏览器有两个事件来识别未处理的拒绝的；</p>
-<ul>
-<li>unhandledrejection 在一个事件循环中，当Promise被拒绝，并且没有提供拒绝处理程序时，触发该事件</li>
-<li>rejecttionhandled 在一个事件循环后，当Promise被拒绝时，若拒绝处理程序被调用，触发该事件；</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">let rejected;</div><div class="line">window.onunhandledrejection = function(event) &#123;</div><div class="line">    console.log(event.type); // &quot;unhandledrejection&quot;</div><div class="line">    console.log(event.reason.message); // &quot;Explosion!&quot;</div><div class="line">    console.log(rejected === event.promise); // true</div><div class="line">&#125;;</div><div class="line">window.onrejectionhandled = function(event) &#123;</div><div class="line">    console.log(event.type); // &quot;rejectionhandled&quot;</div><div class="line">    console.log(event.reason.message); // &quot;Explosion!&quot;</div><div class="line">    console.log(rejected === event.promise); // true</div><div class="line">&#125;;</div><div class="line">rejected = Promise.reject(new Error(&quot;Explosion!&quot;));</div></pre></td></tr></table></figure>
-<h2 id="串联Promise"><a href="#串联Promise" class="headerlink" title="串联Promise"></a>串联Promise</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">let p1 = new Promise(function(resolve, reject) &#123;</div><div class="line">                 resolve(42);</div><div class="line">&#125;);</div><div class="line">p1.then(function(value) &#123;</div><div class="line">    console.log(value);</div><div class="line">&#125;).then(function() &#123;</div><div class="line">    console.log(&quot;Finished&quot;);</div><div class="line">&#125;);</div><div class="line">// 42</div><div class="line">// Finished</div></pre></td></tr></table></figure>
-<p><strong>务必在Promise链的末尾留一个有拒绝处理程序保证能够正确处理所有可能发生的错误。</strong></p>
-<h4 id="Promise链的返回值"><a href="#Promise链的返回值" class="headerlink" title="Promise链的返回值"></a>Promise链的返回值</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">let p1 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(42);</div><div class="line"> &#125;);</div><div class="line">p1.then(function(value) &#123;</div><div class="line">    console.log(value); // 42</div><div class="line">    return value + 1;</div><div class="line">&#125;).then(function(value) &#123;</div><div class="line">    console.log(value); // 43</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<h4 id="在Promise链中返回Promise"><a href="#在Promise链中返回Promise" class="headerlink" title="在Promise链中返回Promise"></a>在Promise链中返回Promise</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">let p1 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(42);</div><div class="line">&#125;);</div><div class="line">let p2 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(43);</div><div class="line">&#125;);</div><div class="line">p1.then(function(value) &#123;</div><div class="line">    // first fulfillment handler</div><div class="line">    console.log(value);     // 42</div><div class="line">    return p2;</div><div class="line">&#125;).then(function(value) &#123;</div><div class="line">    // second fulfillment handler</div><div class="line">    console.log(value);     // 43</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<h2 id="响应多个Promise"><a href="#响应多个Promise" class="headerlink" title="响应多个Promise"></a>响应多个Promise</h2><h4 id="Promise-all"><a href="#Promise-all" class="headerlink" title="Promise.all"></a>Promise.all</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">let p1 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(42);</div><div class="line">&#125;);</div><div class="line">let p2 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(43);</div><div class="line">&#125;);</div><div class="line">let p3 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(44);</div><div class="line">&#125;);</div><div class="line">let p4 = Promise.all([p1, p2, p3]);</div><div class="line">p4.then(function(value) &#123;</div><div class="line">    console.log(Array.isArray(value));  // true</div><div class="line">    console.log(value[0]); // 42</div><div class="line">    console.log(value[1]); // 43</div><div class="line">    console.log(value[2]); // 44</div><div class="line"> &#125;);</div></pre></td></tr></table></figure>
-<p>拒绝处理程序总是接受一个值而非数组，改值来自被拒绝Promise的拒绝值；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">let p1 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(42);</div><div class="line">&#125;);</div><div class="line">let p2 = new Promise(function(resolve, reject) &#123;</div><div class="line">    reject(43);</div><div class="line">&#125;);</div><div class="line">let p3 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(44);</div><div class="line">&#125;);</div><div class="line">let p4 = Promise.all([p1, p2, p3]);</div><div class="line">p4.catch(function(value) &#123;</div><div class="line">    console.log(Array.isArray(value))   // false</div><div class="line">    console.log(value);                 // 43</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<h4 id="Promise-race"><a href="#Promise-race" class="headerlink" title="Promise.race"></a>Promise.race</h4><p>race方法监听多个Promise，只要有一个Promise被解决，整个race就被解决；如果选解决的是已完成Promise，则返回已完成Promise，如果被解决的是已拒绝Promise，返回的是已拒绝Promise：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">let p1 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(42);</div><div class="line">&#125;);</div><div class="line">let p2 = Promise.reject(43);</div><div class="line">let p3 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(44);</div><div class="line">&#125;);</div><div class="line">let p4 = Promise.race([p1, p2, p3]);</div><div class="line">p4.catch(function(value) &#123;</div><div class="line">    console.log(value);     // 43</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/11/27/2017-11-27-ES6之Set与Map/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1305,6 +1302,177 @@
 <li>Weak Map不支持size属性,不支持clear</li>
 <li><strong>最大区别是Weak Map保存的是对象的弱引用</strong></li>
 </ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/11/27/2017-11-26-ES之Promise/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cauil">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/abu.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cauil's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/11/27/2017-11-26-ES之Promise/" itemprop="url">ES6之Promise</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-27T00:00:00+08:00">
+                2017-11-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JS/" itemprop="url" rel="index">
+                    <span itemprop="name">JS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Promise基础知识"><a href="#Promise基础知识" class="headerlink" title="Promise基础知识"></a>Promise基础知识</h2><p>Promise相当于异步操作结果的占位符，它不会去订阅一个事件，也不会传递一个回调函数给目标函数，而是让函数返回一个Promise：</p>
+<p><code>let promise = readFile(&#39;example.txt&#39;)</code></p>
+<p> 上例子中，readFile不会立即开始读取文件，函数会返回一个表示异步读取操作的Promise对象，未来对这个对象的操作完全取决于Promise的声明周期。</p>
+<h4 id="Promise生命周期"><a href="#Promise生命周期" class="headerlink" title="Promise生命周期"></a>Promise生命周期</h4><p> 生命周期有三个：pending、fullfilled、rejected</p>
+<p> 所有promise都有then方法，它接受两个参数：第一个当Promise的状态变为fullfilled时要调用的函数，与异步操作相关的附加数据都会传递给这个完成函数；第二个是当Promise的状态变为rejected时要调用的函数，其与完成时调用的函数类似，所有与失败相关的附加数据都会传递这个拒绝函数；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">let promise = readFile(&quot;example.txt&quot;);</div><div class="line">promise.then(function(contents) &#123;</div><div class="line">    // fulfillment</div><div class="line">    console.log(contents);</div><div class="line">&#125;, function(err) &#123;</div><div class="line">// rejection</div><div class="line">    console.error(err.message);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p><strong>如果一个对象实现了上面的then方法，那这个对象我们称之为thenable对象。所有的Promise对象都是thenable对象，但并非所有thenable对象都是Promise。</strong></p>
+<p>Promise被解决（resolved）时执行，这些任务最终会被加入到一个为Promise量身定制的独立队列中，而不会立即执行，当前面的任务完成后其才被调用；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">var p = new Promise(function(resolve, reject)&#123;resolve()&#125;);</div><div class="line">p.then(function()&#123;console.log(&apos;do&apos;)&#125;);</div><div class="line">console.log(&apos;do1&apos;);</div><div class="line">// do1</div><div class="line">// do</div></pre></td></tr></table></figure>
+<h4 id="创建未完成的Promise"><a href="#创建未完成的Promise" class="headerlink" title="创建未完成的Promise"></a>创建未完成的Promise</h4><p>Promise的执行器会立即执行，然后执行后续流程中的代码;当Promise resolved之后会把任务加入到任务队列尾部，即调用resolve()后出触发一个异步操作，传入then和catch方法的函数会被添加到任务队列中并异步执行；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">let promise = new Promise(function(resolve, reject) &#123;</div><div class="line">  console.log(&apos;Promise&apos;);</div><div class="line">  resolve();</div><div class="line">&#125;);</div><div class="line">promise.then(function() &#123;</div><div class="line">    console.log(&quot;Resolved.&quot;);</div><div class="line">&#125;);</div><div class="line">console.log(&quot;HI!&quot;);</div><div class="line">// &apos;Promise&apos;</div><div class="line">// HI!</div><div class="line">// Resolved</div></pre></td></tr></table></figure>
+<h4 id="创建已处理的Promise"><a href="#创建已处理的Promise" class="headerlink" title="创建已处理的Promise"></a>创建已处理的Promise</h4><p>Promise.resolve() / Promise.reject()</p>
+<p>除了上面的方法直接创建已处理的Promise；Promise的resolve和reject方法还可以接受非Promise的Thenable对象作为参数。如果传入非Promise的Thenable对象，则这些方法会创建一个新的Promise，并在then函数中被调用；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">let thenable = &#123;</div><div class="line">    then: function(resolve, reject) &#123;</div><div class="line">        resolve(42);</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line">let p1 = Promise.resolve(thenable);</div><div class="line">p1.then(function(value) &#123;</div><div class="line">    console.log(value);     // 42</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h2 id="全局的Promise拒绝处理"><a href="#全局的Promise拒绝处理" class="headerlink" title="全局的Promise拒绝处理"></a>全局的Promise拒绝处理</h2><p>为了防止有些没有拒绝处理的promise的错误被忽略掉，可以用全局的Promise拒绝处理。</p>
+<h4 id="浏览器环境的拒绝处理"><a href="#浏览器环境的拒绝处理" class="headerlink" title="浏览器环境的拒绝处理"></a>浏览器环境的拒绝处理</h4><p>浏览器有两个事件来识别未处理的拒绝的；</p>
+<ul>
+<li>unhandledrejection 在一个事件循环中，当Promise被拒绝，并且没有提供拒绝处理程序时，触发该事件</li>
+<li>rejecttionhandled 在一个事件循环后，当Promise被拒绝时，若拒绝处理程序被调用，触发该事件；</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">let rejected;</div><div class="line">window.onunhandledrejection = function(event) &#123;</div><div class="line">    console.log(event.type); // &quot;unhandledrejection&quot;</div><div class="line">    console.log(event.reason.message); // &quot;Explosion!&quot;</div><div class="line">    console.log(rejected === event.promise); // true</div><div class="line">&#125;;</div><div class="line">window.onrejectionhandled = function(event) &#123;</div><div class="line">    console.log(event.type); // &quot;rejectionhandled&quot;</div><div class="line">    console.log(event.reason.message); // &quot;Explosion!&quot;</div><div class="line">    console.log(rejected === event.promise); // true</div><div class="line">&#125;;</div><div class="line">rejected = Promise.reject(new Error(&quot;Explosion!&quot;));</div></pre></td></tr></table></figure>
+<h2 id="串联Promise"><a href="#串联Promise" class="headerlink" title="串联Promise"></a>串联Promise</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">let p1 = new Promise(function(resolve, reject) &#123;</div><div class="line">                 resolve(42);</div><div class="line">&#125;);</div><div class="line">p1.then(function(value) &#123;</div><div class="line">    console.log(value);</div><div class="line">&#125;).then(function() &#123;</div><div class="line">    console.log(&quot;Finished&quot;);</div><div class="line">&#125;);</div><div class="line">// 42</div><div class="line">// Finished</div></pre></td></tr></table></figure>
+<p><strong>务必在Promise链的末尾留一个有拒绝处理程序保证能够正确处理所有可能发生的错误。</strong></p>
+<h4 id="Promise链的返回值"><a href="#Promise链的返回值" class="headerlink" title="Promise链的返回值"></a>Promise链的返回值</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">let p1 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(42);</div><div class="line"> &#125;);</div><div class="line">p1.then(function(value) &#123;</div><div class="line">    console.log(value); // 42</div><div class="line">    return value + 1;</div><div class="line">&#125;).then(function(value) &#123;</div><div class="line">    console.log(value); // 43</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h4 id="在Promise链中返回Promise"><a href="#在Promise链中返回Promise" class="headerlink" title="在Promise链中返回Promise"></a>在Promise链中返回Promise</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">let p1 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(42);</div><div class="line">&#125;);</div><div class="line">let p2 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(43);</div><div class="line">&#125;);</div><div class="line">p1.then(function(value) &#123;</div><div class="line">    // first fulfillment handler</div><div class="line">    console.log(value);     // 42</div><div class="line">    return p2;</div><div class="line">&#125;).then(function(value) &#123;</div><div class="line">    // second fulfillment handler</div><div class="line">    console.log(value);     // 43</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h2 id="响应多个Promise"><a href="#响应多个Promise" class="headerlink" title="响应多个Promise"></a>响应多个Promise</h2><h4 id="Promise-all"><a href="#Promise-all" class="headerlink" title="Promise.all"></a>Promise.all</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">let p1 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(42);</div><div class="line">&#125;);</div><div class="line">let p2 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(43);</div><div class="line">&#125;);</div><div class="line">let p3 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(44);</div><div class="line">&#125;);</div><div class="line">let p4 = Promise.all([p1, p2, p3]);</div><div class="line">p4.then(function(value) &#123;</div><div class="line">    console.log(Array.isArray(value));  // true</div><div class="line">    console.log(value[0]); // 42</div><div class="line">    console.log(value[1]); // 43</div><div class="line">    console.log(value[2]); // 44</div><div class="line"> &#125;);</div></pre></td></tr></table></figure>
+<p>拒绝处理程序总是接受一个值而非数组，改值来自被拒绝Promise的拒绝值；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">let p1 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(42);</div><div class="line">&#125;);</div><div class="line">let p2 = new Promise(function(resolve, reject) &#123;</div><div class="line">    reject(43);</div><div class="line">&#125;);</div><div class="line">let p3 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(44);</div><div class="line">&#125;);</div><div class="line">let p4 = Promise.all([p1, p2, p3]);</div><div class="line">p4.catch(function(value) &#123;</div><div class="line">    console.log(Array.isArray(value))   // false</div><div class="line">    console.log(value);                 // 43</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h4 id="Promise-race"><a href="#Promise-race" class="headerlink" title="Promise.race"></a>Promise.race</h4><p>race方法监听多个Promise，只要有一个Promise被解决，整个race就被解决；如果选解决的是已完成Promise，则返回已完成Promise，如果被解决的是已拒绝Promise，返回的是已拒绝Promise：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">let p1 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(42);</div><div class="line">&#125;);</div><div class="line">let p2 = Promise.reject(43);</div><div class="line">let p3 = new Promise(function(resolve, reject) &#123;</div><div class="line">    resolve(44);</div><div class="line">&#125;);</div><div class="line">let p4 = Promise.race([p1, p2, p3]);</div><div class="line">p4.catch(function(value) &#123;</div><div class="line">    console.log(value);     // 43</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
 
           
         
@@ -1964,182 +2132,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/11/21/2017-11-21-ES6之对象/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cauil">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/abu.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Cauil's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/11/21/2017-11-21-ES6之对象/" itemprop="url">ES6之对象</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-21T00:00:00+08:00">
-                2017-11-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JS/" itemprop="url" rel="index">
-                    <span itemprop="name">JS</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="对象字面量语法扩展"><a href="#对象字面量语法扩展" class="headerlink" title="对象字面量语法扩展"></a>对象字面量语法扩展</h2><h4 id="属性初始值的简写"><a href="#属性初始值的简写" class="headerlink" title="属性初始值的简写"></a>属性初始值的简写</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">function createPerson(name, age) &#123;</div><div class="line">  return &#123;</div><div class="line">    name: name,</div><div class="line">    age: age </div><div class="line">  &#125;;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>属性与为属性赋值的变量是重复的，可以简写为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">function createPerson(name, age) &#123;</div><div class="line">  return &#123;</div><div class="line">    name,</div><div class="line">    age </div><div class="line">  &#125;;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>这样可以避免命名错误以及不小心的拼写错误。</p>
-<h4 id="对象方法的简写"><a href="#对象方法的简写" class="headerlink" title="对象方法的简写"></a>对象方法的简写</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var person = &#123;</div><div class="line">    name: &quot;Nicholas&quot;,</div><div class="line">    sayName: function() &#123;</div><div class="line">        console.log(this.name);</div><div class="line">    &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
-<p>可以简写为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var person = &#123;</div><div class="line">    name: &quot;Nicholas&quot;,</div><div class="line">    sayName() &#123;</div><div class="line">        console.log(this.name);</div><div class="line">    &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<p>简写方法sayName里面可以使用super关键字；</p>
-<h4 id="可计算属性名"><a href="#可计算属性名" class="headerlink" title="可计算属性名"></a>可计算属性名</h4><p>ES5及早期版本的对象实例中，如果想要通过计算得到属性名，就需要用方括号代替点记法。并且有空格的字符串不能直接作为属性名，也需要方括号代替；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var person = &#123;&#125;,</div><div class="line">    lastName = &quot;last name&quot;;</div><div class="line">person[&quot;first name&quot;] = &quot;Nicholas&quot;;</div><div class="line">person[lastName] = &quot;Zakas&quot;;</div><div class="line">console.log(person[&quot;first name&quot;]);</div><div class="line">console.log(person[lastName]);</div></pre></td></tr></table></figure>
-<p>ES6中，可在对象字面量中使用可计算属性名称，其语法与引用对象实例的可计算属性名称相同，也是使用方括号。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">let lastName = &quot;last name&quot;;</div><div class="line">let person = &#123;</div><div class="line">    &quot;first name&quot;: &quot;Nicholas&quot;,</div><div class="line">    [lastName]: &quot;Zakas&quot;</div><div class="line">&#125;;</div><div class="line">console.log(person[&quot;first name&quot;]);</div><div class="line">console.log(person[lastName]);</div></pre></td></tr></table></figure>
-<h2 id="新增方法"><a href="#新增方法" class="headerlink" title="新增方法"></a>新增方法</h2><h4 id="Object-is"><a href="#Object-is" class="headerlink" title="Object.is"></a>Object.is</h4><p>在JS中比较两个值，使用===跟==比较多，但是===在有些情况也不完全准确；+0与-0在JS引擎中是两个完全不同的实体，<code>NaN === NaN</code> 返回值为false，需要用isNaN()才能检测出NaN;</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">console.log(+0 == -0);              // true</div><div class="line">console.log(+0 === -0);             // true</div><div class="line">console.log(Object.is(+0, -0));     // false</div><div class="line">console.log(NaN == NaN);            // false</div><div class="line">console.log(NaN === NaN);           // false</div><div class="line">console.log(Object.is(NaN, NaN));   // true</div><div class="line">console.log(5 == 5);                // true</div><div class="line">console.log(5 == &quot;5&quot;);              // true</div><div class="line">console.log(5 === 5);               // true</div><div class="line">console.log(5 === &quot;5&quot;);             // false</div><div class="line">console.log(Object.is(5, 5));       // true</div><div class="line">console.log(Object.is(5, &quot;5&quot;));     // false</div></pre></td></tr></table></figure>
-<h4 id="Object-assign"><a href="#Object-assign" class="headerlink" title="Object.assign"></a>Object.assign</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">var receiver = &#123;&#125;;</div><div class="line">var test = &#123;name: &apos;zakas&apos;&#125;;</div><div class="line">Object.assign(receiver,</div><div class="line">    &#123;</div><div class="line">      type: &quot;js&quot;,</div><div class="line">        name: &quot;file.js&quot;</div><div class="line">    &#125;,</div><div class="line">    &#123;</div><div class="line">      type: &quot;css&quot;,</div><div class="line">      data: test,</div><div class="line">    &#125; </div><div class="line">);</div><div class="line">console.log(receiver.type); // css</div><div class="line">console.log(receiver.name); // file.js</div><div class="line">console.log(receiver.data); // &#123;name: &apos;zakas&apos;&#125;</div><div class="line">test.name = &apos;hi&apos;;</div><div class="line">console.log(receiver.data); // &#123;name: &apos;hi&apos;&#125;</div></pre></td></tr></table></figure>
-<p>Object.assign参数后面的对象会覆盖前面的对象，并且为浅复制；</p>
-<p>Object.assign会把访问器属性复制为数据属性；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">var receiver = &#123;&#125;,</div><div class="line">  supplier = &#123;</div><div class="line">    get name() &#123;</div><div class="line">      return &quot;file.js&quot;</div><div class="line">    &#125; </div><div class="line">  &#125;;</div><div class="line">Object.assign(receiver, supplier);</div><div class="line">var descriptor = Object.getOwnPropertyDescriptor(receiver, &quot;name&quot;);</div><div class="line">console.log(descriptor.value);      // &quot;file.js&quot;</div><div class="line">console.log(descriptor.get);        // undefined</div></pre></td></tr></table></figure>
-<h2 id="重复的对象字面量属性"><a href="#重复的对象字面量属性" class="headerlink" title="重复的对象字面量属性"></a>重复的对象字面量属性</h2><p>ES5严格模式重复字面量属性会报错；ES6无论严格或者非严格模式下，重复属性都会选取最后一个取值；<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&quot;use strict&quot;;</div><div class="line">var person = &#123;</div><div class="line">  name: &quot;Nicholas&quot;,</div><div class="line">  name: &quot;Greg&quot;        // no error in ES6 strict mode</div><div class="line">&#125;;</div><div class="line">console.log(person.name); // Greg</div></pre></td></tr></table></figure></p>
-<h2 id="自有属性枚举顺序"><a href="#自有属性枚举顺序" class="headerlink" title="自有属性枚举顺序"></a>自有属性枚举顺序</h2><ol>
-<li>所有数字键按升序排列</li>
-<li>所有字符串键按照它们被加入对象的顺序排序</li>
-<li>所有symbol按照它们被加入的顺序排序</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">var obj = &#123;</div><div class="line">    a: 1,</div><div class="line">    0: 1,</div><div class="line">    c: 1,</div><div class="line">    2: 1,</div><div class="line">    b: 1,</div><div class="line">    1: 1</div><div class="line">&#125;;</div><div class="line">obj.d = 1;</div><div class="line">console.log(Object.getOwnPropertyNames(obj).join(&quot;&quot;));</div><div class="line">// 012acbd</div></pre></td></tr></table></figure>
-<h2 id="增强对象原型"><a href="#增强对象原型" class="headerlink" title="增强对象原型"></a>增强对象原型</h2><h4 id="改变对象的原型setPrototypeOf"><a href="#改变对象的原型setPrototypeOf" class="headerlink" title="改变对象的原型setPrototypeOf"></a>改变对象的原型setPrototypeOf</h4><p>对象原型的真实值被储存在内部的专用属性[[Prototype]]中，调用Object.getPrototypeOf返回储存在其中的值，调用Object.setPrototypeOf方法改变其中的值；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">let person = &#123;</div><div class="line">    getGreeting() &#123;</div><div class="line">        return &quot;Hello&quot;;</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line">let dog = &#123;</div><div class="line">    getGreeting() &#123;</div><div class="line">        return &quot;Woof&quot;;</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line">// prototype is person</div><div class="line">let friend = Object.create(person);</div><div class="line">console.log(friend.getGreeting()); // Hello</div><div class="line">console.log(Object.getPrototypeOf(friend) === person); // true</div><div class="line">// set prototype to dog</div><div class="line">Object.setPrototypeOf(friend, dog);</div><div class="line">console.log(friend.getGreeting()); // &quot;Woof&quot;</div><div class="line">console.log(Object.getPrototypeOf(friend) === dog); // true</div></pre></td></tr></table></figure>
-<h4 id="简化原型访问的Super引用"><a href="#简化原型访问的Super引用" class="headerlink" title="简化原型访问的Super引用"></a>简化原型访问的Super引用</h4><p>ES6引入了super关键字，super引用相当于指向对象原型的指针，实际上也就是Object.getPrototypeOf()的效果；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">let friend = &#123;</div><div class="line">    getGreeting() &#123;</div><div class="line">        // in the previous example, this is the same as:</div><div class="line">        // Object.getPrototypeOf(this).getGreeting.call(this)</div><div class="line">        return super.getGreeting() + &quot;, hi!&quot;;</div><div class="line">&#125; &#125;;</div></pre></td></tr></table></figure>
-<p>super关键字必须要在使用简写方法的对象中使用super引用，如果在其他方法声明中使用会导致语法错误；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">let friend = &#123;</div><div class="line">    getGreeting: function() &#123;// syntax error</div><div class="line">        return super.getGreeting() + &quot;, hi!&quot;; // &apos;super&apos; keyword unexpected here</div><div class="line">    &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
-<h2 id="正式的方法定义"><a href="#正式的方法定义" class="headerlink" title="正式的方法定义"></a>正式的方法定义</h2><p>ES6正式将方法定义为一个函数，它会由一个内部的[[HomeObject]]属性来容纳这个方法从属的对象；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">let person = &#123;</div><div class="line">    // method</div><div class="line">    getGreeting() &#123;</div><div class="line">        return &quot;Hello&quot;;</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line">// not a method</div><div class="line">function shareGreeting() &#123;</div><div class="line">    return &quot;Hi!&quot;;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>上段代码的getGreeting方法的[[HomeObject]]属性值为person，而创建shareGreeting函数时，由于未将其赋值给一个对象，因为该方法没有明确定义[[HomeObject]]属性。</p>
-<p>super的所有引用都通过[[HomeObject]]属性调用Object.getPrototypeOf方法来检索原型的引用；然后搜寻原型找到同名函数；最后，设置this绑定并且调用相应的方法；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">let person = &#123;</div><div class="line">    getGreeting() &#123;</div><div class="line">        return &quot;Hello&quot;;</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line">// prototype is person</div><div class="line">let friend = &#123;</div><div class="line">    getGreeting() &#123;</div><div class="line">        return super.getGreeting() + &quot;, hi!&quot;;</div><div class="line">&#125; &#125;;</div><div class="line">Object.setPrototypeOf(friend, person);</div><div class="line">console.log(friend.getGreeting());</div></pre></td></tr></table></figure>
-<p><code>friend.getGreeting()</code>方法的[[HomeObject]]的属性值时friend,friend的原型是person，所以<code>super.getGreeting()</code>等价于<code>person.getGreeting.call(this)</code>;</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2194,7 +2186,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-count">33</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2205,7 +2197,7 @@
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">分类</span>
                 
               </div>
@@ -2216,7 +2208,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-count">23</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -2275,7 +2267,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
