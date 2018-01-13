@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="javascript," />
+  <meta name="keywords" content="设计模式,design model," />
 
 
 
@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="本文转载自前端乱炖：Javascript 模块模式 1.Javascript 模块模式假设现在我们有一个小型的Js库，目的是用来增加一个数字： var jspy = {   count: 0,    incrementCount: function() {     this.count++;   },    decrementCount: function() {     this.count--">
-<meta name="keywords" content="javascript">
+<meta name="description" content="装饰器模式在装饰器模式中，可以在运行时动态添加附加功能到对象中。当处理静态类，这可能是一个挑战。在JS中，由于对象是可变的，因此，添加功能到对象中的过程本身并不是问题。 装饰者模式的一个比较方便的特征在于其预期行为的可定制和可配置特性。可以从仅具有一些基本功能的普通对象开始，然后从可用装饰资源池中选择需要用于增加普通对象的那些功能，并且按照顺序进行装饰； 一个例子如果实现一个销售商品的价格，有原始">
+<meta name="keywords" content="设计模式,design model">
 <meta property="og:type" content="article">
-<meta property="og:title" content="深入理解Javascript：模块模式">
-<meta property="og:url" content="http://cauil.github.io/2015/12/15/DiveIntoJs_module_pattern/index.html">
+<meta property="og:title" content="JS模式之装饰器模式">
+<meta property="og:url" content="http://cauil.github.io/2018/01/13/2018-01-13-JS模式之装饰器模式/index.html">
 <meta property="og:site_name" content="Cauil&#39;s Blog">
-<meta property="og:description" content="本文转载自前端乱炖：Javascript 模块模式 1.Javascript 模块模式假设现在我们有一个小型的Js库，目的是用来增加一个数字： var jspy = {   count: 0,    incrementCount: function() {     this.count++;   },    decrementCount: function() {     this.count--">
+<meta property="og:description" content="装饰器模式在装饰器模式中，可以在运行时动态添加附加功能到对象中。当处理静态类，这可能是一个挑战。在JS中，由于对象是可变的，因此，添加功能到对象中的过程本身并不是问题。 装饰者模式的一个比较方便的特征在于其预期行为的可定制和可配置特性。可以从仅具有一些基本功能的普通对象开始，然后从可用装饰资源池中选择需要用于增加普通对象的那些功能，并且按照顺序进行装饰； 一个例子如果实现一个销售商品的价格，有原始">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-10-10T15:27:36.000Z">
+<meta property="og:updated_time" content="2018-01-13T14:15:11.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="深入理解Javascript：模块模式">
-<meta name="twitter:description" content="本文转载自前端乱炖：Javascript 模块模式 1.Javascript 模块模式假设现在我们有一个小型的Js库，目的是用来增加一个数字： var jspy = {   count: 0,    incrementCount: function() {     this.count++;   },    decrementCount: function() {     this.count--">
+<meta name="twitter:title" content="JS模式之装饰器模式">
+<meta name="twitter:description" content="装饰器模式在装饰器模式中，可以在运行时动态添加附加功能到对象中。当处理静态类，这可能是一个挑战。在JS中，由于对象是可变的，因此，添加功能到对象中的过程本身并不是问题。 装饰者模式的一个比较方便的特征在于其预期行为的可定制和可配置特性。可以从仅具有一些基本功能的普通对象开始，然后从可用装饰资源池中选择需要用于增加普通对象的那些功能，并且按照顺序进行装饰； 一个例子如果实现一个销售商品的价格，有原始">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://cauil.github.io/2015/12/15/DiveIntoJs_module_pattern/"/>
+  <link rel="canonical" href="http://cauil.github.io/2018/01/13/2018-01-13-JS模式之装饰器模式/"/>
 
 
 
 
 
-  <title>深入理解Javascript：模块模式 | Cauil's Blog</title>
+  <title>JS模式之装饰器模式 | Cauil's Blog</title>
   
 
 
@@ -243,7 +243,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2015/12/15/DiveIntoJs_module_pattern/">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2018/01/13/2018-01-13-JS模式之装饰器模式/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="cauil">
@@ -260,7 +260,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">深入理解Javascript：模块模式</h1>
+          <h1 class="post-title" itemprop="name headline">JS模式之装饰器模式</h1>
         
 
         <div class="post-meta">
@@ -272,8 +272,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-12-15T00:00:00+08:00">
-                2015-12-15
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-13T00:00:00+08:00">
+                2018-01-13
               </time>
             
 
@@ -295,8 +295,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/js/" itemprop="url" rel="index">
-                    <span itemprop="name">js</span>
+                  <a href="/categories/设计模式/" itemprop="url" rel="index">
+                    <span itemprop="name">设计模式</span>
                   </a>
                 </span>
 
@@ -332,88 +332,26 @@
       
 
       
-        <p>本文转载自前端乱炖：<a href="http://www.html-js.com/article/Study-JavaScript-Javascript-module-every-day" target="_blank" rel="external">Javascript 模块模式</a></p>
-<h2 id="1-Javascript-模块模式"><a href="#1-Javascript-模块模式" class="headerlink" title="1.Javascript 模块模式"></a>1.Javascript 模块模式</h2><p>假设现在我们有一个小型的Js库，目的是用来增加一个数字：</p>
-<pre><code>var jspy = {
-  count: 0,
-
-  incrementCount: function() {
-    this.count++;
-  },
-
-  decrementCount: function() {
-    this.count--;
-  },
-
-  getCount: function() {
-    return this.count;
-  }
-
-};
-</code></pre><p>但是，使用这个js库的人可以用jspy.count = 5 的方法来改变这个值。并不是我们的最初目的。在其他的编程语言中你可以定义一个私有变量，但是Javascript并不能“真正”定义私有变量。然而，我们可以通过操作Javascript来实现，这就引出了一个最流行的Javascript设计模式，模块模式。</p>
-<p>针对上面问题的解决方案如下：</p>
-<pre><code>var jspy = (function() {
-  var _count = 0;
-
-  var incrementCount = function() {
-    _count++;
-  }
-
-  var getCount = function() {
-    return _count;
-  }
-  return {
-    incrementCount: incrementCount,
-    getCount: getCount
-  };
-
-})();
-</code></pre><p>首先我们创造一个_count变量，下划线表明它是一个私有变量。再Javascript中下划线并没有什么实际的意义，但是它是一个用来标明私有变量的普遍用法。现在函数就可以操纵、返回变量了：</p>
-<p>然而，你注意到了我吧整个库包含在了一个自调用匿名函数中。这是一个在执行过程中马上被执行的函数。这个函数运行，定义了函数和变量然后到了return {}的部分，它告诉函数将其返回给变量jspy，或者换句话说，暴露给用户。我们暴露两个函数而不是_count变量，这意味着我们可以做如下操作：</p>
-<pre><code>jspy.incrementCount();
-jspy.getCount();
-</code></pre><p>但是当我们试图进行如下操作时：</p>
-<pre><code>jspy._count; //undefined
-</code></pre><p>它返回undefined。</p>
-<p>对于上面的这种设计模式有许多不同的实现方法。有人喜欢在return 中定义函数：</p>
-<pre><code>var jspy = (function() {
-    var _count = 0;
-
-    return {
-      incrementCount: function() {
-        _count++;
-      },
-      getCount: function() {
-        return _count;
-      }
-    };
-})();   
-</code></pre><p>受到上面例子的启发，CHristian Heilmann提出了Revealing Module Pattern。他的方法是将所有方法定义为私有变量，也就是说，不在return中定义，但是在那里暴露给用户，如下所示：</p>
-<pre><code>var jspy = (function() {
-  var _count = 0;
-  var incrementCount = function() {
-    _count++;
-  };
-  var resetCount = function() {
-    _count = 0;
-  };
-  var getCount = function() {
-    return _count;
-  };
-  return {
-    add: incrementCount,
-    reset: resetCount,
-    get: getCount
-  };
-})();
-</code></pre><p>这种设计模式有两个好处：</p>
+        <h2 id="装饰器模式"><a href="#装饰器模式" class="headerlink" title="装饰器模式"></a>装饰器模式</h2><p>在装饰器模式中，可以在运行时动态添加附加功能到对象中。当处理静态类，这可能是一个挑战。在JS中，由于对象是可变的，因此，添加功能到对象中的过程本身并不是问题。</p>
+<p>装饰者模式的一个比较方便的特征在于其预期行为的可定制和可配置特性。可以从仅具有一些基本功能的普通对象开始，然后从可用装饰资源池中选择需要用于增加普通对象的那些功能，并且按照顺序进行装饰；</p>
+<h4 id="一个例子"><a href="#一个例子" class="headerlink" title="一个例子"></a>一个例子</h4><p>如果实现一个销售商品的价格，有原始价格、国税、地税以及币种的转换；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">var sale = new Sale(100);</div><div class="line">sale.decorate(&apos;fedax&apos;);</div><div class="line">sale.decorate(&apos;quebec&apos;);</div><div class="line">sale.decorate(&apos;money&apos;);</div><div class="line">sale.getPrice()</div></pre></td></tr></table></figure>
+<p>实现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">function Sale(price) &#123;</div><div class="line">  this.price = (price &gt; 0) || 100;</div><div class="line">  this.decorators_list = [];</div><div class="line">&#125;</div><div class="line"></div><div class="line">Sale.decorators = &#123;&#125;;</div><div class="line">Sale.decorators.fedtax = &#123;</div><div class="line">  getPrice: function(price) &#123;</div><div class="line">    return price + price*5/100;</div><div class="line">  &#125;</div><div class="line">&#125;;</div><div class="line">Sale.decorators.quebec = &#123;</div><div class="line">  getPrice: function(price) &#123;</div><div class="line">    return price + price*7.5/100;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">Sale.decorators.money = &#123;</div><div class="line">  getPrice: function(price) &#123;</div><div class="line">    return &quot;$&quot; + price.toFixed(2);</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">Sale.prototype.decorate = function(decorator) &#123;</div><div class="line">  this.decorators_list.push(decorator);</div><div class="line">&#125;</div><div class="line">Sale.prototype.getPrice = function() &#123;</div><div class="line">  var price = this.price,</div><div class="line">  i,</div><div class="line">  max = this.decorators_list.length,</div><div class="line">  name;</div><div class="line">  </div><div class="line">  for(i = 0; i &lt; max; i += 1) &#123;</div><div class="line">    name = this.decorators_list[i];</div><div class="line">    price = Sale.decorators[name].getPrice(price);</div><div class="line">  &#125;</div><div class="line">  return price;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="ECMASCRIPT装饰器"><a href="#ECMASCRIPT装饰器" class="headerlink" title="ECMASCRIPT装饰器"></a>ECMASCRIPT装饰器</h4><p>在ES8中，将会添加新的语言功能-装饰器；</p>
+<p>新的功能目前已经处于stage2阶段，目前只可作用于class和class属性；</p>
+<p><strong>class member decorator</strong></p>
+<p>装饰器函数接受三个参数：</p>
 <ul>
-<li><p>首先，它使我们更容易的了解暴露的函数。当你不在return中定义函数时，我们能轻松的了解到每一行就是一个暴露的函数，这时我们阅读代码更加轻松。</p>
-</li>
-<li><p>其次，你可以用简短的名字（例如 add）来暴露函数，但在定义的时候仍然可以使用冗余的定义方法（例如 incrementCount）。   </p>
-</li>
+<li>target - 所属的class</li>
+<li>name - member的名字</li>
+<li>descriptor - member的描述对象</li>
 </ul>
-<p>相关阅读：<a href="http://www.ruanyifeng.com/blog/2012/10/javascript_module.html" target="_blank" rel="external">阮一峰：Javascript模块化编程（一）：模块的写法</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">function readonly(target, name, descriptor) &#123;</div><div class="line">  descriptor.writable = false;</div><div class="line">  return descriptor;</div><div class="line">&#125;</div><div class="line"></div><div class="line">class Example &#123;</div><div class="line">  a() &#123;&#125;</div><div class="line">  @readonly</div><div class="line">  b() &#123;&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">const e = new Example();</div><div class="line">e.a = 1;</div><div class="line">e.b = 2; // TypeError: Cannot assign to read only property &apos;b&apos; of object &apos;#</div></pre></td></tr></table></figure>
+<p>目前这个装饰器使用需要用babel插件才可以使用，浏览器都没有支持；</p>
+<p><strong>class decorator</strong></p>
+<p>直接看使用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">function log(Class) &#123;</div><div class="line">  return (...args) =&gt; &#123;</div><div class="line">    console.log(args);</div><div class="line">    return new Class(...args);</div><div class="line">  &#125;;</div><div class="line">&#125;</div><div class="line"></div><div class="line">@log</div><div class="line">class Example &#123;</div><div class="line">  constructor(name, age) &#123;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">const e = new Example(&apos;Graham&apos;, 34); // [ &apos;Graham&apos;, 34 ]</div><div class="line">console.log(e); // Example &#123;&#125;</div></pre></td></tr></table></figure></p>
+<p>其实新的装饰器跟python有点类似，有点区别；类装饰器跟python装饰器思路是一致，只有类属性装饰器是是通过重新定义属性描述器中的值来装饰的。</p>
 
       
     </div>
@@ -431,7 +369,9 @@ jspy.getCount();
       
         <div class="post-tags">
           
-            <a href="/tags/javascript/" rel="tag"># javascript</a>
+            <a href="/tags/设计模式/" rel="tag"># 设计模式</a>
+          
+            <a href="/tags/design-model/" rel="tag"># design model</a>
           
         </div>
       
@@ -444,8 +384,8 @@ jspy.getCount();
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2015/11/19/DiveIntoJs_hoisted/" rel="next" title="深入理解Javascript： 声明提升">
-                <i class="fa fa-chevron-left"></i> 深入理解Javascript： 声明提升
+              <a href="/2018/01/13/2018-01-13-JS模式之代理模式和中介者模式/" rel="next" title="JS模式之代理模式和中介者模式">
+                <i class="fa fa-chevron-left"></i> JS模式之代理模式和中介者模式
               </a>
             
           </div>
@@ -454,8 +394,8 @@ jspy.getCount();
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2015/12/27/DiveIntoJs_core/" rel="prev" title="深入理解Javascript： JavaScript核心">
-                深入理解Javascript： JavaScript核心 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/01/13/2018-01-13-JS模式之策略模式和外观模式/" rel="prev" title="JS模式之策略模式和外观模式">
+                JS模式之策略模式和外观模式 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -614,7 +554,7 @@ jspy.getCount();
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Javascript-模块模式"><span class="nav-number">1.</span> <span class="nav-text">1.Javascript 模块模式</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#装饰器模式"><span class="nav-number">1.</span> <span class="nav-text">装饰器模式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#一个例子"><span class="nav-number">1.0.1.</span> <span class="nav-text">一个例子</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ECMASCRIPT装饰器"><span class="nav-number">1.0.2.</span> <span class="nav-text">ECMASCRIPT装饰器</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>

@@ -239,7 +239,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/11/21/2017-11-21-ES6之解构/">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/11/27/2017-11-27-ES6之Set与Map/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="cauil">
@@ -258,7 +258,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/11/21/2017-11-21-ES6之解构/" itemprop="url">ES6之解构</a></h1>
+                <a class="post-title-link" href="/2017/11/27/2017-11-27-ES6之Set与Map/" itemprop="url">ES6之Set与Map</a></h1>
         
 
         <div class="post-meta">
@@ -270,8 +270,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-21T00:00:00+08:00">
-                2017-11-21
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-27T00:00:00+08:00">
+                2017-11-27
               </time>
             
 
@@ -332,47 +332,672 @@
       
         
           
-            <h2 id="为何使用解构功能"><a href="#为何使用解构功能" class="headerlink" title="为何使用解构功能"></a>为何使用解构功能</h2><p>在编码过程中，我们经常定义许多对象和数组，然后有组织地从中提取相关的信息片段；如果对象跟数组结构复杂，我们就需要深入挖掘整个数据结构才能找到所需数据。</p>
-<p>所以ES6位对象与数组都添加了结构功能，将数据结构打散的过程变得更加简单；许多语言都通过极少量的语法实现了结构功能，以简化获取信息的过程；而ES6实际上利用了你早已熟悉的语法：对象和数组字面量的语法。</p>
-<h2 id="对象解构"><a href="#对象解构" class="headerlink" title="对象解构"></a>对象解构</h2><p>对象解构的语法形式是在一个赋值操作符左边放置一个对象字面量。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">let node = &#123;</div><div class="line">    type: &quot;Identifier&quot;,</div><div class="line">    name: &quot;foo&quot;</div><div class="line">&#125;;</div><div class="line">let &#123; type, name &#125; = node;</div><div class="line">console.log(type);      // &quot;Identifier&quot;</div><div class="line">console.log(name);      // &quot;foo&quot;</div></pre></td></tr></table></figure>
-<p>使用var let或const解构声明变量，必须要提供初始化程序。下面几行代码全部都会导致抛出语法错误，它们都缺少了初始化程序：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">// syntax error!</div><div class="line">var &#123; type, name &#125;;</div><div class="line">// syntax error!</div><div class="line">let &#123; type, name &#125;;</div><div class="line">// syntax error!</div><div class="line">const &#123; type, name &#125;;</div></pre></td></tr></table></figure>
-<h4 id="解构赋值"><a href="#解构赋值" class="headerlink" title="解构赋值"></a>解构赋值</h4><p>如果在定义变量之后想要修改它们的值，需要用小括号包裹解构赋值语句，因为JS引擎将一对开放的花括号视为一个代码块，而语法规定，代码块语句不允许出现在赋值语句左侧，添加小括号后可以将块语句转化为一个表达式，从而实现解构赋值的过程。如下面的<code>({ type, name } = node)</code>语句：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">let node = &#123;</div><div class="line">    type: &quot;Identifier&quot;,</div><div class="line">    name: &quot;foo&quot;</div><div class="line">&#125;,</div><div class="line">type = &quot;Literal&quot;,</div><div class="line">name = 5;</div><div class="line">// assign different values using destructuring</div><div class="line">(&#123; type, name &#125; = node);</div><div class="line">console.log(type);      // &quot;Identifier&quot;</div><div class="line">console.log(name);</div></pre></td></tr></table></figure>
-<p>解构赋值表达式（=号右侧）如果为null或者undefined会导致程序抛出错误；<code>let {hello} = null</code>会抛出错误<code>Cannot destructure property</code>hello<code>of &#39;undefined&#39; or &#39;null&#39;.</code></p>
-<h4 id="默认值"><a href="#默认值" class="headerlink" title="默认值"></a>默认值</h4><p>当指定的局部变量名称在对象中不存在的时候，会被赋值为undefined，我们可以设置一个默认值，来处理这种情况：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">let node = &#123;</div><div class="line">    type: &quot;Identifier&quot;,</div><div class="line">    name: &quot;foo&quot;</div><div class="line">&#125;;</div><div class="line">let &#123; type, name, value = true &#125; = node;</div><div class="line">console.log(type); // &quot;Identifier&quot;</div><div class="line">console.log(name); // &quot;foo&quot;</div><div class="line">console.log(value);// true</div></pre></td></tr></table></figure>
-<h4 id="为非同名局部变量赋值"><a href="#为非同名局部变量赋值" class="headerlink" title="为非同名局部变量赋值"></a>为非同名局部变量赋值</h4><p>也可以使用非同名的局部变量来解构对象，并且可以指定默认值：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">let node = &#123;</div><div class="line">    type: &quot;Identifier&quot;,</div><div class="line">    name: &quot;foo&quot;</div><div class="line">&#125;;</div><div class="line">let &#123; type: localType, name: localName, first_name: firstName=&apos;hi&apos; &#125; = node;</div><div class="line">console.log(localType);     // &quot;Identifier&quot;</div><div class="line">console.log(localName);     // &quot;foo&quot;</div><div class="line">console.log(firstName);     // &quot;hi&quot;</div></pre></td></tr></table></figure>
-<h4 id="嵌套解构"><a href="#嵌套解构" class="headerlink" title="嵌套解构"></a>嵌套解构</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">let node = &#123;</div><div class="line">    type: &quot;Identifier&quot;,</div><div class="line">    name: &quot;foo&quot;,</div><div class="line">    loc: &#123;</div><div class="line">        start: &#123;</div><div class="line">            line: 1,</div><div class="line">column: 1 &#125;,</div><div class="line">        end: &#123;</div><div class="line">            line: 1,</div><div class="line">column: 4 &#125;</div><div class="line">&#125; &#125;;</div><div class="line">let &#123; loc: &#123; start &#125;&#125; = node;</div><div class="line">console.log(start.line);   // 1</div><div class="line">console.log(start.column); // 1</div></pre></td></tr></table></figure>
-<h2 id="数组解构"><a href="#数组解构" class="headerlink" title="数组解构"></a>数组解构</h2><p>数组解构语法比对象解构更简单，使用的是数组字面量，且解构操作全部在数组内完成，而不是像对象字面量语法一样使用对象的命名属性：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">let colors = [ &quot;red&quot;, &quot;green&quot;, &quot;blue&quot; ];</div><div class="line">let [ firstColor, ,thirdColor ] = colors;</div><div class="line">console.log(firstColor);        // &quot;red&quot;</div><div class="line">console.log(thirdColor);        // &quot;blue&quot;</div></pre></td></tr></table></figure>
-<p>当通过var let或者const声明数组解构的绑定时，必须要提供一个初始化程序；</p>
-<h4 id="解构赋值-1"><a href="#解构赋值-1" class="headerlink" title="解构赋值"></a>解构赋值</h4><p>数组解构也可用于赋值上下文，不需要用小括号包裹， 因为[]跟{}不一样，后者有块级的功能；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">let colors = [ &quot;red&quot;, &quot;green&quot;, &quot;blue&quot; ],</div><div class="line">    firstColor = &quot;black&quot;,</div><div class="line">    secondColor = &quot;purple&quot;;</div><div class="line">[ firstColor, secondColor ] = colors;</div><div class="line">console.log(firstColor);        // &quot;red&quot;</div><div class="line">console.log(secondColor);       // &quot;green&quot;</div></pre></td></tr></table></figure>
-<p>数组也可用来交换两个变量的值：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">let a = 1,</div><div class="line">b = 2;</div><div class="line">[ a, b ] = [ b, a ];</div><div class="line">console.log(a);     // 2</div><div class="line">console.log(b);     // 1</div></pre></td></tr></table></figure>
-<p>与对象解构一样，如果右侧为null或者undefined，抛出错误；</p>
-<h4 id="默认值-1"><a href="#默认值-1" class="headerlink" title="默认值"></a>默认值</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">let colors = [ &quot;red&quot; ];</div><div class="line">let [ firstColor, secondColor = &quot;green&quot; ] = colors;</div><div class="line">console.log(firstColor);        // &quot;red&quot;</div><div class="line">console.log(secondColor);       // &quot;green&quot;</div></pre></td></tr></table></figure>
-<h4 id="嵌套解构-1"><a href="#嵌套解构-1" class="headerlink" title="嵌套解构"></a>嵌套解构</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">let colors = [ &quot;red&quot;, [ &quot;green&quot;, &quot;lightgreen&quot; ], &quot;blue&quot; ];</div><div class="line">// later</div><div class="line">let [ firstColor, [ secondColor ] ] = colors;</div><div class="line">console.log(firstColor);        // &quot;red&quot;</div><div class="line">console.log(secondColor);       // &quot;green&quot;</div></pre></td></tr></table></figure>
-<h4 id="不定元素"><a href="#不定元素" class="headerlink" title="不定元素"></a>不定元素</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">let colors = [ &quot;red&quot;, &quot;green&quot;, &quot;blue&quot; ];</div><div class="line">let [ firstColor, ...restColors ] = colors;</div><div class="line">console.log(firstColor);        // &quot;red&quot;</div><div class="line">console.log(restColors.length); // 2</div><div class="line">console.log(restColors[0]);     // &quot;green&quot;</div><div class="line">console.log(restColors[1]);     // &quot;blue&quot;</div></pre></td></tr></table></figure>
-<p>通过上面这个语法，可以用来实现生成数组的副本；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">// cloning an array in ECMAScript 6</div><div class="line">let colors = [ &quot;red&quot;, &quot;green&quot;, &quot;blue&quot; ];</div><div class="line">let [ ...clonedColors ] = colors;</div><div class="line">console.log(clonedColors);      // &quot;[red,green,blue]&quot;</div></pre></td></tr></table></figure>
-<p><strong>被解构的数组中，不定元素必须为最后一个条目，在后面继续添加逗号会导致程序抛出语法错误</strong></p>
-<h2 id="混合解构"><a href="#混合解构" class="headerlink" title="混合解构"></a>混合解构</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">let node = &#123;</div><div class="line">    type: &quot;Identifier&quot;,</div><div class="line">    name: &quot;foo&quot;,</div><div class="line">    loc: &#123;</div><div class="line">        start: &#123;</div><div class="line">            line: 1,</div><div class="line">column: 1 &#125;,</div><div class="line">        end: &#123;</div><div class="line">            line: 1,</div><div class="line">column: 4 &#125;</div><div class="line">&#125;,</div><div class="line">    range: [0, 3]</div><div class="line">&#125;;</div><div class="line">let &#123;</div><div class="line">    loc: &#123; start &#125;,</div><div class="line">    range: [ startIndex ]</div><div class="line">&#125; = node;</div><div class="line">console.log(start.line);   // 1</div><div class="line">console.log(start.column); // 1</div><div class="line">console.log(startIndex);   // 0</div></pre></td></tr></table></figure>
-<h2 id="解构参数"><a href="#解构参数" class="headerlink" title="解构参数"></a>解构参数</h2><p>ES5解析参数可能会这样做：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">// properties on options represent additional parameters</div><div class="line">function setCookie(name, value, options) &#123;</div><div class="line">    options = options || &#123;&#125;;</div><div class="line">    let secure = options.secure,</div><div class="line">    path = options.path,</div><div class="line">    domain = options.domain,</div><div class="line">    expires = options.expires;</div><div class="line">    // code to set the cookie</div><div class="line">&#125;</div><div class="line">// third argument maps to options</div><div class="line">setCookie(&quot;type&quot;, &quot;js&quot;, &#123;</div><div class="line">    secure: true,</div><div class="line">    expires: 60000</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<p>利用解构我们可以：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">function setCookie(name, value, &#123; secure, path, domain, expires &#125;) &#123;</div><div class="line">    // code to set the cookie</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h4 id="必须传值的解构参数"><a href="#必须传值的解构参数" class="headerlink" title="必须传值的解构参数"></a>必须传值的解构参数</h4><p>解构参数在默认情况下，如果调用函数时不提供被解构的参数会导致程序抛出错误；如果这样调用上面的setCookie函数<code>setCookie(&#39;type&#39;, &#39;js&#39;)</code>会抛出错误；</p>
-<p>实际上JS是这样解析的：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">function setCookie(name, value, options) &#123;</div><div class="line">    let &#123; secure, path, domain, expires &#125; = options;</div><div class="line">    // code to set the cookie</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>当第三个参数不传值时，实际options被赋值为undefined，根据前面讨论过的解构赋值表达式=号右边的值不能为undefined或者null，所以第三个参数是必须传值的；</p>
-<p>可以设置默认值来避免必须传值：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">function setCookie(name, value, &#123; secure, path, domain, expires &#125; = &#123;&#125;) &#123;</div><div class="line">// empty</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h4 id="解构参数默认值"><a href="#解构参数默认值" class="headerlink" title="解构参数默认值"></a>解构参数默认值</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">function setCookie(name, value,</div><div class="line">    &#123;</div><div class="line">        secure = false,</div><div class="line">        path = &quot;/&quot;,</div><div class="line">        domain = &quot;example.com&quot;,</div><div class="line">        expires = new Date(Date.now() + 360000000)</div><div class="line">&#125; = &#123;&#125; )&#123;</div><div class="line">// empty </div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>也可以为第三个参数设置一个默认对象</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">const cookieDefault = &#123;</div><div class="line">  secure: false,</div><div class="line">  path: &apos;/&apos;,</div><div class="line">  domain: &apos;example.com&apos;,</div><div class="line">  expires: new Date(Date.now() + 360000000)</div><div class="line">&#125;;</div><div class="line">function setCookie(name, value,</div><div class="line">    &#123;</div><div class="line">        secure = cookieDefault.secure,</div><div class="line">        path = cookieDefault.path,</div><div class="line">        domain = cookieDefault.domain,</div><div class="line">        expires = cookieDefault.expires</div><div class="line">&#125; = cookieDefault )&#123;</div><div class="line">// empty </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+            <h2 id="为啥引入Set与Map"><a href="#为啥引入Set与Map" class="headerlink" title="为啥引入Set与Map"></a>为啥引入Set与Map</h2><p>在ES6之前，当想使用非数值型索引，就会用非数组对象创建所需的数据结构；</p>
+<p>ES5中set集合：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var set = Object.create(null);</div><div class="line">set.foo = true;</div><div class="line">// checking for existence</div><div class="line">if (set.foo) &#123;</div><div class="line">    // code to execute</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>Map集合：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">var map = Object.create(null);</div><div class="line">map.foo = &quot;bar&quot;;</div><div class="line">// retrieving a value</div><div class="line">var value = map.foo;</div><div class="line">console.log(value);         // &quot;bar&quot;</div></pre></td></tr></table></figure>
+<p>用这种方法的确可以模拟Set集合与Map集合，但这种<strong>所有对象的属性名必须是字符串类型，必须确保每个键名都是字符串类型且在对象中是唯一的</strong>。如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">var map = Object.create(null);</div><div class="line">map[5] = &quot;foo&quot;;</div><div class="line">console.log(map[&quot;5&quot;]);      // &quot;foo&quot;</div><div class="line"></div><div class="line">var map = Object.create(null),</div><div class="line">    key1 = &#123;&#125;,</div><div class="line">    key2 = &#123;&#125;;</div><div class="line">map[key1] = &quot;foo&quot;;</div><div class="line">console.log(map[key2]); // &quot;foo&quot;</div></pre></td></tr></table></figure>
+<p>对于Map集合中，如果它的属性值是假值，则要求使用布尔值的情况下，会被自动转换成false。当在判断Map结合中是否有某些属性场景会有问题：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var map = Object.create(null);</div><div class="line">map.count = 0;</div><div class="line">// checking for the existence of &quot;count&quot; or for a nonzero value?</div><div class="line">if (map.count) &#123;</div><div class="line">   // code to execute</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="ES6中Set"><a href="#ES6中Set" class="headerlink" title="ES6中Set"></a>ES6中Set</h2><h4 id="添加元素"><a href="#添加元素" class="headerlink" title="添加元素"></a>添加元素</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">let set = new Set();</div><div class="line">set.add(5);</div><div class="line">set.add(&quot;5&quot;);</div><div class="line">console.log(set.size);</div></pre></td></tr></table></figure>
+<h4 id="移除元素"><a href="#移除元素" class="headerlink" title="移除元素"></a>移除元素</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">let set = new Set();</div><div class="line">set.add(5);</div><div class="line">set.add(&quot;5&quot;);</div><div class="line">console.log(set.has(5)); // true</div><div class="line">set.delete(5);</div><div class="line">console.log(set.has(5)); // false</div><div class="line">console.log(set.size);   // 1</div><div class="line">set.clear();</div><div class="line">console.log(set.has(&quot;5&quot;));  // false</div><div class="line">console.log(set.size);      // 0</div></pre></td></tr></table></figure>
+<h4 id="forEach"><a href="#forEach" class="headerlink" title="forEach"></a>forEach</h4><p>需要注意的是回调函数中的前两个参数value与key是一样的；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">let set = new Set([1, 2]);</div><div class="line">set.forEach(function(value, key, ownerSet) &#123;</div><div class="line">    console.log(key + &quot; &quot; + value);</div><div class="line">    console.log(ownerSet === set);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h4 id="转换为数组"><a href="#转换为数组" class="headerlink" title="转换为数组"></a>转换为数组</h4><p>在前面的迭代器中有讲到可迭代对象可以展开，同样Set可以：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">let set = new Set([1, 2, 3, 3, 3, 4, 5]),</div><div class="line">    array = [...set];</div><div class="line">console.log(array);  // [1, 2, 3, 4, 5]</div></pre></td></tr></table></figure>
+<h4 id="Weak-Set集合"><a href="#Weak-Set集合" class="headerlink" title="Weak Set集合"></a>Weak Set集合</h4><p>为啥要引入Weak Set？先看一个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">let set = new Set(),</div><div class="line">    key = &#123;&#125;;</div><div class="line">set.add(key);</div><div class="line">console.log(set.size);      // 1</div><div class="line">// eliminate original reference</div><div class="line">key = null;</div><div class="line">console.log(set.size);      // 1</div><div class="line">// get the original reference back</div><div class="line">key = [...set][0];</div></pre></td></tr></table></figure>
+<p>上面例子将变量key设置null时消除了对初识对象的引用，但是Set集合却保留了这个引用；</p>
+<p>有时我们希望当其他所有引用都不再存在时，让Set集合的这些引用随之消失；为了解决这个问题，ES6额外引入了一个类型：Weak Set集合（弱引用Set集合）。</p>
+<p>Weak Set集合只存储对象的弱引用，并且不可以存储原始值；集合中的弱引用如果是对象唯一的引用，则会被回收并释放相应内存；</p>
+<p>Weak Set支持add has和delete方法；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">let set = new WeakSet(),</div><div class="line">    key = &#123;&#125;;</div><div class="line">// add the object to the set</div><div class="line">set.add(key);</div><div class="line">console.log(set.has(key));</div><div class="line">set.delete(key);</div><div class="line">console.log(set.has(key));</div></pre></td></tr></table></figure>
+<p>Weak Set与Set区别：</p>
+<ul>
+<li>Weak Set实例中，只能含有对象参数；非对象参数会报错</li>
+<li>Weak Set不可迭代；</li>
+<li>Weak Set不暴露任何迭代器</li>
+<li>Weak Set不支持forEach方法</li>
+<li>Weak Set不支持size属性</li>
+<li><strong>最大区别是Weak Set保存的是对象的弱引用</strong></li>
+</ul>
+<h2 id="ES6中Map"><a href="#ES6中Map" class="headerlink" title="ES6中Map"></a>ES6中Map</h2><h4 id="支持的方法has-delete-clear"><a href="#支持的方法has-delete-clear" class="headerlink" title="支持的方法has delete clear"></a>支持的方法has delete clear</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">let map = new Map();</div><div class="line">map.set(&quot;name&quot;, &quot;Nicholas&quot;);</div><div class="line">map.set(&quot;age&quot;, 25);</div><div class="line">console.log(map.size); // 2</div><div class="line">console.log(map.has(&quot;name&quot;)); // true</div><div class="line">console.log(map.get(&quot;name&quot;)); // &apos;Nicholas&apos;</div><div class="line">console.log(map.has(&quot;age&quot;)); // true</div><div class="line">console.log(map.get(&quot;age&quot;)); // 25</div><div class="line">map.delete(&quot;name&quot;);</div><div class="line">console.log(map.has(&quot;name&quot;)); // false</div><div class="line">console.log(map.get(&quot;name&quot;)); // undefined</div><div class="line">console.log(map.size); // 1</div><div class="line">map.clear();</div><div class="line">console.log(map.has(&quot;name&quot;)); // false</div><div class="line">console.log(map.get(&quot;name&quot;)); // undefined</div><div class="line">console.log(map.has(&quot;age&quot;)); // false</div><div class="line">console.log(map.get(&quot;age&quot;)); // undefined</div><div class="line">console.log(map.size); // 0</div></pre></td></tr></table></figure>
+<h4 id="Map集合初始化"><a href="#Map集合初始化" class="headerlink" title="Map集合初始化"></a>Map集合初始化</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">let map = new Map([[&quot;name&quot;, &quot;Nicholas&quot;], [&quot;age&quot;, 25]]);</div><div class="line">console.log(map.has(&quot;name&quot;)); // true</div><div class="line">console.log(map.get(&quot;name&quot;)); // &apos;Nicholas&apos;</div><div class="line">console.log(map.has(&quot;age&quot;)); // true</div><div class="line">console.log(map.get(&quot;age&quot;)); // 25</div><div class="line">console.log(map.size); // 2</div></pre></td></tr></table></figure>
+<h4 id="Map集合的forEach"><a href="#Map集合的forEach" class="headerlink" title="Map集合的forEach"></a>Map集合的forEach</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">let map = new Map([[&quot;name&quot;, &quot;Nicholas&quot;], [&quot;age&quot;, 25]]);</div><div class="line">map.forEach(function(value, key, ownerMap) &#123;</div><div class="line">    console.log(key + &quot; &quot; + value);</div><div class="line">    console.log(ownerMap === map);</div><div class="line">&#125;);</div><div class="line">// name Nicholas</div><div class="line">// true</div><div class="line">// age 25</div><div class="line">// true</div></pre></td></tr></table></figure>
+<h4 id="Weak-Map"><a href="#Weak-Map" class="headerlink" title="Weak Map"></a>Weak Map</h4><p>Weak Map与Map的不同之处和Weak Set与Set的不同类似</p>
+<ul>
+<li>Weak Map实例中，只能含有对象参数；非对象参数会报错</li>
+<li>Weak Map不可迭代；</li>
+<li>Weak Map不暴露任何迭代器</li>
+<li>Weak Map不支持forEach方法</li>
+<li>Weak Map不支持size属性,不支持clear</li>
+<li><strong>最大区别是Weak Map保存的是对象的弱引用</strong></li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/11/26/2017-11-26-ES6之迭代器与生成器/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cauil">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/abu.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cauil's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/11/26/2017-11-26-ES6之迭代器与生成器/" itemprop="url">ES6之迭代器与生成器</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-26T00:00:00+08:00">
+                2017-11-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JS/" itemprop="url" rel="index">
+                    <span itemprop="name">JS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="迭代器"><a href="#迭代器" class="headerlink" title="迭代器"></a>迭代器</h2><p>之前写过一篇文章关于可迭代对象-<a href="http://cauil.github.io/2017/09/07/2017-09-07-%E8%B0%88%E8%B0%88%E9%81%8D%E5%8E%86%E4%B8%8E%E8%BF%AD%E4%BB%A3%E5%8D%8F%E8%AE%AE/">谈谈遍历与迭代协议</a>， 并讲述了可迭代协议(iterable protocal);</p>
+<p>还遗留了一个迭代器协议(iterator)没有讲述，这次我们就来说一说迭代器协议；</p>
+<h4 id="迭代器协议"><a href="#迭代器协议" class="headerlink" title="迭代器协议"></a>迭代器协议</h4><p>MDN上是这样定义iterator protocal的：</p>
+<p>The iterator protocol defines a standard way to produce a sequence of values (either finite or infinite).</p>
+<p>An object is an iterator when it implements a next() method with the following semantics:</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>next</td>
+<td>A zero arguments function that returns an object with two properties:</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>done (boolean)<ul>
+<li>Has the value true if the iterator is past the end of the iterated sequence. In this case value optionally specifies the return value of the iterator. The return values are explained here.</li>
+<li>Has the value false if the iterator was able to produce the next value in the sequence. This is equivalent of not specifying the done property altogether.</li>
+</ul>
+</li>
+<li>value - any JavaScript value returned by the iterator. Can be omitted when done is true.</li>
+</ul>
+<p>The next method always has to return an object with appropriate properties including done and value. If a non-object value gets returned (such as false or undefined), a TypeError (“iterator.next() returned a non-object value”) will be thrown. |</p>
+<p>其实就是迭代器拥有一个next方法，每次调用返回含有value和done两个属性的对象，value表示下一个将要返回的值；done是一个布尔值，当没有更多返回数据时返回true；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">var someArray = [1, 5];</div><div class="line">var someArrayEntries = someArray.entries();</div><div class="line"></div><div class="line">someArrayEntries.toString();   // &quot;[object Array Iterator]&quot;</div><div class="line">someArrayEntries === someArrayEntries[Symbol.iterator](); // true</div><div class="line">someArrayEntries.next(); // &#123;value: Array(2), done: false&#125;</div><div class="line">someArrayEntries.next(); // &#123;value: Array(2), done: false&#125;</div><div class="line">someArrayEntries.next(); // &#123;value: undefined, done: true&#125;</div></pre></td></tr></table></figure>
+<p>上个例子中someArray.entries()生成了一个迭代器，每次调用next返回一个对象；当迭代到最后，返回{value: undefined, done: true}；<strong>并且特殊的是someArrayEntries也是一个符合iterable协议的可迭代对象，当调用<code>someArrayEntries[Symbol.iterator])</code>的时候返回一个迭代器对象就是其本身；</strong></p>
+<h4 id="迭代器与可迭代对象的联系"><a href="#迭代器与可迭代对象的联系" class="headerlink" title="迭代器与可迭代对象的联系"></a>迭代器与可迭代对象的联系</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">iterableObj[Symbol.iterator]() ===&gt; iteratorObj;</div><div class="line">for （let v of iterableObj）&#123;</div><div class="line">  console.log(v);</div><div class="line">&#125;</div><div class="line">iteratorObj.next(); //&#123;value: v, done: false&#125;</div><div class="line">...</div><div class="line">iteratorObj.next(); //&#123;value: undefined, done: true&#125;</div></pre></td></tr></table></figure>
+<p>以上介绍生成迭代器的方法还是针对具有Symbol.iterator属性的常见对象（如数组，map等）来的，怎么更通用的生成一个迭代器呢？</p>
+<h4 id="内建迭代器"><a href="#内建迭代器" class="headerlink" title="内建迭代器"></a>内建迭代器</h4><p>1.集合对象迭代器</p>
+<p>ES6中有三种类型集合对象： 数组、Map集合与Set集合。为了更好的访问对象中的内容，都内建了以下三种迭代器：</p>
+<ul>
+<li>entries() 返回一个迭代器，其值为多个键值对</li>
+<li>values() 返回一个迭代器，其值为集合中的值</li>
+<li>keys() 返回一个迭代器，其值为集合中的所有键名</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">let colors = [ &quot;red&quot;, &quot;green&quot;, &quot;blue&quot; ];</div><div class="line">for (let entry of colors.entries()) &#123;</div><div class="line">    console.log(entry);</div><div class="line">&#125;</div><div class="line">//[0, &quot;red&quot;]</div><div class="line">//[1, &quot;green&quot;]</div><div class="line">//[2, &quot;blue&quot;]</div><div class="line"></div><div class="line">let tracking = new Set([1234, 5678, 9012]);</div><div class="line">for (let value of tracking.values()) &#123;</div><div class="line">    console.log(value);</div><div class="line">&#125;</div><div class="line">// 1234</div><div class="line">// 5678</div><div class="line">// 9012</div><div class="line"></div><div class="line">let data = new Map();</div><div class="line">for (let key of data.keys()) &#123;</div><div class="line">    console.log(key);</div><div class="line">&#125;</div><div class="line">// &quot;title&quot;</div><div class="line">// &quot;format&quot;</div></pre></td></tr></table></figure>
+<p>在for-of循环中，如果没有显式指定则使用默认的迭代器。数组和Set集合的默认迭代器是values()方法，Map默认迭代器是entries方法。</p>
+<p>2.字符串迭代器和NodeList迭代器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">var message = &quot;A 𠮷 B&quot;;</div><div class="line">for (let c of message) &#123;</div><div class="line">    console.log(c);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>NodeList迭代器：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">var divs = document.getElementsByTagName(&quot;div&quot;);</div><div class="line">    for (let div of divs) &#123;</div><div class="line">        console.log(div.id);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="生成器"><a href="#生成器" class="headerlink" title="生成器"></a>生成器</h2><p>上面的例子中生成迭代器的方法还是针对具有Symbol.iterator属性的常见对象（如数组，map等）来的，怎么更通用的生成一个迭代器呢？</p>
+<p>ES6中引入了生成器；生成器是一种返回迭代器的函数，通过function关键字后的*号来表示，函数中会用到新的关键字yield。星号可以紧挨着function关键字，也可以在中间添加一个空格，如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">function *createIterator() &#123;</div><div class="line">    yield 1;</div><div class="line">    yield 2;</div><div class="line">    yield 3;</div><div class="line">&#125;</div><div class="line">// generators are called like regular functions but return an iterator</div><div class="line">let iterator = createIterator();</div><div class="line">console.log(iterator);              // [object Generator]</div><div class="line">console.log(iterator.next().value); // 1</div><div class="line">console.log(iterator.next().value); // 2</div><div class="line">console.log(iterator.next().value); // 3</div></pre></td></tr></table></figure>
+<p>上面的例子createIterator就是一个生成器，生成器执行返回的是一个生成器对象，<strong>生成器对象既是一个迭代器也是一个可迭代对象。</strong></p>
+<h4 id="yield"><a href="#yield" class="headerlink" title="yield"></a>yield</h4><p>生成器函数最有趣的部分是：每当执行完一条yield语句后函数就会自动停止执行。</p>
+<p>**yield关键字只可以在生成器内部使用，在其他地方使用会导致程序抛出语法错误，即便在生成器内部的函数里使用也是如此：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">function *createIterator(items) &#123;</div><div class="line">        items.forEach(function(item) &#123;</div><div class="line">            // syntax error</div><div class="line">            yield item + 1;</div><div class="line">        &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>从字面量上看，yield关键字确实在createIterator函数内部，但是它与return关键字一样，二者都不能穿透函数边界。嵌套函数中的return语句不能用做外部函数的返回语句，而此处嵌套函数中的yield语句会导致程序抛出语法错误。</p>
+<h4 id="生成器函数表达式"><a href="#生成器函数表达式" class="headerlink" title="生成器函数表达式"></a>生成器函数表达式</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">let createIterator = function *(items) &#123;</div><div class="line">    for (let i = 0; i &lt; items.length; i++) &#123;</div><div class="line">        yield items[i];</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line">let iterator = createIterator([1, 2, 3]);</div><div class="line">console.log(iterator.next()); // &quot;&#123; value: 1, done: false &#125;&quot;</div><div class="line">console.log(iterator.next()); // &quot;&#123; value: 2, done: false &#125;&quot;</div><div class="line">console.log(iterator.next()); // &quot;&#123; value: 3, done: false &#125;&quot;</div><div class="line">console.log(iterator.next()); // &quot;&#123; value: undefined, done: true &#125;&quot;</div></pre></td></tr></table></figure>
+<p><strong>不能用箭头函数来创建生成器</strong></p>
+<h4 id="生成器对象的方法"><a href="#生成器对象的方法" class="headerlink" title="生成器对象的方法"></a>生成器对象的方法</h4><p>由于生成器对象本身就是函数，因而可以将她们添加到对象中。例如</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">let o = &#123;</div><div class="line">    createIterator: function *(items) &#123;</div><div class="line">        for (let i = 0; i &lt; items.length; i++) &#123;</div><div class="line">            yield items[i];</div><div class="line">        &#125;</div><div class="line">&#125; &#125;;</div><div class="line">let iterator = o.createIterator([1, 2, 3]);</div></pre></td></tr></table></figure>
+<p>也可以用ES6对象方法的简写方式来创建生成器；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">let o = &#123;</div><div class="line">    *createIterator(items) &#123;</div><div class="line">        for (let i = 0; i &lt; items.length; i++) &#123;</div><div class="line">            yield items[i];</div><div class="line">        &#125;</div><div class="line">&#125; &#125;;</div><div class="line">let iterator = o.createIterator([1, 2, 3]);</div></pre></td></tr></table></figure>
+<h2 id="高级生成器"><a href="#高级生成器" class="headerlink" title="高级生成器"></a>高级生成器</h2><p>生成器根据需求计算它们的产出值，这使得它们能够有效地表示计算成本高的序列，或者甚至如上所述的无限序列。</p>
+<h4 id="给迭代器传递参数"><a href="#给迭代器传递参数" class="headerlink" title="给迭代器传递参数"></a>给迭代器传递参数</h4><p>The next() 方法也接受可用于修改生成器内部状态的值。传递给next()的值将被视为暂停生成器的最后一个yield表达式的结果。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">function* fibonacci() &#123;</div><div class="line">  var fn1 = 0;</div><div class="line">  var fn2 = 1;</div><div class="line">  while (true) &#123;  </div><div class="line">    var current = fn1;</div><div class="line">    fn1 = fn2;</div><div class="line">    fn2 = current + fn1;</div><div class="line">    var reset = yield current;</div><div class="line">    if (reset) &#123;</div><div class="line">        fn1 = 0;</div><div class="line">        fn2 = 1;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">var sequence = fibonacci();</div><div class="line">console.log(sequence.next().value);     // 0</div><div class="line">console.log(sequence.next().value);     // 1</div><div class="line">console.log(sequence.next().value);     // 1</div><div class="line">console.log(sequence.next().value);     // 2</div><div class="line">console.log(sequence.next().value);     // 3</div><div class="line">console.log(sequence.next().value);     // 5</div><div class="line">console.log(sequence.next().value);     // 8</div><div class="line">console.log(sequence.next(true).value); // 0</div><div class="line">console.log(sequence.next().value);     // 1</div><div class="line">console.log(sequence.next().value);     // 1</div><div class="line">console.log(sequence.next().value);     // 2</div></pre></td></tr></table></figure>
+<h4 id="在迭代器中抛出错误"><a href="#在迭代器中抛出错误" class="headerlink" title="在迭代器中抛出错误"></a>在迭代器中抛出错误</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">function *createIterator() &#123;</div><div class="line">    let first = yield 1;</div><div class="line">    let second = yield first + 2;</div><div class="line">    yield second + 3;</div><div class="line">&#125;</div><div class="line">let iterator = createIterator();</div><div class="line">console.log(iterator.next()); // &#123;value: 1, done: false&#125;</div><div class="line">console.log(iterator.next(4)); // &#123;value: 6, done: false&#125;</div><div class="line">console.log(iterator.throw(new Error(&quot;Boom&quot;)));</div></pre></td></tr></table></figure>
+<h4 id="生成器返回语句"><a href="#生成器返回语句" class="headerlink" title="生成器返回语句"></a>生成器返回语句</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">function *createIterator() &#123;</div><div class="line">    yield 1;</div><div class="line">    return 42;</div><div class="line">&#125;</div><div class="line">let iterator = createIterator();</div><div class="line">console.log(iterator.next()); // &quot;&#123; value: 1, done: false &#125;&quot;</div><div class="line">console.log(iterator.next()); // &quot;&#123; value: 42, done: true &#125;&quot;</div><div class="line">console.log(iterator.next()); // &quot;&#123; value: undefined, done: true &#125;&quot;</div></pre></td></tr></table></figure>
+<p>上面例子中return语句返回一个值，该值被赋值给返回对象的value属性，本来第二条是返回<code>{ value: undefined, done: true }</code>的最终返回<code>{ value: 42, done: true }</code></p>
+<h4 id="委托生成器"><a href="#委托生成器" class="headerlink" title="委托生成器"></a>委托生成器</h4><p>语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">yield* [[expression]];</div><div class="line">expression</div><div class="line">  返回一个可迭代对象的表达式。</div></pre></td></tr></table></figure>
+<p><code>yield*</code> 表达式迭代操作数，并产生它返回的每个值。<code>yield*</code> 表达式本身的值是当迭代器关闭时返回的值（即done为true时）;</p>
+<p>1.委托给其他生成器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">function* g1() &#123;</div><div class="line">  yield 2;</div><div class="line">  yield 3;</div><div class="line">  yield 4;</div><div class="line">&#125;</div><div class="line"></div><div class="line">function* g2() &#123;</div><div class="line">  yield 1;</div><div class="line">  yield* g1();</div><div class="line">  yield 5;</div><div class="line">&#125;</div><div class="line"></div><div class="line">var iterator = g2();</div><div class="line"></div><div class="line">console.log(iterator.next()); // &#123; value: 1, done: false &#125;</div><div class="line">console.log(iterator.next()); // &#123; value: 2, done: false &#125;</div><div class="line">console.log(iterator.next()); // &#123; value: 3, done: false &#125;</div><div class="line">console.log(iterator.next()); // &#123; value: 4, done: false &#125;</div><div class="line">console.log(iterator.next()); // &#123; value: 5, done: false &#125;</div><div class="line">console.log(iterator.next()); // &#123; value: undefined, done: true &#125;</div></pre></td></tr></table></figure>
+<p>2.委托给其他可迭代对象</p>
+<p>除了生成器对象这一种可迭代对象，yield* 还可以 yield 其它任意的可迭代对象，比如说数组、字符串、arguments 对象等等。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">function* g3() &#123;</div><div class="line">  yield* [1, 2];</div><div class="line">  yield* &quot;34&quot;;</div><div class="line">  yield* arguments;</div><div class="line">&#125;</div><div class="line"></div><div class="line">var iterator = g3(5, 6);</div><div class="line"></div><div class="line">console.log(iterator.next()); // &#123; value: 1, done: false &#125;</div><div class="line">console.log(iterator.next()); // &#123; value: 2, done: false &#125;</div><div class="line">console.log(iterator.next()); // &#123; value: &quot;3&quot;, done: false &#125;</div><div class="line">console.log(iterator.next()); // &#123; value: &quot;4&quot;, done: false &#125;</div><div class="line">console.log(iterator.next()); // &#123; value: 5, done: false &#125;</div><div class="line">console.log(iterator.next()); // &#123; value: 6, done: false &#125;</div><div class="line">console.log(iterator.next()); // &#123; value: undefined, done: true &#125;</div></pre></td></tr></table></figure>
+<p>3.<code>yield*</code> 表达式的值</p>
+<p><code>yield*</code> 是一个表达式，不是语句，所以它会有自己的值。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">function* g4() &#123;</div><div class="line">  yield* [1, 2, 3];</div><div class="line">  return &quot;foo&quot;;</div><div class="line">&#125;</div><div class="line">var result;</div><div class="line">function* g5() &#123;</div><div class="line">  result = yield* g4();</div><div class="line">&#125;</div><div class="line">var iterator = g5();</div><div class="line"></div><div class="line">console.log(iterator.next()); // &#123; value: 1, done: false &#125;</div><div class="line">console.log(iterator.next()); // &#123; value: 2, done: false &#125;</div><div class="line">console.log(iterator.next()); // &#123; value: 3, done: false &#125;</div><div class="line">console.log(iterator.next()); // &#123; value: undefined, done: true &#125;, 此时 g4() 返回了 &#123; value: &quot;foo&quot;, done: true &#125;</div><div class="line">console.log(result);          // &quot;foo&quot;</div></pre></td></tr></table></figure>
+<p>koa1源码中就有用到委托生成器语法；</p>
+<h2 id="可迭代对象"><a href="#可迭代对象" class="headerlink" title="可迭代对象"></a>可迭代对象</h2><p>ES6中，所有的集合对象（数组、Set集合、Map集合）和字符串都是可迭代对象，这些对象中都有默认的迭代器；</p>
+<p>之前的文章谈过可迭代对象，这里就总结一下：</p>
+<h4 id="for-of循环"><a href="#for-of循环" class="headerlink" title="for-of循环"></a>for-of循环</h4><p>可迭代对象可用于for-of循环：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">let values = [1, 2, 3];</div><div class="line">for (let num of values) &#123;</div><div class="line">    console.log(num);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="spread-syntax-…"><a href="#spread-syntax-…" class="headerlink" title="spread syntax (…)"></a>spread syntax (…)</h4><p>可迭代对象可用于…语法：</p>
+<p><code>[...&#39;abc&#39;]; // [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]</code></p>
+<h4 id="用于yield"><a href="#用于yield" class="headerlink" title="用于yield *"></a>用于yield *</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">function* gen() &#123;</div><div class="line">  yield* [&apos;a&apos;, &apos;b&apos;, &apos;c&apos;];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="用于解构"><a href="#用于解构" class="headerlink" title="用于解构"></a>用于解构</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">let [a, b, c] = new Set([&apos;a&apos;, &apos;b&apos;, &apos;c&apos;]);</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/11/24/2017-11-24-ES6之类/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cauil">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/abu.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cauil's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/11/24/2017-11-24-ES6之类/" itemprop="url">ES6之class</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-24T00:00:00+08:00">
+                2017-11-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JS/" itemprop="url" rel="index">
+                    <span itemprop="name">JS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="类声明"><a href="#类声明" class="headerlink" title="类声明"></a>类声明</h2><p>cheat sheet:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">class PersonClass &#123;</div><div class="line">    // equivalent of the PersonType constructor</div><div class="line">    constructor(name) &#123;</div><div class="line">        this.name = name;</div><div class="line">                 &#125;</div><div class="line">    // equivalent of PersonType.prototype.sayName</div><div class="line">    sayName() &#123;</div><div class="line">        console.log(this.name);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">let person = new PersonClass(&quot;Nicholas&quot;);</div><div class="line">person.sayName();   // outputs &quot;Nicholas&quot;</div><div class="line">console.log(person instanceof PersonClass); // true</div><div class="line">console.log(person instanceof Object);      // true</div><div class="line">console.log(typeof PersonClass);            // function</div><div class="line">console.log(typeof PersonClass.prototype.sayName); // function</div></pre></td></tr></table></figure></p>
+<p>类属性不可被赋予新值，在之前的实例中，PersonClass.prototype就是这样一个只可读的类属性；</p>
+<h2 id="类语法"><a href="#类语法" class="headerlink" title="类语法"></a>类语法</h2><p>类与ES5类型（new Person）之间有诸多相识之初，但也有差异：</p>
+<ol>
+<li>函数声明可以被提升，而类声明与let声明类似，不能被提升；真正执行声明语句之前，它们会一直存在于临时死区</li>
+<li>类声明中的所有代码将自动运行在严格模式下，而且无法强行让代码脱离严格模式执行；</li>
+<li>在自定义类型中，需要通过Object.defineProperty方法手工指定某个方法不可枚举；而在类中，所有方法都是不可枚举的；</li>
+<li>每个类都有一个名为[[Construct]]内部方法，通过关键字new调用那些不含有[[Construct]]的方法会导致程序抛出错误；</li>
+<li>使用除关键字new以外的方法调用类的构造函数会导致程序抛出错误；</li>
+<li>在类中修改类名会导致程序报错；</li>
+</ol>
+<p>下面是ES5来实现上面例子类PersonClass的等价代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">let PersonType2 = (function() &#123; // 1 临时死区</div><div class="line">  &apos;use strict&apos;; // 2 严格模式</div><div class="line">  </div><div class="line">  const PersonType2 = function(name) &#123; // 6 内部类名不可修改</div><div class="line">    if(typeof new.target === &apos;undefined&apos;) &#123; // 5 只能使用new</div><div class="line">      throw new Error(&apos;必须通过关键字new来调用构造函数&apos;);</div><div class="line">    &#125;</div><div class="line">    this.name = name;</div><div class="line">  &#125;</div><div class="line">  Object.defineProperty(PersonType2.prototype, sayName, &#123;</div><div class="line">    value: function() &#123;</div><div class="line">      if(typeof new.target !== &apos;undefined&apos;) &#123; // 4 不能使用new</div><div class="line">        throw Error(&apos;不能使用关键字new来调用该方法&apos;);</div><div class="line">      &#125;</div><div class="line">      console.log(this.name);</div><div class="line">    &#125;,</div><div class="line">    enumerable: false,// 3 不可枚举</div><div class="line">    writable: true,</div><div class="line">    configurable: true,</div><div class="line">  &#125;);</div><div class="line">  </div><div class="line">  return Persontype2;</div><div class="line">&#125;())</div></pre></td></tr></table></figure>
+<p>上述1和6可以看下面这个例子：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">class Foo &#123;</div><div class="line">   constructor() &#123;</div><div class="line">Foo = &quot;bar&quot;;// throws an error when executed...</div><div class="line">&#125; &#125;</div><div class="line">// but this is okay after the class declaration</div><div class="line">Foo = &quot;baz&quot;;</div></pre></td></tr></table></figure></p>
+<h2 id="类表达式"><a href="#类表达式" class="headerlink" title="类表达式"></a>类表达式</h2><h4 id="声明表达式"><a href="#声明表达式" class="headerlink" title="声明表达式"></a>声明表达式</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">let PersonClass = class &#123;</div><div class="line"> ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="命名表达式"><a href="#命名表达式" class="headerlink" title="命名表达式"></a>命名表达式</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">let PersonClass = class PersonClass2 &#123;</div><div class="line">...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在JS引擎中，类表达式的实现与类声明稍有不同。对于类声明来说，通过let定义的外部绑定与通过const定义的内部绑定具有相同的名称；而命名表达式通过const定义名称，从而PersonClass2只能在类的内部使用；</p>
+<h2 id="一等公民的类"><a href="#一等公民的类" class="headerlink" title="一等公民的类"></a>一等公民的类</h2><p>在程序中，一等公民是指一个可以传入函数，可以从函数返回，并且可以复制给变量的值。JS函数是一等公民，ES6中把类也设计为一等公民。</p>
+<p>作为参数传入函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">function createObject(classDef) &#123;</div><div class="line">  return new classDef();</div><div class="line">&#125;</div><div class="line"></div><div class="line">let obj = createObject(class &#123;...&#125;);</div></pre></td></tr></table></figure>
+<p>立即调用类构造函数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">let person = new class &#123;</div><div class="line">  ...</div><div class="line">&#125;(&apos;Hi&apos;);</div></pre></td></tr></table></figure></p>
+<h2 id="访问器属性"><a href="#访问器属性" class="headerlink" title="访问器属性"></a>访问器属性</h2><p>类也支持直接在原型上定义访问器属性：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">class CustomHTMLElement &#123;</div><div class="line">    constructor(element) &#123;</div><div class="line">        this.element = element;</div><div class="line">&#125;</div><div class="line">    get html() &#123;</div><div class="line">        return this.element.innerHTML;</div><div class="line">&#125;</div><div class="line">    set html(value) &#123;</div><div class="line">        this.element.innerHTML = value;</div><div class="line">&#125; &#125;</div><div class="line">var descriptor = Object.getOwnPropertyDescriptor(CustomHTMLElement.prototype, &quot;html&quot;);</div><div class="line">console.log(&quot;get&quot; in descriptor);</div><div class="line">console.log(&quot;set&quot; in descriptor);</div><div class="line">console.log(descriptor.enumerable);</div><div class="line">// true</div><div class="line">// true</div><div class="line">// false</div></pre></td></tr></table></figure></p>
+<h2 id="可计算成员名称"><a href="#可计算成员名称" class="headerlink" title="可计算成员名称"></a>可计算成员名称</h2><p>类方法和访问器属性也支持使用可计算名称；<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">let methodName = &quot;sayName&quot;;</div><div class="line">class PersonClass &#123;</div><div class="line">    constructor(name) &#123;</div><div class="line">        this.name = name;</div><div class="line">    &#125;</div><div class="line">    [methodName]() &#123;</div><div class="line">        console.log(this.name);</div><div class="line">    &#125; </div><div class="line">&#125;;</div><div class="line">let me = new PersonClass(&quot;Nicholas&quot;);</div><div class="line">me.sayName();           // &quot;Nicholas&quot;</div></pre></td></tr></table></figure></p>
+<h2 id="生成器方法"><a href="#生成器方法" class="headerlink" title="生成器方法"></a>生成器方法</h2><p>在类中可以在方法名称前附加一个星号来定义生成器；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">class MyClass &#123;</div><div class="line">    *createIterator() &#123;</div><div class="line">        yield 1;</div><div class="line">        yield 2;</div><div class="line">        yield 3;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">let instance = new MyClass();</div><div class="line">let iterator = instance.createIterator();</div></pre></td></tr></table></figure>
+<h2 id="静态成员"><a href="#静态成员" class="headerlink" title="静态成员"></a>静态成员</h2><p>ES6中类简化了创建静态成员的工程，在方法或访问器属性前面使用正式的静态注释即可；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">class PersonClass &#123;</div><div class="line">  constructor() &#123;</div><div class="line">    this.name = name;</div><div class="line">  &#125;  </div><div class="line">  static create() &#123;</div><div class="line">    ...</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>不可在实例中访问静态成员，必须要直接在类中访问静态成员</p>
+<h2 id="继承与派生"><a href="#继承与派生" class="headerlink" title="继承与派生"></a>继承与派生</h2><p>ES6中使用extends关键字可以创造继承类；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">class Rectangle &#123;</div><div class="line">    constructor(length, width) &#123;</div><div class="line">        this.length = length;</div><div class="line">        this.width = width;</div><div class="line">    &#125;</div><div class="line">    getArea() &#123;</div><div class="line">        return this.length * this.width;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">class Square extends Rectangle &#123;</div><div class="line">    constructor(length) &#123;</div><div class="line">        // equivalent of Rectangle.call(this, length, length)</div><div class="line">        super(length, length);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">var square = new Square(3);</div><div class="line">console.log(square.getArea());// 9</div><div class="line">console.log(square instanceof Square);// true</div><div class="line">console.log(square instanceof Rectangle);// true</div></pre></td></tr></table></figure>
+<p>上述代码创造了一个Square继承Rectangle类；Square被称为派生类；注意：<strong>如果在派生类中指定了构造函数则必须要调用super，如果不这样做程序就会报错；如果不使用构造函数，则当创建新的类实例时会自动调用super并传入所有参数</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">class Square extends Rectangle &#123;</div><div class="line">    // no constructor</div><div class="line">&#125;</div><div class="line">// is equivalent to</div><div class="line">class Square extends Rectangle &#123;</div><div class="line">    constructor(...args) &#123;</div><div class="line">        super(...args);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>使用super要注意：</p>
+<ul>
+<li>只可在派生类的构造函数中使用super(),如果尝试在非派生类或者函数中使用会抛出错误</li>
+<li>在构造函数中访问this前一定要调用super，它负责初试化this，如果在调用super之前尝试访问this会报错</li>
+<li>如果不想调用super()，则唯一的方法是让类的构造函数返回一个对象</li>
+</ul>
+<h4 id="类方法遮蔽"><a href="#类方法遮蔽" class="headerlink" title="类方法遮蔽"></a>类方法遮蔽</h4><p>派生类如果跟父类有同名函数，派生类的方法会覆盖父类的同名方法；如果想在派生类中调用父类的方法，可以<code>super.funcName()</code>这样来调用；</p>
+<h4 id="静态成员继承"><a href="#静态成员继承" class="headerlink" title="静态成员继承"></a>静态成员继承</h4><p>如果基类有静态成员，那么这些静态成员在派生类中也可调用。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">class Rectangle &#123;</div><div class="line">    constructor(length, width) &#123;</div><div class="line">        this.length = length;</div><div class="line">        this.width = width;</div><div class="line">    &#125;</div><div class="line">    getArea() &#123;</div><div class="line">        return this.length * this.width;</div><div class="line">&#125;</div><div class="line">    static create(length, width) &#123;</div><div class="line">        return new Rectangle(length, width);</div><div class="line">&#125; &#125;</div><div class="line">class Square extends Rectangle &#123;</div><div class="line">    constructor(length) &#123;</div><div class="line">        // equivalent of Rectangle.call(this, length, length)</div><div class="line">         super(length, length);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">var rect = Square.create(3, 4);</div><div class="line">console.log(rect instanceof Rectangle); // true</div><div class="line">console.log(rect.getArea());            // 12</div><div class="line">console.log(rect instanceof Square);    // false</div></pre></td></tr></table></figure></p>
+<p>新的静态方法create被添加到Rectangle中，继承后的Square.create()与Rectangle.create()行为类似；</p>
+<h4 id="派生自表达式的类"><a href="#派生自表达式的类" class="headerlink" title="派生自表达式的类"></a>派生自表达式的类</h4><p>ES6最强大的一面或许是从表达式导出类的功能了；只要表达式可以被解析为一个函数并且具有[[Construct]]属性和原型，那么就可以用extends进行派生；<strong>extends强大的功能使得类可以继承自任意类型的表达式，从而可以创造更多可能性</strong>，例如动态的确定类的继承目标：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">let SerializableMixin = &#123;</div><div class="line">    serialize() &#123;</div><div class="line">        return JSON.stringify(this);</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line">let AreaMixin = &#123;</div><div class="line">    getArea() &#123;</div><div class="line">        return this.length * this.width;</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line">function mixin(...mixins) &#123;</div><div class="line">    var base = function() &#123;&#125;;</div><div class="line">    Object.assign(base.prototype, ...mixins);</div><div class="line">    return base;</div><div class="line">&#125;</div><div class="line">class Square extends mixin(AreaMixin, SerializableMixin) &#123;</div><div class="line">    constructor(length) &#123;</div><div class="line">         super();</div><div class="line">        this.length = length;</div><div class="line">        this.width = length;</div><div class="line">&#125; &#125;</div><div class="line">var x = new Square(3);</div><div class="line">console.log(x.getArea());   // 9</div><div class="line">console.log(x.serialize()); // &quot;&#123;&quot;length&quot;:3,&quot;width&quot;:3&#125;&quot;</div></pre></td></tr></table></figure>
+<h4 id="内建对象的继承"><a href="#内建对象的继承" class="headerlink" title="内建对象的继承"></a>内建对象的继承</h4><p>在ES6之前，几乎不可能通过继承方式创建属于自己的数组，如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">var colors = [];</div><div class="line">colors[0] = &quot;red&quot;;</div><div class="line">console.log(colors.length); // 1</div><div class="line">colors.length = 0;</div><div class="line">console.log(colors[0]);     // undefined</div><div class="line"></div><div class="line">// trying to inherit from array in ES5</div><div class="line">function MyArray() &#123;</div><div class="line">    Array.apply(this, arguments);</div><div class="line">&#125;</div><div class="line">MyArray.prototype = Object.create(Array.prototype, &#123;</div><div class="line">    constructor: &#123;</div><div class="line">        value: MyArray,</div><div class="line">        writable: true,</div><div class="line">        configurable: true,</div><div class="line">        enumerable: true</div><div class="line">&#125; &#125;);</div><div class="line">var colors = new MyArray();</div><div class="line">colors[0] = &quot;red&quot;;</div><div class="line">console.log(colors.length); // 0</div><div class="line">colors.length = 0;</div><div class="line">console.log(colors[0])      // red</div></pre></td></tr></table></figure>
+<p>通过上面的代码，可以看出MyArray的行为与内建数组行为不一致；</p>
+<p>ES6中可以通过extends来创建自定义数组；<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">class MyArray extends Array &#123;</div><div class="line">    // empty</div><div class="line">&#125;</div><div class="line">var colors = new MyArray();</div><div class="line">colors[0] = &quot;red&quot;;</div><div class="line">console.log(colors.length); // 1</div><div class="line">colors.length = 0;</div><div class="line">console.log(colors[0]);     // undefined</div></pre></td></tr></table></figure></p>
+<h2 id="在类的构造函数中使用new-target"><a href="#在类的构造函数中使用new-target" class="headerlink" title="在类的构造函数中使用new.target"></a>在类的构造函数中使用new.target</h2><p>类中new.targe一般就等于类本身：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">class Rectangle &#123;</div><div class="line">    constructor(length, width) &#123;</div><div class="line">        console.log(new.target === Rectangle);</div><div class="line">        this.length = length;</div><div class="line">        this.width = width;</div><div class="line"> &#125; &#125;</div><div class="line">// new.target is Rectangle</div><div class="line">var obj = new Rectangle(3, 4); // outputs true</div></pre></td></tr></table></figure>
+<p>但有时其值会不同：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">class Rectangle &#123;</div><div class="line">    constructor(length, width) &#123;</div><div class="line">        console.log(new.target === Rectangle);</div><div class="line">        this.length = length;</div><div class="line">        this.width = width;</div><div class="line">&#125; &#125;</div><div class="line">class Square extends Rectangle &#123;</div><div class="line">    constructor(length) &#123;</div><div class="line">         super(length, length)</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">// new.target is Square</div><div class="line">var obj = new Square(3); // outputs false</div></pre></td></tr></table></figure>
+<p>Square调用Rectangle的构造函数，所以当调用发生时new.target等于Square;每个构造函数都可以根据自身被调用的方式改变自己的行为；例如构造一个抽象基类；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">class Shape &#123;</div><div class="line">    constructor() &#123;</div><div class="line">        if (new.target === Shape) &#123;</div><div class="line">            throw new Error(&quot;This class cannot be instantiated directly.&quot;)</div><div class="line">        &#125;</div><div class="line"> &#125; &#125;</div><div class="line">class Rectangle extends Shape &#123;</div><div class="line">    constructor(length, width) &#123;</div><div class="line">        super();</div><div class="line">        this.length = length;</div><div class="line">        this.width = width;</div><div class="line">&#125; &#125;</div><div class="line">var x = new Shape(); // throws an error</div><div class="line">var y = new Rectangle(3, 4); // no error</div><div class="line">console.log(y instanceof Shape); // true</div></pre></td></tr></table></figure>
+<p>上例子中抽象基类Shape不能直接被实例化，只能通过派生的类来继承；</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/11/22/2017-11-22-ES6之Symbol/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cauil">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/abu.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cauil's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/11/22/2017-11-22-ES6之Symbol/" itemprop="url">ES6之Symbol</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-22T00:00:00+08:00">
+                2017-11-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JS/" itemprop="url" rel="index">
+                    <span itemprop="name">JS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>ES6引入了第6种原始类型：Symbol。起初，人们用它来创建对象的私有成员；在Symbol出现之前，人们一直通过属性名来访问所有属性，无论属性名由什么元素构成，全部通过一个字符串类型的名称来访问。</p>
+<p>私有名称原本是为了让开发者<strong>创建非字符串属性名称而设计</strong>的，但是<strong>一般的技术无法检测这些属性的私有名称</strong>。</p>
+<h2 id="创建Symbol"><a href="#创建Symbol" class="headerlink" title="创建Symbol"></a>创建Symbol</h2><p>可以通过全局的Symbol函数创建一个Symbol：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">let firstName = Symbol();</div><div class="line">let person = &#123;&#125;;</div><div class="line">person[firstName] = &quot;Nicholas&quot;;</div><div class="line">console.log(person[firstName]);</div></pre></td></tr></table></figure>
+<p>由于Symbol是原始值，因此调用new Symbol()会导致程序抛出错误。</p>
+<p>Symbol接受一个可选参数，其可以添加一段文本描述即将创建的Symbol，这段描述不可以用作属性访问，只是为了便于阅读和调试Symbol程序；symbol的描述被存储在内部的[[Description]]属性中，只有当调用Symbol的toString()方法时才可以读取这个属性；</p>
+<p>检测一个Symbol：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">let name = Symbol(&apos;hi&apos;);</div><div class="line">console.log(typeof name); // symbol</div></pre></td></tr></table></figure></p>
+<h2 id="Symbol的使用方法"><a href="#Symbol的使用方法" class="headerlink" title="Symbol的使用方法"></a>Symbol的使用方法</h2><p><strong>所有使用可计算属性名的地方，都可以使用Symbol</strong>。如Object.defineProperty等:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">let firstName = Symbol(&quot;first name&quot;);</div><div class="line">// use a computed object literal property</div><div class="line">let person = &#123;</div><div class="line">    [firstName]: &quot;Nicholas&quot;</div><div class="line">&#125;;</div><div class="line">// make the property read only</div><div class="line">Object.defineProperty(person, firstName, &#123; writable: false &#125;);</div><div class="line">let lastName = Symbol(&quot;last name&quot;);</div><div class="line">Object.defineProperties(person, &#123;</div><div class="line">    [lastName]: &#123;</div><div class="line">        value: &quot;Zakas&quot;,</div><div class="line">        writable: false</div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h2 id="Symbol共享体系"><a href="#Symbol共享体系" class="headerlink" title="Symbol共享体系"></a>Symbol共享体系</h2><p>在不同的代码中共享同一个Symbol，ES6提供了一个可以随时访问的全局Symbol注册表；如果要创建一个共享的Symbol，要使用Symbol.for方法，它只接受一个参数，也就是即将创建的Symbol的字符串标示，这个参数同样也被用作Symbol的描述；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">let uid = Symbol.for(&quot;uid&quot;);</div><div class="line">let object = &#123;&#125;;</div><div class="line">object[uid] = &quot;12345&quot;;</div><div class="line">console.log(object[uid]); // &apos;12345&apos;</div><div class="line">console.log(uid);         // &apos;Symbol(uid)&apos;</div></pre></td></tr></table></figure>
+<p>Symbol.for首先在全局Symbol注册表中搜索键为’uid’的Symbol，如果存在，直接返回已存在的，否则创建一个新的Symbol，并使用这个键在Symbol全局注册表中注册，随机返回新创建的Symbol。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">let uid = Symbol.for(&quot;uid&quot;);</div><div class="line">let uid2 = Symbol.for(&quot;uid&quot;);</div><div class="line">console.log(uid === uid2); // true</div><div class="line">console.log(uid2);         // &apos;Symbol(uid)&apos;</div></pre></td></tr></table></figure>
+<p>还有一个与Symbol共享有关的特性，Symbol.keyFor方法在Symbol全局注册表中检索与Symbol有关的键；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">let uid = Symbol.for(&quot;uid&quot;);</div><div class="line">console.log(Symbol.keyFor(uid)); // uid</div><div class="line">let uid2 = Symbol.for(&quot;uid&quot;);</div><div class="line">console.log(Symbol.keyFor(uid2));// uid</div><div class="line">let uid3 = Symbol(&quot;uid&quot;);</div><div class="line">console.log(Symbol.keyFor(uid3));// undefined</div></pre></td></tr></table></figure>
+<p>Symbol全局注册表中不存在uid3这个Symbol(没有通过Symbol.for注册)，返回undefined；</p>
+<h2 id="Symbol与类型强制转换"><a href="#Symbol与类型强制转换" class="headerlink" title="Symbol与类型强制转换"></a>Symbol与类型强制转换</h2><p>不能将Symbol强制转换为字符串和数字类型；Symbol在需要逻辑判断表达式中为真；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">var uid = Symbol.for(&quot;uid&quot;),</div><div class="line">          desc = uid + &quot;&quot;;  // Cannot convert a Symbol value to a string</div><div class="line">var sum = uid / 1; // Cannot convert a Symbol value to a number</div><div class="line">!!uid; // true</div></pre></td></tr></table></figure>
+<h2 id="Symbol属性检索"><a href="#Symbol属性检索" class="headerlink" title="Symbol属性检索"></a>Symbol属性检索</h2><p>Object.keys和Object.getOwnpropertyNames不能检索出Symbol属性，ES6中Object.getOwnpropertySymbols来支持这个功能，返回对象中的所有Symbol属性的数组；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">let uid = Symbol.for(&quot;uid&quot;);</div><div class="line">let object = &#123;</div><div class="line">    [uid]: &quot;12345&quot;</div><div class="line">&#125;;</div><div class="line">let symbols = Object.getOwnPropertySymbols(object);</div><div class="line">console.log(symbols.length); // 1</div><div class="line">console.log(symbols[0]);     // &apos;Symbol(uid)&apos;</div><div class="line">console.log(object[symbols[0]]);// &apos;12345&apos;</div></pre></td></tr></table></figure>
+<h2 id="通过well-known-Symbol暴露内部操作"><a href="#通过well-known-Symbol暴露内部操作" class="headerlink" title="通过well-known Symbol暴露内部操作"></a>通过well-known Symbol暴露内部操作</h2><p>ES6通过在原型链上定义与Symbol相关的属性来暴露更多的语言内部逻辑；开放了以前JS中常见的内部操作，并通过预定义一些well-known Symbol来表示。每一个这类Symbol都是symbol对象的一个属性，例如Symbol.match</p>
+<h4 id="Symbol-hasInstance"><a href="#Symbol-hasInstance" class="headerlink" title="Symbol.hasInstance"></a>Symbol.hasInstance</h4><p>一个在执行instanceof时调用的内部方法，用于检测对象的继承信息；</p>
+<p>Function.prototype中有一个Symbol.hasInstance方法，每一个函数都继承了这个方法，用于确定对象是否是函数的实例。该方法被定义为不可写，不可配置并且不可枚举。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Object.getOwnPropertyDescriptor(Function.prototype, Symbol.hasInstance); // &#123;writable: false, enumerable: false, configurable: false, value: ƒ&#125;</div></pre></td></tr></table></figure>
+<p>看一段代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Array.hasOwnProperty(Symbol.hasInstance);              // false</div><div class="line">Function.prototype.hasOwnProperty(Symbol.hasInstance); // true</div><div class="line">Array instanceof Function;                             // true</div></pre></td></tr></table></figure></p>
+<p>从上面可以看出Array是Function的实例；Function.prototype具有自有属性Symbol.hasInstance，Array没有Symbol.hasInstance;</p>
+<p><code>obj instanceof Array</code>实际等价于<code>Array[Symbol.hasInstance](obj)</code>，由于Array没有<code>Symbol.hasInstance</code>，所以会从原型链中寻找，最终在<code>Function.prototype</code>中找到，最终实际执行的就是<code>Function.prototype[Symbol.hasInstance](obj)</code>。</p>
+<p>明白了instanceof的实际调用过程，就可以按我们的意愿来定制一些内容，例如定义一个无实例的函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">function MyObject() &#123;</div><div class="line">    // empty</div><div class="line">&#125;</div><div class="line">Object.defineProperty(MyObject, Symbol.hasInstance, &#123;</div><div class="line">    value: function(v) &#123;</div><div class="line">             return false;</div><div class="line">    &#125;</div><div class="line">&#125;);</div><div class="line">let obj = new MyObject();</div><div class="line">console.log(obj instanceof MyObject); // false</div></pre></td></tr></table></figure>
+<h4 id="Symbol-isConcatSpreadable"><a href="#Symbol-isConcatSpreadable" class="headerlink" title="Symbol.isConcatSpreadable"></a>Symbol.isConcatSpreadable</h4><p>concat元素<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">let colors1 = [ &quot;red&quot;, &quot;green&quot; ],</div><div class="line">    colors2 = colors1.concat([ &quot;blue&quot;, &quot;black&quot; ]);</div><div class="line">console.log(colors2.length);    // 4</div><div class="line">console.log(colors2); [&quot;red&quot;,&quot;green&quot;,&quot;blue&quot;,&quot;black&quot;]</div></pre></td></tr></table></figure></p>
+<p>concat数组<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">let colors1 = [ &quot;red&quot;, &quot;green&quot; ],</div><div class="line">    colors2 = colors1.concat([ &quot;blue&quot;, &quot;black&quot; ], &quot;brown&quot;);</div><div class="line">console.log(colors2.length);    // 5</div><div class="line">console.log(colors2);           // [&quot;red&quot;,&quot;green&quot;,&quot;blue&quot;,&quot;black&quot;,&quot;brown&quot;]</div></pre></td></tr></table></figure></p>
+<p>JS规范声明，concat凡是传入了数组参数，就会自动将它们分解成独立元素，在ES6之前，我们根本无法调整这个特性；</p>
+<p>Symbol.isConcatSpreadable属性是一个布尔值，如果该属性为true，则表示对象由length属性和数字键，故它的数值型属性应该被独立添加到cancat()调用结果中；与其他well-known Symbol属性不同的是，这个Symbol属性默认情况下不会出现标准对象，它只是一个可选对象，用于增强作用于特定对象类型的concat()方法的功能，有效简化其默认特性；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">let collection = &#123;</div><div class="line">    0: &quot;Hello&quot;,</div><div class="line">    1: &quot;world&quot;,</div><div class="line">    length: 2,</div><div class="line">    [Symbol.isConcatSpreadable]: true</div><div class="line">&#125;;</div><div class="line">let messages = [ &quot;Hi&quot; ].concat(collection);</div><div class="line">console.log(messages.length);    // 3</div><div class="line">console.log(messages);           // [&quot;Hi&quot;,&quot;Hello&quot;,&quot;world&quot;]</div><div class="line"></div><div class="line">let collection1 = &#123;</div><div class="line">    0: &quot;Hello&quot;,</div><div class="line">    1: &quot;world&quot;,</div><div class="line">    length: 2,</div><div class="line">    [Symbol.isConcatSpreadable]: true</div><div class="line">&#125;;</div><div class="line">let messages = [ &quot;Hi&quot; ].concat(collection1);</div><div class="line">console.log(messages.length);    // 2</div><div class="line">console.log(messages);           // [&quot;Hi&quot;,&#123;...&#125;]</div></pre></td></tr></table></figure>
+<h4 id="Symbol-match-Symbol-replace-Symbol-search-Symbol-split"><a href="#Symbol-match-Symbol-replace-Symbol-search-Symbol-split" class="headerlink" title="Symbol.match Symbol.replace Symbol.search Symbol.split"></a>Symbol.match Symbol.replace Symbol.search Symbol.split</h4><p>这四个Symbol用在String对应的四个方法String.match/replace/search/split中且当参数为正则表达式时。</p>
+<p>可以定义一个对象的这四个Symbol属性方法，这对象就可以代替正则表达式来应用在上面的对应场景中；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">// effectively equivalent to /^.&#123;10&#125;$/ </div><div class="line">let hasLengthOf10 = &#123;</div><div class="line">  [Symbol.match]: function(value) &#123;</div><div class="line">    return value.length === 10 ? [value.substring(0, 10)] : null;</div><div class="line">  &#125;,</div><div class="line">  [Symbol.replace]: function(value, replacement) &#123;</div><div class="line">    return value.length === 10 ? replacement + value.substring(10) : value;</div><div class="line">  &#125;,</div><div class="line">  [Symbol.search]: function(value) &#123;</div><div class="line">    return value.length === 10 ? 0 : -1;</div><div class="line">  &#125;,</div><div class="line">  [Symbol.split]: function(value) &#123;</div><div class="line">    return value.length === 10 ? [&quot;&quot;, &quot;&quot;] : [value];</div><div class="line">  &#125; </div><div class="line">&#125;;</div><div class="line"></div><div class="line">let message1 = &quot;Hello world&quot;, // 11 characters </div><div class="line">message2 = &quot;Hello John&quot;; // 10 characters</div><div class="line">let match1 = message1.match(hasLengthOf10), </div><div class="line">match2 = message2.match(hasLengthOf10);</div><div class="line">console.log(match1); // null </div><div class="line">console.log(match2); // [&quot;Hello John&quot;]</div><div class="line">let replace1 = message1.replace(hasLengthOf10), </div><div class="line">replace2 = message2.replace(hasLengthOf10);</div><div class="line">console.log(replace1); // &quot;Hello world&quot; </div><div class="line">console.log(replace2); // &quot;Hello John&quot;</div><div class="line">let search1 = message1.search(hasLengthOf10), </div><div class="line">search2 = message2.search(hasLengthOf10);</div><div class="line">console.log(search1); // -1 </div><div class="line">console.log(search2); // 0</div><div class="line">let split1 = message1.split(hasLengthOf10), </div><div class="line">split2 = message2.split(hasLengthOf10);</div><div class="line">console.log(split1); // [&quot;Hello world&quot;] </div><div class="line">console.log(split2); // [&quot;&quot;, &quot;&quot;]</div></pre></td></tr></table></figure>
+<h4 id="Symbol-toPrimitive"><a href="#Symbol-toPrimitive" class="headerlink" title="Symbol.toPrimitive"></a>Symbol.toPrimitive</h4><p>JS引擎中，经常会尝试将对象转换到相应的原始值，例如比较一个对象与字符串；对象被转换为原始值，会有三种选择：数字，字符串或无类型偏好的值。对于大多数标准对象，当对象被转换为数字时：</p>
+<ol>
+<li>调用valueOf方法，如果结果为原始值，则返回</li>
+<li>否则，调用toString方法，如果结果值为原始值，则返回</li>
+<li>如果再无可选值，则抛出异常</li>
+</ol>
+<p>当对象被转换为字符串时：</p>
+<ol>
+<li>调用toSring方法，如果结果为原始值，则返回</li>
+<li>否则，调用valueOf方法，如果结果值为原始值，则返回</li>
+<li>如果再无可选值，则抛出异常</li>
+</ol>
+<p><strong>大多数情况下，标准对象会将默认模式按数字模式处理（除了Date对象）；默认模式只用于==运算，+运算及给Date构造函数传递一个参数时。</strong></p>
+<p>在ES6标准中，通过Symbol.toPrimitive方法可以更改那个暴露出来的原始值；Symbol.toPrimitive被定义在每一个标准类型的原型上，并且规定了当对象被转换为原始值时应该执行的操作。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">function Temperature(degrees) &#123;</div><div class="line">              this.degrees = degrees;</div><div class="line">&#125;</div><div class="line">Temperature.prototype[Symbol.toPrimitive] = function(hint) &#123;</div><div class="line">switch (hint) &#123;</div><div class="line">    case &quot;string&quot;:</div><div class="line">        return this.degrees + &quot;\u00b0&quot;; // degrees symbol</div><div class="line">    case &quot;number&quot;:</div><div class="line">        return this.degrees;</div><div class="line">    case &quot;default&quot;:</div><div class="line">        return this.degrees + &quot; degrees&quot;;</div><div class="line">&#125; &#125;;</div><div class="line">var freezing = new Temperature(32);</div><div class="line">console.log(freezing + &quot;!&quot;);    // &quot;32 degrees!&quot;</div><div class="line">console.log(freezing / 2);      // 16</div><div class="line">console.log(String(freezing));  // &quot;32°&quot;</div></pre></td></tr></table></figure>
+<h4 id="Symbol-toStringTag"><a href="#Symbol-toStringTag" class="headerlink" title="Symbol.toStringTag"></a>Symbol.toStringTag</h4><p>当检测一个数据的类型时，可能会用instanceof,这样在使用iframe标签情况下会有一定问题，不同的iframe代表不同的领域，不同领域的构造函数是不同的，当数据传递到不同的领域时，使用instanceof会得不到预期的结果；</p>
+<p>这时我们可能会用Object.prototype.toString.call来处理；</p>
+<p>如区分原生JSON对象和自建对象<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">function supportsNativeJSON() &#123;</div><div class="line">    return typeof JSON !== &quot;undefined&quot; &amp;&amp;</div><div class="line">        Object.prototype.toString.call(JSON) === &quot;[object JSON]&quot;;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在ES6中重新定义了原生对象过去的状态，通过Symbol.toStringTag改变了调用Object.prototype.toString方法时返回的身份标示；这个Symbol所代表的属性在每一个对象中都存在，其定义了调用对象的Object.prototype.toString.call方法时返回的值。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">function Person(name) &#123;</div><div class="line">    this.name = name;</div><div class="line">&#125;</div><div class="line">Person.prototype[Symbol.toStringTag] = &quot;Person&quot;;</div><div class="line">var me = new Person(&quot;Nicholas&quot;);</div><div class="line">console.log(me.toString());                     // [object Person]</div><div class="line">console.log(Object.prototype.toString.call(me)); // [object Person]</div></pre></td></tr></table></figure>
+<h4 id="Symbol-unscopables"><a href="#Symbol-unscopables" class="headerlink" title="Symbol.unscopables"></a>Symbol.unscopables</h4><p>The Symbol.unscopables well-known symbol is used to specify an object value of whose own and inherited property names are excluded from the with environment bindings of the associated object.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">var keys = [];</div><div class="line"></div><div class="line">with (Array.prototype) &#123;</div><div class="line">  keys.push(&apos;something&apos;);</div><div class="line">&#125;</div><div class="line"></div><div class="line">Object.keys(Array.prototype[Symbol.unscopables]); </div><div class="line">// [&quot;copyWithin&quot;, &quot;entries&quot;, &quot;fill&quot;, &quot;find&quot;, &quot;findIndex&quot;, &quot;includes&quot;, &quot;keys&quot;, &quot;values&quot;]</div></pre></td></tr></table></figure>
+<p>也可以改变对象的Symbol.unscopables属性：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">var obj = &#123; </div><div class="line">  foo: 1, </div><div class="line">  bar: 2 </div><div class="line">&#125;;</div><div class="line"></div><div class="line">obj[Symbol.unscopables] = &#123; </div><div class="line">  foo: false, </div><div class="line">  bar: true </div><div class="line">&#125;;</div><div class="line"></div><div class="line">with (obj) &#123;</div><div class="line">  console.log(foo); // 1</div><div class="line">  console.log(bar); // ReferenceError: bar is not defined</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 
           
         
@@ -549,6 +1174,188 @@
 <p>super的所有引用都通过[[HomeObject]]属性调用Object.getPrototypeOf方法来检索原型的引用；然后搜寻原型找到同名函数；最后，设置this绑定并且调用相应的方法；</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">let person = &#123;</div><div class="line">    getGreeting() &#123;</div><div class="line">        return &quot;Hello&quot;;</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line">// prototype is person</div><div class="line">let friend = &#123;</div><div class="line">    getGreeting() &#123;</div><div class="line">        return super.getGreeting() + &quot;, hi!&quot;;</div><div class="line">&#125; &#125;;</div><div class="line">Object.setPrototypeOf(friend, person);</div><div class="line">console.log(friend.getGreeting());</div></pre></td></tr></table></figure>
 <p><code>friend.getGreeting()</code>方法的[[HomeObject]]的属性值时friend,friend的原型是person，所以<code>super.getGreeting()</code>等价于<code>person.getGreeting.call(this)</code>;</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/11/21/2017-11-21-ES6之解构/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cauil">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/abu.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cauil's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/11/21/2017-11-21-ES6之解构/" itemprop="url">ES6之解构</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-21T00:00:00+08:00">
+                2017-11-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JS/" itemprop="url" rel="index">
+                    <span itemprop="name">JS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="为何使用解构功能"><a href="#为何使用解构功能" class="headerlink" title="为何使用解构功能"></a>为何使用解构功能</h2><p>在编码过程中，我们经常定义许多对象和数组，然后有组织地从中提取相关的信息片段；如果对象跟数组结构复杂，我们就需要深入挖掘整个数据结构才能找到所需数据。</p>
+<p>所以ES6位对象与数组都添加了结构功能，将数据结构打散的过程变得更加简单；许多语言都通过极少量的语法实现了结构功能，以简化获取信息的过程；而ES6实际上利用了你早已熟悉的语法：对象和数组字面量的语法。</p>
+<h2 id="对象解构"><a href="#对象解构" class="headerlink" title="对象解构"></a>对象解构</h2><p>对象解构的语法形式是在一个赋值操作符左边放置一个对象字面量。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">let node = &#123;</div><div class="line">    type: &quot;Identifier&quot;,</div><div class="line">    name: &quot;foo&quot;</div><div class="line">&#125;;</div><div class="line">let &#123; type, name &#125; = node;</div><div class="line">console.log(type);      // &quot;Identifier&quot;</div><div class="line">console.log(name);      // &quot;foo&quot;</div></pre></td></tr></table></figure>
+<p>使用var let或const解构声明变量，必须要提供初始化程序。下面几行代码全部都会导致抛出语法错误，它们都缺少了初始化程序：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">// syntax error!</div><div class="line">var &#123; type, name &#125;;</div><div class="line">// syntax error!</div><div class="line">let &#123; type, name &#125;;</div><div class="line">// syntax error!</div><div class="line">const &#123; type, name &#125;;</div></pre></td></tr></table></figure>
+<h4 id="解构赋值"><a href="#解构赋值" class="headerlink" title="解构赋值"></a>解构赋值</h4><p>如果在定义变量之后想要修改它们的值，需要用小括号包裹解构赋值语句，因为JS引擎将一对开放的花括号视为一个代码块，而语法规定，代码块语句不允许出现在赋值语句左侧，添加小括号后可以将块语句转化为一个表达式，从而实现解构赋值的过程。如下面的<code>({ type, name } = node)</code>语句：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">let node = &#123;</div><div class="line">    type: &quot;Identifier&quot;,</div><div class="line">    name: &quot;foo&quot;</div><div class="line">&#125;,</div><div class="line">type = &quot;Literal&quot;,</div><div class="line">name = 5;</div><div class="line">// assign different values using destructuring</div><div class="line">(&#123; type, name &#125; = node);</div><div class="line">console.log(type);      // &quot;Identifier&quot;</div><div class="line">console.log(name);</div></pre></td></tr></table></figure>
+<p>解构赋值表达式（=号右侧）如果为null或者undefined会导致程序抛出错误；<code>let {hello} = null</code>会抛出错误<code>Cannot destructure property</code>hello<code>of &#39;undefined&#39; or &#39;null&#39;.</code></p>
+<h4 id="默认值"><a href="#默认值" class="headerlink" title="默认值"></a>默认值</h4><p>当指定的局部变量名称在对象中不存在的时候，会被赋值为undefined，我们可以设置一个默认值，来处理这种情况：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">let node = &#123;</div><div class="line">    type: &quot;Identifier&quot;,</div><div class="line">    name: &quot;foo&quot;</div><div class="line">&#125;;</div><div class="line">let &#123; type, name, value = true &#125; = node;</div><div class="line">console.log(type); // &quot;Identifier&quot;</div><div class="line">console.log(name); // &quot;foo&quot;</div><div class="line">console.log(value);// true</div></pre></td></tr></table></figure>
+<h4 id="为非同名局部变量赋值"><a href="#为非同名局部变量赋值" class="headerlink" title="为非同名局部变量赋值"></a>为非同名局部变量赋值</h4><p>也可以使用非同名的局部变量来解构对象，并且可以指定默认值：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">let node = &#123;</div><div class="line">    type: &quot;Identifier&quot;,</div><div class="line">    name: &quot;foo&quot;</div><div class="line">&#125;;</div><div class="line">let &#123; type: localType, name: localName, first_name: firstName=&apos;hi&apos; &#125; = node;</div><div class="line">console.log(localType);     // &quot;Identifier&quot;</div><div class="line">console.log(localName);     // &quot;foo&quot;</div><div class="line">console.log(firstName);     // &quot;hi&quot;</div></pre></td></tr></table></figure>
+<h4 id="嵌套解构"><a href="#嵌套解构" class="headerlink" title="嵌套解构"></a>嵌套解构</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">let node = &#123;</div><div class="line">    type: &quot;Identifier&quot;,</div><div class="line">    name: &quot;foo&quot;,</div><div class="line">    loc: &#123;</div><div class="line">        start: &#123;</div><div class="line">            line: 1,</div><div class="line">column: 1 &#125;,</div><div class="line">        end: &#123;</div><div class="line">            line: 1,</div><div class="line">column: 4 &#125;</div><div class="line">&#125; &#125;;</div><div class="line">let &#123; loc: &#123; start &#125;&#125; = node;</div><div class="line">console.log(start.line);   // 1</div><div class="line">console.log(start.column); // 1</div></pre></td></tr></table></figure>
+<h2 id="数组解构"><a href="#数组解构" class="headerlink" title="数组解构"></a>数组解构</h2><p>数组解构语法比对象解构更简单，使用的是数组字面量，且解构操作全部在数组内完成，而不是像对象字面量语法一样使用对象的命名属性：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">let colors = [ &quot;red&quot;, &quot;green&quot;, &quot;blue&quot; ];</div><div class="line">let [ firstColor, ,thirdColor ] = colors;</div><div class="line">console.log(firstColor);        // &quot;red&quot;</div><div class="line">console.log(thirdColor);        // &quot;blue&quot;</div></pre></td></tr></table></figure>
+<p>当通过var let或者const声明数组解构的绑定时，必须要提供一个初始化程序；</p>
+<h4 id="解构赋值-1"><a href="#解构赋值-1" class="headerlink" title="解构赋值"></a>解构赋值</h4><p>数组解构也可用于赋值上下文，不需要用小括号包裹， 因为[]跟{}不一样，后者有块级的功能；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">let colors = [ &quot;red&quot;, &quot;green&quot;, &quot;blue&quot; ],</div><div class="line">    firstColor = &quot;black&quot;,</div><div class="line">    secondColor = &quot;purple&quot;;</div><div class="line">[ firstColor, secondColor ] = colors;</div><div class="line">console.log(firstColor);        // &quot;red&quot;</div><div class="line">console.log(secondColor);       // &quot;green&quot;</div></pre></td></tr></table></figure>
+<p>数组也可用来交换两个变量的值：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">let a = 1,</div><div class="line">b = 2;</div><div class="line">[ a, b ] = [ b, a ];</div><div class="line">console.log(a);     // 2</div><div class="line">console.log(b);     // 1</div></pre></td></tr></table></figure>
+<p>与对象解构一样，如果右侧为null或者undefined，抛出错误；</p>
+<h4 id="默认值-1"><a href="#默认值-1" class="headerlink" title="默认值"></a>默认值</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">let colors = [ &quot;red&quot; ];</div><div class="line">let [ firstColor, secondColor = &quot;green&quot; ] = colors;</div><div class="line">console.log(firstColor);        // &quot;red&quot;</div><div class="line">console.log(secondColor);       // &quot;green&quot;</div></pre></td></tr></table></figure>
+<h4 id="嵌套解构-1"><a href="#嵌套解构-1" class="headerlink" title="嵌套解构"></a>嵌套解构</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">let colors = [ &quot;red&quot;, [ &quot;green&quot;, &quot;lightgreen&quot; ], &quot;blue&quot; ];</div><div class="line">// later</div><div class="line">let [ firstColor, [ secondColor ] ] = colors;</div><div class="line">console.log(firstColor);        // &quot;red&quot;</div><div class="line">console.log(secondColor);       // &quot;green&quot;</div></pre></td></tr></table></figure>
+<h4 id="不定元素"><a href="#不定元素" class="headerlink" title="不定元素"></a>不定元素</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">let colors = [ &quot;red&quot;, &quot;green&quot;, &quot;blue&quot; ];</div><div class="line">let [ firstColor, ...restColors ] = colors;</div><div class="line">console.log(firstColor);        // &quot;red&quot;</div><div class="line">console.log(restColors.length); // 2</div><div class="line">console.log(restColors[0]);     // &quot;green&quot;</div><div class="line">console.log(restColors[1]);     // &quot;blue&quot;</div></pre></td></tr></table></figure>
+<p>通过上面这个语法，可以用来实现生成数组的副本；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">// cloning an array in ECMAScript 6</div><div class="line">let colors = [ &quot;red&quot;, &quot;green&quot;, &quot;blue&quot; ];</div><div class="line">let [ ...clonedColors ] = colors;</div><div class="line">console.log(clonedColors);      // &quot;[red,green,blue]&quot;</div></pre></td></tr></table></figure>
+<p><strong>被解构的数组中，不定元素必须为最后一个条目，在后面继续添加逗号会导致程序抛出语法错误</strong></p>
+<h2 id="混合解构"><a href="#混合解构" class="headerlink" title="混合解构"></a>混合解构</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">let node = &#123;</div><div class="line">    type: &quot;Identifier&quot;,</div><div class="line">    name: &quot;foo&quot;,</div><div class="line">    loc: &#123;</div><div class="line">        start: &#123;</div><div class="line">            line: 1,</div><div class="line">column: 1 &#125;,</div><div class="line">        end: &#123;</div><div class="line">            line: 1,</div><div class="line">column: 4 &#125;</div><div class="line">&#125;,</div><div class="line">    range: [0, 3]</div><div class="line">&#125;;</div><div class="line">let &#123;</div><div class="line">    loc: &#123; start &#125;,</div><div class="line">    range: [ startIndex ]</div><div class="line">&#125; = node;</div><div class="line">console.log(start.line);   // 1</div><div class="line">console.log(start.column); // 1</div><div class="line">console.log(startIndex);   // 0</div></pre></td></tr></table></figure>
+<h2 id="解构参数"><a href="#解构参数" class="headerlink" title="解构参数"></a>解构参数</h2><p>ES5解析参数可能会这样做：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">// properties on options represent additional parameters</div><div class="line">function setCookie(name, value, options) &#123;</div><div class="line">    options = options || &#123;&#125;;</div><div class="line">    let secure = options.secure,</div><div class="line">    path = options.path,</div><div class="line">    domain = options.domain,</div><div class="line">    expires = options.expires;</div><div class="line">    // code to set the cookie</div><div class="line">&#125;</div><div class="line">// third argument maps to options</div><div class="line">setCookie(&quot;type&quot;, &quot;js&quot;, &#123;</div><div class="line">    secure: true,</div><div class="line">    expires: 60000</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>利用解构我们可以：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">function setCookie(name, value, &#123; secure, path, domain, expires &#125;) &#123;</div><div class="line">    // code to set the cookie</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="必须传值的解构参数"><a href="#必须传值的解构参数" class="headerlink" title="必须传值的解构参数"></a>必须传值的解构参数</h4><p>解构参数在默认情况下，如果调用函数时不提供被解构的参数会导致程序抛出错误；如果这样调用上面的setCookie函数<code>setCookie(&#39;type&#39;, &#39;js&#39;)</code>会抛出错误；</p>
+<p>实际上JS是这样解析的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">function setCookie(name, value, options) &#123;</div><div class="line">    let &#123; secure, path, domain, expires &#125; = options;</div><div class="line">    // code to set the cookie</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>当第三个参数不传值时，实际options被赋值为undefined，根据前面讨论过的解构赋值表达式=号右边的值不能为undefined或者null，所以第三个参数是必须传值的；</p>
+<p>可以设置默认值来避免必须传值：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">function setCookie(name, value, &#123; secure, path, domain, expires &#125; = &#123;&#125;) &#123;</div><div class="line">// empty</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h4 id="解构参数默认值"><a href="#解构参数默认值" class="headerlink" title="解构参数默认值"></a>解构参数默认值</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">function setCookie(name, value,</div><div class="line">    &#123;</div><div class="line">        secure = false,</div><div class="line">        path = &quot;/&quot;,</div><div class="line">        domain = &quot;example.com&quot;,</div><div class="line">        expires = new Date(Date.now() + 360000000)</div><div class="line">&#125; = &#123;&#125; )&#123;</div><div class="line">// empty </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>也可以为第三个参数设置一个默认对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">const cookieDefault = &#123;</div><div class="line">  secure: false,</div><div class="line">  path: &apos;/&apos;,</div><div class="line">  domain: &apos;example.com&apos;,</div><div class="line">  expires: new Date(Date.now() + 360000000)</div><div class="line">&#125;;</div><div class="line">function setCookie(name, value,</div><div class="line">    &#123;</div><div class="line">        secure = cookieDefault.secure,</div><div class="line">        path = cookieDefault.path,</div><div class="line">        domain = cookieDefault.domain,</div><div class="line">        expires = cookieDefault.expires</div><div class="line">&#125; = cookieDefault )&#123;</div><div class="line">// empty </div><div class="line">&#125;</div></pre></td></tr></table></figure>
 
           
         
@@ -1312,676 +2119,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/10/29/2017-10-19-JS之异步1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cauil">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/abu.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Cauil's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/10/29/2017-10-19-JS之异步1/" itemprop="url">JS之异步1</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-29T00:00:00+08:00">
-                2017-10-29
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JS/" itemprop="url" rel="index">
-                    <span itemprop="name">JS</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="什么是异步"><a href="#什么是异步" class="headerlink" title="什么是异步"></a>什么是异步</h2><p>异步：一种通讯方式， 一个可以无需等待被调用函数的返回值就让操作继续进行的方法.</p>
-<p>在操作系统中对设备的处理，很多就是利用异步来处理的；比如中断，计算机的网卡接受从网络中发过来的数据，如果让cpu一直轮询等待数据的传输完成，这个很费时间, 浪费cpu的效率，<br>在网卡接受网络数据的时候，可以让cpu自己先忙其他的，等网络数据接受完毕之后才让网卡发起一个中断请求让cpu介入进行处理；这就是异步。</p>
-<h2 id="JS中的异步"><a href="#JS中的异步" class="headerlink" title="JS中的异步"></a>JS中的异步</h2><p>谈起JS的异步，就不得不说JS引擎是基于单线程事件循环的概念构建的。跟上面举的例子一样，为了让JS更有效率，响应更及时，JS中加入了异步。</p>
-<p>JS引擎同一时刻只能执行一个代码块,所以需要跟踪即将运行的代码，那些代码被放在一个任务队列中，每当一段代码准备执行是，都会被添加到任务队列中。每当JS引擎中的一段代码执行结束时，<br>事件循环会执行队列中的下一个任务。如下图可示：</p>
-<p><img src="/images/eventqueue.jpg" alt=""></p>
-<p>JS中有哪些异步呢？</p>
-<p>setTimeout(), setInterval(), ajax请求，dom事件这些都是JS中比较常见的异步.</p>
-<h2 id="事件模型"><a href="#事件模型" class="headerlink" title="事件模型"></a>事件模型</h2><p>用户点击按钮或按下键盘上的按钮会触发类似onclick这样的事件，它会向任务队列添加一个新任务来响应用户的操作。如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">let button = document.getElementById(&quot;my-btn&quot;);</div><div class="line">button.onclick = function(event) &#123;</div><div class="line">    console.log(&quot;clicked&quot;);</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
-<p>这段代码中当按钮被点击的时候，会触发onclick事件，执行函数(clickFn)会被添加到任务队列中，当任务队列执行到clickFn的时候打印出clicked;</p>
-<p>如下图:</p>
-<p><img src="/images/eventstack.png" alt=""></p>
-<p>事件模型适用于响应用户交互和完成类似的低频功能，但其对于更复杂的需求来说却不是很灵活。</p>
-<h2 id="setTimeout与setInterval"><a href="#setTimeout与setInterval" class="headerlink" title="setTimeout与setInterval"></a>setTimeout与setInterval</h2><p>这两个区别不大，我们看一段代码:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">setTimeout(function() &#123;</div><div class="line">    console.log(&apos;settimeout&apos;);</div><div class="line">&#125;, 1000)</div><div class="line">var sTime = new Date().getTime();</div><div class="line">console.log(new Date());</div><div class="line">console.log(&apos;test1&apos;);</div><div class="line">while(new Date().getTime() - sTime &lt; 2000) &#123;</div><div class="line">&#125;</div><div class="line">console.log(new Date())</div></pre></td></tr></table></figure>
-<p>执行结果显示打印出:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">// Sun Oct 29 2017 20:24:29 GMT+0800 (CST)</div><div class="line">// test1</div><div class="line">// Sun Oct 29 2017 20:24:31 GMT+0800 (CST)</div><div class="line">// settimeout</div></pre></td></tr></table></figure>
-<p>从中可以看出：</p>
-<ol>
-<li>先打印test1，setTimeout的确是异步过程，会在1秒后加入任务队列;</li>
-<li>只有在任务队列中的前面任务执行完，才会执行加入的任务(这段代码是过了两秒);</li>
-</ol>
-<p>setTimeout也是一种异步的方式，但是不能很好的把控。</p>
-<h2 id="回调模式"><a href="#回调模式" class="headerlink" title="回调模式"></a>回调模式</h2><p>回调模式与事件模式类似，只不过回调模式中被调用的函数是作为参数传入的，如下所示：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">fs.readFile(&apos;example.txt&apos;, function(err, contents) &#123;</div><div class="line">    if(err) &#123;</div><div class="line">        throw err;</div><div class="line">    &#125;</div><div class="line">    console.log(contents)</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
-<p>文件example.txt读取完毕后会把回调加入任务队列中，如果此时任务队列为空，直接执行回调，如果不为空，等前面的任务执行完再执行回调；</p>
-<p>但是这有一个问题，当我们的需求是，先读取文件1，然后需要把读出的文件1作为内容进行网络转发；那就会：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">fs.readFile(&apos;example.txt&apos;, function(err, contents) &#123;</div><div class="line">    if(err) &#123;</div><div class="line">        throw err;</div><div class="line">    &#125;;</div><div class="line">    console.log(contents);</div><div class="line">    ajax(&#123;</div><div class="line">        url: &apos;xxx.json&apos;</div><div class="line">        data: contents,</div><div class="line">        success: function() &#123;</div><div class="line">            doSomething()</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
-<p>这样看起来还是，当时如果这样的需求是叠加的，那就可能会形成传说中的回调地狱了。如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">fn1(function(err, result) &#123;</div><div class="line">    if(err) &#123;throw err;&#125;</div><div class="line"></div><div class="line">    fn2(function(err, result) &#123;</div><div class="line">        if(err) &#123;throw err;&#125;</div><div class="line"></div><div class="line">        fn3(function(err, result) &#123;</div><div class="line">            if(err) &#123;throw err;&#125;</div><div class="line"></div><div class="line">            fn4(function(err, result) &#123;</div><div class="line">                if(err) &#123;throw err;&#125;</div><div class="line">            &#125;)</div><div class="line">            ...</div><div class="line">        &#125;)</div><div class="line">    &#125;)</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
-<p>像上面这样嵌套多个方法调用，会创建出一堆难于理解和调试的代码。</p>
-<h2 id="异步之生成器"><a href="#异步之生成器" class="headerlink" title="异步之生成器"></a>异步之生成器</h2><h4 id="生成器简单介绍"><a href="#生成器简单介绍" class="headerlink" title="生成器简单介绍"></a>生成器简单介绍</h4><p>有时间会深入讲述一下生成器，这里只是简单说一下生成器的概念。下面就是一个生成器函数的栗子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">function *test() &#123; // 生成器函数</div><div class="line">    yield 1;</div><div class="line">    yield 2;</div><div class="line">&#125;</div><div class="line">var iter = test() // 迭代器</div></pre></td></tr></table></figure>
-<p>上面就是一个简单的生成器函数，当执行会生成一个迭代器，迭代器可参考之前写过的一片文章谈谈遍历与迭代协议.</p>
-<p>迭代器每次调用next方法会执行生成器函数，并且每次执行完yield关键词就停止，只在当下一次调用next的时候才回到之前执行停止的地方继续执行；</p>
-<p>如若需要回调或者系列化一序列的异步操作，生成器和yield语句就派上用场了。</p>
-<h4 id="生成器处理异步操作"><a href="#生成器处理异步操作" class="headerlink" title="生成器处理异步操作"></a>生成器处理异步操作</h4><p>任务处理器:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">function run(taskDef) &#123;</div><div class="line">    let task = taskDef();      // 1.外层生成器函数执行  创建一个无使用限制的迭代器</div><div class="line"></div><div class="line">    let result = task.next(); // 2. 开始任务，执行到第一个yield</div><div class="line"></div><div class="line">    // 循环调用next</div><div class="line">    function step() &#123;</div><div class="line">        if(!result.done) &#123; // 3.判断是否迭代完毕（没有yield或者return）</div><div class="line">            if(typeof result.value === &apos;function&apos;) &#123; // 4.下面包裹函数return的函数</div><div class="line">                result.value(function(err, data) &#123; // 5.调用return的函数, 传入回调函数到callback</div><div class="line">                    if(err) &#123;</div><div class="line">                        result = task.throw(err);</div><div class="line">                        return;</div><div class="line">                    &#125;</div><div class="line">                    result = task.next(data); // 6.异步回调完，继续执行到下一个yield</div><div class="line">                    step(); // 7. 循环执行 </div><div class="line">                &#125;)</div><div class="line">            &#125;</div><div class="line">        &#125; else &#123;</div><div class="line">            result = task.next(result.value);</div><div class="line">            step(); // 循环执行</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    step(); // 启动</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>然后把异步操作包裹起来，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">let fs = require(&apos;sf&apos;);</div><div class="line"></div><div class="line">function readFile(filename) &#123;</div><div class="line">    return function(callback) &#123;</div><div class="line">        fs.readFile(filename, callback)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>下面是最终的调用方式：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">run(function *() &#123;</div><div class="line">    let contents = yield readFile(&apos;config.json&apos;);</div><div class="line">    doSomethingWith(contents);</div><div class="line">    yield readMoreFile(&apos;xxx.json&apos;);</div><div class="line">    console.log(&apos;Done&apos;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<p>这样就可以很好的解决回调地狱的问题了，并且把异步操作通过同步的形式来调用。</p>
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>上面谈了JS的异步，并分别讲了事件模型／setTimeout／回调模型，最后讲述了怎么用生成器来处理回调地狱，并可以用同步的操作方式.</p>
-<p>上面这种处理形式还是比较麻烦，需要把异步函数包裹起来，并且无法区分用作任务执行器回调函数的返回值和一个不是回调函数的返回值。</p>
-<p>这种方式在场景使用中还是有局限性，如果需求需要并行执行两个异步操作或者同时进行两个异步操作并且只取优先完成的操作；这种就不太好处理了，会在下一篇中讲述解决的办法.</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/10/19/2017-10-19-mongo/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cauil">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/abu.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Cauil's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/10/19/2017-10-19-mongo/" itemprop="url">mongo</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-19T00:00:00+08:00">
-                2017-10-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/sql/" itemprop="url" rel="index">
-                    <span itemprop="name">sql</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="what-is-mongo"><a href="#what-is-mongo" class="headerlink" title="what is mongo"></a>what is mongo</h2><p>MongoDB is  NoSQL database, NoSQL = not only sql.</p>
-<p>And from wikipedia:</p>
-<p><code>The term NoSQL was used by Carlo Strozzi in 1998 to name his lightweight, Strozzi NoSQL open-source relational database that did not expose the standard Structured Query Language (SQL) interface, but was still relational.[16] His NoSQL RDBMS is distinct from the circa-2009 general concept of NoSQL databases. Strozzi suggests that, because the current NoSQL movement &quot;departs from the relational model altogether, it should therefore have been called more appropriately &#39;NoREL&#39;,[17] referring to &#39;No Relational&#39;.</code></p>
-<p>MongoDB is document database:</p>
-<ul>
-<li>not .PDF or .DOC/.DOCX</li>
-<li>is a associative array</li>
-<li>document == json object</li>
-<li>document == php array</li>
-<li>document == python dict</li>
-<li>document == ruby hash</li>
-</ul>
-<h2 id="Why-mongo"><a href="#Why-mongo" class="headerlink" title="Why mongo"></a>Why mongo</h2><ul>
-<li>flexible schema</li>
-<li>oriented toward programmers</li>
-<li>flexible deployment</li>
-<li>designed for big data</li>
-</ul>
-<h2 id="Install-mongo"><a href="#Install-mongo" class="headerlink" title="Install mongo"></a>Install mongo</h2><p>mac: <code>brew intall mongo</code></p>
-<h2 id="Usage"><a href="#Usage" class="headerlink" title="Usage"></a>Usage</h2><p>We can use PyMongo to communicate with mongo in python.</p>
-<p>Use <code>pip install PyMongo</code> command to install PyMongo.</p>
-<p>And:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">from pymongo import MongoClient</div><div class="line">client = MongoClient(&apos;localhost:27017&apos;)</div><div class="line">db = client[db_name]</div></pre></td></tr></table></figure>
-<p>So now we can use db to read/create/update/delete the data.</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/10/10/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cauil">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/abu.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Cauil's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/10/10/hello-world/" itemprop="url">Hello World</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-10T23:04:28+08:00">
-                2017-10-10
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2017/10/01/2017-10-01-从尺寸单位到移动端适配方案/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="cauil">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/abu.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Cauil's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/10/01/2017-10-01-从尺寸单位到移动端适配方案/" itemprop="url">从尺寸单位到移动端适配方案</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-01T00:00:00+08:00">
-                2017-10-01
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/css/" itemprop="url" rel="index">
-                    <span itemprop="name">css</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="css尺寸单位"><a href="#css尺寸单位" class="headerlink" title="css尺寸单位"></a>css尺寸单位</h2><h4 id="绝对单位"><a href="#绝对单位" class="headerlink" title="绝对单位"></a>绝对单位</h4><p>在平常的前端开发中，在很多地方写css的时候，你都会用到长度尺寸单位，可能最典型的代表就是px；<br>其实这些单位主要分两类，绝对单位和相对单位；px就属于绝对单位，除了px之外，其他的你可能都很<br>少使用,如下：</p>
-<ul>
-<li>mm, cm, in: 毫米（Millimeters），厘米（centimeters），英寸（inches）</li>
-<li>pt, pc: 点（Points (1/72 of an inch)）， 十二点活字（ picas (12 points.)）</li>
-</ul>
-<h4 id="相对单位"><a href="#相对单位" class="headerlink" title="相对单位"></a>相对单位</h4><p>上面列举的主要是绝对单位，那相对单位是啥呢，顾名思义，相对单位就是基于某些参考物的单位；主要有：</p>
-<ul>
-<li>ex, ch: 分别是小写x的高度和数字0的宽度；</li>
-<li>em, rem: em和rem都是基于<code>font-size</code>的单位，但又有所不同，em是基于当前元素的<code>font-size</code>为参考物<br>的(如果当前font-size没有设置，就基于父元素，以此类推); rem是基于根元素为参考物，如果根元素没有设置，<br>大多数浏览器默认为16px；假如参考物的<code>font-size: 20px</code>, 那么<code>1em=20px</code>, <code>1.5rem=30px</code>;</li>
-<li>vw, vh, vmin, vmax: 这组单位都是基于视口为参考物，vw基于视口的宽度，vh基于视口的高度，vmin=min(vw, vh),<br>vmax=max(vw,vh)</li>
-</ul>
-<h2 id="在移动端的使用"><a href="#在移动端的使用" class="headerlink" title="在移动端的使用"></a>在移动端的使用</h2><p>目前市面的手机品类繁多，屏幕分辨率也各有不同，导致移动端开发难度加大，我们怎么开发来适配不同的手机？</p>
-<h4 id="rem"><a href="#rem" class="headerlink" title="rem"></a>rem</h4><p>以iphone三种尺寸手机为例: iphone4(320px),iphone6(375px),iphone6 plus(414px);</p>
-<p>普通的做法是根据不同比例的尺寸来等比例<br>缩放，例如iphone4文本大小是12px，那么iphone6就是<code>（375/320*12px=14px）</code>,iphone6 plus就是<code>（414/320*12px=15.5px）</code>;</p>
-<p>最开始的方法： 以一款尺寸做一版样式，然后用js去控制viewpoint的intial-scale(网页缩放比例); 天猫最初站点就是用这种<br>方法来进行移动端的开发的，这样有些不好的地方，如手机为大屏幕的时候图片文字会拉伸，导致页面模糊,在某些布局在不同<br>尺寸的屏幕也有可能导致布局错乱；</p>
-<p>为了最好的适配不同的手机尺寸，目前最普遍的做法就是应用到上一节说到的相对单位rem; </p>
-<h4 id="兼容性"><a href="#兼容性" class="headerlink" title="兼容性"></a>兼容性</h4><p>先来看看rem的兼容性：</p>
-<p><img src="/images/caniuse.png" alt="caniuse"></p>
-<p>从图中可以看出兼容性还是很不错的，大部分市面上主流浏览器都支持,我们可以比较放心的使用；</p>
-<p>rem官方文档上<a href="https://www.w3.org/TR/css3-values/#rem的解释是：" target="_blank" rel="external">https://www.w3.org/TR/css3-values/#rem的解释是：</a></p>
-<p><i>rem unit</i></p>
-<p><code>rem unit
-Equal to the computed value of font-size on the root element. When specified on the font-size property of the root element, the rem units refer to the property’s initial value.</code></p>
-<p>实际就是根据根元素来设置字体大小，然后其他设置了rem单位的就是利用这个来进行同等的变换；</p>
-<h2 id="适配实现方案"><a href="#适配实现方案" class="headerlink" title="适配实现方案"></a>适配实现方案</h2><h4 id="方案1-动态添加html样式"><a href="#方案1-动态添加html样式" class="headerlink" title="方案1 - 动态添加html样式"></a>方案1 - 动态添加html样式</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">(function() &#123;</div><div class="line">   var b = document.documentElement;</div><div class="line">   var a = document.createElement(&quot;style&quot;);</div><div class="line">   a.innerHTML = &quot;html &#123; font-size: &quot; + ((b.clientWidth &gt; 640 ? 640 : b.clientWidth) / 18.75) + &quot;px !important; &#125;&quot;;</div><div class="line">   b.firstElementChild.appendChild(a)</div><div class="line">&#125;)();</div></pre></td></tr></table></figure>
-<h4 id="方案2-利用media-query来设置"><a href="#方案2-利用media-query来设置" class="headerlink" title="方案2 - 利用media query来设置"></a>方案2 - 利用media query来设置</h4><p>利用css的media query也是可以来实现font-size的设置，如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">@media (min-device-width : 375px) and (max-device-width : 667px) and (-webkit-min-device-pixel-ratio : 2)&#123;</div><div class="line">      html&#123;font-size: 37.5px;&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h4 id="方案3-js动态设置"><a href="#方案3-js动态设置" class="headerlink" title="方案3 - js动态设置"></a>方案3 - js动态设置</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">document.getElementsByTagName(&apos;html&apos;)[0].style.fontSize = window.innerWidth / 10 + &apos;px&apos;;</div></pre></td></tr></table></figure>
-<h2 id="rem解决方案升级"><a href="#rem解决方案升级" class="headerlink" title="rem解决方案升级"></a>rem解决方案升级</h2><p>上面几个方案我们就实现了动态设置font-size并根据rem实现移动端不同尺寸的适配；</p>
-<p>但适用rem的方案还是有不足的地方的：</p>
-<ol>
-<li><p>大屏幕伸缩之后可能导致页面模糊</p>
-</li>
-<li><p>设计稿里面的px都要转换成rem</p>
-</li>
-</ol>
-<p>如何解决这些问题呢？</p>
-<p>提供高分辨率设计稿，一般采用的是宽度为750px的设计稿，刚好是375的两倍，并利用sass实现一个函数功能<br>为提供直接px到rem的转换;</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@function px2rem($px)&#123;</div><div class="line">    $rem : 75px;</div><div class="line">    @return ($px/$rem) + rem;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>设置基准font-size为75，传入参数px大小直接计算出rem的大小；</p>
-<p>这样我们就可以完全按照视觉稿上的尺寸来了, 不用除于2了，就解决了图片高清问题，并且不用手动转换单位；</p>
-<p>不过rem不是万能的，也还是具有不足之处的,如：</p>
-<ol>
-<li><p>一个App里native界面和Web界面混合使用时，rem在不同尺寸屏幕上的适配与native界面适配不一致;</p>
-</li>
-<li><p>rem在多屏幕尺寸适配上与当前两大平台的设计哲学不一致, 有些并不是理想的按照不同大小进行等比例缩放；</p>
-</li>
-</ol>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文我们一开始先讲了css尺寸单位，包括绝对单位与相对单位，并详细讲述了em和rem；接下来讲述了rem在现代<br>移动端开发的应用，最后讲述了rem的几种应用方案与不足之处；</p>
-<p>最后祝大家双节快乐，祖国越来越强大！</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2036,7 +2173,7 @@ Equal to the computed value of font-size on the root element. When specified on 
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">33</span>
+                  <span class="site-state-item-count">37</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

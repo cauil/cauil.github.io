@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="javascript," />
+  <meta name="keywords" content="设计模式,design model," />
 
 
 
@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="本文转载自前端乱炖：Javascript 模块模式 1.Javascript 模块模式假设现在我们有一个小型的Js库，目的是用来增加一个数字： var jspy = {   count: 0,    incrementCount: function() {     this.count++;   },    decrementCount: function() {     this.count--">
-<meta name="keywords" content="javascript">
+<meta name="description" content="工厂模式设计工厂模式的目的是为了创建对象。它通常在类或者类的静态方法中实现，具有下列目标：  当创建相识对象时执行重复操作 在编译时不知道具体类型的情况下，为工厂客户提供一种创建对象的接口  通过工厂方法创建的对象在设计上都继承了相同的父对象这个思想，它们都是实现专门功能的特定子类。有时候公共父类是一个包含了工厂方法的同一个类。 看一个汽车工厂实例： 12345678910111213141516">
+<meta name="keywords" content="设计模式,design model">
 <meta property="og:type" content="article">
-<meta property="og:title" content="深入理解Javascript：模块模式">
-<meta property="og:url" content="http://cauil.github.io/2015/12/15/DiveIntoJs_module_pattern/index.html">
+<meta property="og:title" content="JS模式之工厂模式和迭代器模式">
+<meta property="og:url" content="http://cauil.github.io/2018/01/13/2018-01-13-JS模式之工厂模式和迭代器模式/index.html">
 <meta property="og:site_name" content="Cauil&#39;s Blog">
-<meta property="og:description" content="本文转载自前端乱炖：Javascript 模块模式 1.Javascript 模块模式假设现在我们有一个小型的Js库，目的是用来增加一个数字： var jspy = {   count: 0,    incrementCount: function() {     this.count++;   },    decrementCount: function() {     this.count--">
+<meta property="og:description" content="工厂模式设计工厂模式的目的是为了创建对象。它通常在类或者类的静态方法中实现，具有下列目标：  当创建相识对象时执行重复操作 在编译时不知道具体类型的情况下，为工厂客户提供一种创建对象的接口  通过工厂方法创建的对象在设计上都继承了相同的父对象这个思想，它们都是实现专门功能的特定子类。有时候公共父类是一个包含了工厂方法的同一个类。 看一个汽车工厂实例： 12345678910111213141516">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-10-10T15:27:36.000Z">
+<meta property="og:updated_time" content="2018-01-13T14:14:36.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="深入理解Javascript：模块模式">
-<meta name="twitter:description" content="本文转载自前端乱炖：Javascript 模块模式 1.Javascript 模块模式假设现在我们有一个小型的Js库，目的是用来增加一个数字： var jspy = {   count: 0,    incrementCount: function() {     this.count++;   },    decrementCount: function() {     this.count--">
+<meta name="twitter:title" content="JS模式之工厂模式和迭代器模式">
+<meta name="twitter:description" content="工厂模式设计工厂模式的目的是为了创建对象。它通常在类或者类的静态方法中实现，具有下列目标：  当创建相识对象时执行重复操作 在编译时不知道具体类型的情况下，为工厂客户提供一种创建对象的接口  通过工厂方法创建的对象在设计上都继承了相同的父对象这个思想，它们都是实现专门功能的特定子类。有时候公共父类是一个包含了工厂方法的同一个类。 看一个汽车工厂实例： 12345678910111213141516">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://cauil.github.io/2015/12/15/DiveIntoJs_module_pattern/"/>
+  <link rel="canonical" href="http://cauil.github.io/2018/01/13/2018-01-13-JS模式之工厂模式和迭代器模式/"/>
 
 
 
 
 
-  <title>深入理解Javascript：模块模式 | Cauil's Blog</title>
+  <title>JS模式之工厂模式和迭代器模式 | Cauil's Blog</title>
   
 
 
@@ -243,7 +243,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2015/12/15/DiveIntoJs_module_pattern/">
+    <link itemprop="mainEntityOfPage" href="http://cauil.github.io/2018/01/13/2018-01-13-JS模式之工厂模式和迭代器模式/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="cauil">
@@ -260,7 +260,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">深入理解Javascript：模块模式</h1>
+          <h1 class="post-title" itemprop="name headline">JS模式之工厂模式和迭代器模式</h1>
         
 
         <div class="post-meta">
@@ -272,8 +272,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-12-15T00:00:00+08:00">
-                2015-12-15
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-13T00:00:00+08:00">
+                2018-01-13
               </time>
             
 
@@ -295,8 +295,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/js/" itemprop="url" rel="index">
-                    <span itemprop="name">js</span>
+                  <a href="/categories/设计模式/" itemprop="url" rel="index">
+                    <span itemprop="name">设计模式</span>
                   </a>
                 </span>
 
@@ -332,88 +332,23 @@
       
 
       
-        <p>本文转载自前端乱炖：<a href="http://www.html-js.com/article/Study-JavaScript-Javascript-module-every-day" target="_blank" rel="external">Javascript 模块模式</a></p>
-<h2 id="1-Javascript-模块模式"><a href="#1-Javascript-模块模式" class="headerlink" title="1.Javascript 模块模式"></a>1.Javascript 模块模式</h2><p>假设现在我们有一个小型的Js库，目的是用来增加一个数字：</p>
-<pre><code>var jspy = {
-  count: 0,
-
-  incrementCount: function() {
-    this.count++;
-  },
-
-  decrementCount: function() {
-    this.count--;
-  },
-
-  getCount: function() {
-    return this.count;
-  }
-
-};
-</code></pre><p>但是，使用这个js库的人可以用jspy.count = 5 的方法来改变这个值。并不是我们的最初目的。在其他的编程语言中你可以定义一个私有变量，但是Javascript并不能“真正”定义私有变量。然而，我们可以通过操作Javascript来实现，这就引出了一个最流行的Javascript设计模式，模块模式。</p>
-<p>针对上面问题的解决方案如下：</p>
-<pre><code>var jspy = (function() {
-  var _count = 0;
-
-  var incrementCount = function() {
-    _count++;
-  }
-
-  var getCount = function() {
-    return _count;
-  }
-  return {
-    incrementCount: incrementCount,
-    getCount: getCount
-  };
-
-})();
-</code></pre><p>首先我们创造一个_count变量，下划线表明它是一个私有变量。再Javascript中下划线并没有什么实际的意义，但是它是一个用来标明私有变量的普遍用法。现在函数就可以操纵、返回变量了：</p>
-<p>然而，你注意到了我吧整个库包含在了一个自调用匿名函数中。这是一个在执行过程中马上被执行的函数。这个函数运行，定义了函数和变量然后到了return {}的部分，它告诉函数将其返回给变量jspy，或者换句话说，暴露给用户。我们暴露两个函数而不是_count变量，这意味着我们可以做如下操作：</p>
-<pre><code>jspy.incrementCount();
-jspy.getCount();
-</code></pre><p>但是当我们试图进行如下操作时：</p>
-<pre><code>jspy._count; //undefined
-</code></pre><p>它返回undefined。</p>
-<p>对于上面的这种设计模式有许多不同的实现方法。有人喜欢在return 中定义函数：</p>
-<pre><code>var jspy = (function() {
-    var _count = 0;
-
-    return {
-      incrementCount: function() {
-        _count++;
-      },
-      getCount: function() {
-        return _count;
-      }
-    };
-})();   
-</code></pre><p>受到上面例子的启发，CHristian Heilmann提出了Revealing Module Pattern。他的方法是将所有方法定义为私有变量，也就是说，不在return中定义，但是在那里暴露给用户，如下所示：</p>
-<pre><code>var jspy = (function() {
-  var _count = 0;
-  var incrementCount = function() {
-    _count++;
-  };
-  var resetCount = function() {
-    _count = 0;
-  };
-  var getCount = function() {
-    return _count;
-  };
-  return {
-    add: incrementCount,
-    reset: resetCount,
-    get: getCount
-  };
-})();
-</code></pre><p>这种设计模式有两个好处：</p>
+        <h2 id="工厂模式"><a href="#工厂模式" class="headerlink" title="工厂模式"></a>工厂模式</h2><p>设计工厂模式的目的是为了创建对象。它通常在类或者类的静态方法中实现，具有下列目标：</p>
 <ul>
-<li><p>首先，它使我们更容易的了解暴露的函数。当你不在return中定义函数时，我们能轻松的了解到每一行就是一个暴露的函数，这时我们阅读代码更加轻松。</p>
-</li>
-<li><p>其次，你可以用简短的名字（例如 add）来暴露函数，但在定义的时候仍然可以使用冗余的定义方法（例如 incrementCount）。   </p>
-</li>
+<li>当创建相识对象时执行重复操作</li>
+<li>在编译时不知道具体类型的情况下，为工厂客户提供一种创建对象的接口</li>
 </ul>
-<p>相关阅读：<a href="http://www.ruanyifeng.com/blog/2012/10/javascript_module.html" target="_blank" rel="external">阮一峰：Javascript模块化编程（一）：模块的写法</a></p>
+<p>通过工厂方法创建的对象在设计上都继承了相同的父对象这个思想，它们都是实现专门功能的特定子类。有时候公共父类是一个包含了工厂方法的同一个类。</p>
+<p>看一个汽车工厂实例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">function CarMaker() &#123;&#125;</div><div class="line"></div><div class="line">CarMaker.prototype.drive = function() &#123;</div><div class="line">  return &quot;Vroom, I have &quot; + this.doors + &quot; doors&quot;;</div><div class="line">&#125;</div><div class="line"></div><div class="line">CarMaker.factory = function(type) &#123;</div><div class="line">  var constr = type, newcar;</div><div class="line">  if(typeof CarMaker[constr] !== &quot;function&quot;) &#123;</div><div class="line">    throw &#123;</div><div class="line">      name: &quot;Error&quot;,</div><div class="line">      message: constr + &quot; doesn&apos;t exist&quot;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  if(typeof CarMaker[constr].prototype.drive !== &quot;function&quot;) &#123;</div><div class="line">    CarMaker[constr].prototype = new CarMaker();</div><div class="line">  &#125;</div><div class="line">  newcar = new CarMaker[constr]();</div><div class="line">  return newcar;</div><div class="line">&#125;</div><div class="line"></div><div class="line">CarMaker.Compact = function() &#123;this.doors = 4&#125;</div><div class="line">CarMaker.Convertible = function() &#123;this.doors = 2&#125;</div><div class="line">CarMaker.SUV = function() &#123;this.doors = 24;&#125;</div></pre></td></tr></table></figure>
+<p>再看看使用：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var corolla = CarMaker.factory(&apos;Compact&apos;);</div><div class="line">var solstice = CarMaker.factory(&apos;Convertible&apos;);</div><div class="line">var cherokee = CarMaker.factory(&apos;SUV&apos;);</div><div class="line">corolla.drive()</div><div class="line">solstice.drive()</div><div class="line">chrokee.drive()</div></pre></td></tr></table></figure></p>
+<p>实现该工厂模式并没有特别的困难，所有需要做的就是寻找能够创建所需类型对象的构造函数。</p>
+<h2 id="迭代器模式"><a href="#迭代器模式" class="headerlink" title="迭代器模式"></a>迭代器模式</h2><p>提起迭代器就会联想起ES6新支持的迭代协议，迭代器，可迭代对象；其实迭代器模式就是跟ES6的迭代器类似；</p>
+<p>通常的迭代器模式中，有一个包含各种数据集合的对象。该数据可能存储在一个复杂数据结构内部，而要提供一种简单的方法能够访问数据结构中每个元素。对象的消费者并不需要知道如何组织数据，所有需要做的就是取出单个数据进行工作。</p>
+<p>在迭代器模式中，需要提供一个next方法，还可以提供一个较为方便的hasNext方法，看一个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">var agg = (functiono() &#123;</div><div class="line">  var index = 0,</div><div class="line">  data = [1, 2, 3, 4, 5],</div><div class="line">  length = data.length;</div><div class="line">  </div><div class="line">  return &#123;</div><div class="line">    next: function() &#123;</div><div class="line">      var element;</div><div class="line">      if(!this.hasNext()) &#123;</div><div class="line">        return null;</div><div class="line">      &#125;</div><div class="line">      element = data[index];</div><div class="line">      index = index +2;</div><div class="line">      return element;</div><div class="line">    &#125;,</div><div class="line">    hasNext: function() &#123;</div><div class="line">      return index &lt; length;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;)();</div></pre></td></tr></table></figure>
+<p>除了上面的两个方法，还可以提供更简单的访问方式及多次迭代数据的能力，你的对象可以提供额外的便利方法：</p>
+<p>rewind()：重置指针到初始位置。<br>current(): 返回当前元素，因为不可能在不前进指针的情况下使用next()执行该操作。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">var agg = (function() &#123;</div><div class="line">  // ...</div><div class="line">  return &#123;</div><div class="line">    // ...</div><div class="line">    rewind: function() &#123;</div><div class="line">      index = 0;</div><div class="line">    &#125;,</div><div class="line">    current: function() &#123;</div><div class="line">      return data[index]</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;)()</div></pre></td></tr></table></figure>
 
       
     </div>
@@ -431,7 +366,9 @@ jspy.getCount();
       
         <div class="post-tags">
           
-            <a href="/tags/javascript/" rel="tag"># javascript</a>
+            <a href="/tags/设计模式/" rel="tag"># 设计模式</a>
+          
+            <a href="/tags/design-model/" rel="tag"># design model</a>
           
         </div>
       
@@ -444,8 +381,8 @@ jspy.getCount();
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2015/11/19/DiveIntoJs_hoisted/" rel="next" title="深入理解Javascript： 声明提升">
-                <i class="fa fa-chevron-left"></i> 深入理解Javascript： 声明提升
+              <a href="/2018/01/13/2018-01-13-JS模式之策略模式和外观模式/" rel="next" title="JS模式之策略模式和外观模式">
+                <i class="fa fa-chevron-left"></i> JS模式之策略模式和外观模式
               </a>
             
           </div>
@@ -453,10 +390,6 @@ jspy.getCount();
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2015/12/27/DiveIntoJs_core/" rel="prev" title="深入理解Javascript： JavaScript核心">
-                深入理解Javascript： JavaScript核心 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -614,7 +547,7 @@ jspy.getCount();
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Javascript-模块模式"><span class="nav-number">1.</span> <span class="nav-text">1.Javascript 模块模式</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#工厂模式"><span class="nav-number">1.</span> <span class="nav-text">工厂模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#迭代器模式"><span class="nav-number">2.</span> <span class="nav-text">迭代器模式</span></a></li></ol></div>
             
 
           </div>
